@@ -1,7 +1,3 @@
-using System;
-using System.Globalization;
-using System.IO;
-using System.Text.Json.Serialization;
 using Business;
 using Business.Helpers;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
@@ -9,6 +5,7 @@ using Core.Extensions;
 using Core.Utilities.IoC;
 using Core.Utilities.Security.Encyption;
 using Core.Utilities.Security.Jwt;
+using Core.Utilities.TaskScheduler.Hangfire;
 using Core.Utilities.TaskScheduler.Hangfire.Models;
 using Hangfire;
 using HangfireBasicAuthenticationFilter;
@@ -18,11 +15,17 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Swashbuckle.AspNetCore.SwaggerUI;
+using System;
+using System.Globalization;
+using System.IO;
+using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 using ConfigurationManager = Business.ConfigurationManager;
 
 namespace WebAPI
@@ -59,6 +62,8 @@ namespace WebAPI
                 {
                     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
                     options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+                    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+                    options.JsonSerializerOptions.PropertyNamingPolicy = null;
                 });
 
             services.AddApiVersioning(v =>
@@ -69,11 +74,55 @@ namespace WebAPI
                 v.ApiVersionReader = new HeaderApiVersionReader("x-dev-arch-version");
             });
 
+            // CORS configuration
             services.AddCors(options =>
             {
                 options.AddPolicy(
                     "AllowOrigin",
-                    builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+                    builder => builder
+                        .WithOrigins(
+                            "http://192.168.1.10:5173",
+                            "http://localhost:3000",
+                            "https://f957a04b03a6.ngrok-free.app",
+                            "http://localhost:3001",
+                            "http://127.0.0.1:3000",
+                            "http://127.0.0.1:3001",
+                            "http://192.168.1.6:5173",
+                            "http://192.168.106.125:5173",
+                            "http://localhost:8081",
+                            "http://192.168.106.115:8081",
+                            "http://localhost:5173",
+                            "http://e0wwo8c8c8swcokg04gwsw0c.185.139.5.109.sslip.io",
+                            "http://pc4s00cckocww8gwwc4wwk8o.185.139.5.109.sslip.io",
+                            "http://ako08o4oscgc8sscs0cg4oco.185.139.5.109.sslip.io",
+                            "http://v40w48gskgs4g84wg4g4gksw.185.139.5.109.sslip.io",
+                            "http://e0wwo8c8c8swcokg04gwsw0c.185.139.5.109.sslip.io:5000",
+                            "http://pc4s00cckocww8gwwc4wwk8o.185.139.5.109.sslip.io:5000",
+                            "http://ako08o4oscgc8sscs0cg4oco.185.139.5.109.sslip.io:5000",
+                            "http://v40w48gskgs4g84wg4g4gksw.185.139.5.109.sslip.io:5000",
+                            "http://e0wwo8c8c8swcokg04gwsw0c.185.139.5.109.sslip.io:3000",
+                            "http://pc4s00cckocww8gwwc4wwk8o.185.139.5.109.sslip.io:3000",
+                            "http://ako08o4oscgc8sscs0cg4oco.185.139.5.109.sslip.io:3000",
+                            "http://v40w48gskgs4g84wg4g4gksw.185.139.5.109.sslip.io:3000",
+                            "http://e0wwo8c8c8swcokg04gwsw0c.185.139.5.109.sslip.io:3001",
+                            "http://pc4s00cckocww8gwwc4wwk8o.185.139.5.109.sslip.io:3001",
+                            "http://ako08o4oscgc8sscs0cg4oco.185.139.5.109.sslip.io:3001",
+                            "http://v40w48gskgs4g84wg4g4gksw.185.139.5.109.sslip.io:3001",
+                            "http://e0wwo8c8c8swcokg04gwsw0c.185.139.5.109.sslip.io:3002",
+                            "http://pc4s00cckocww8gwwc4wwk8o.185.139.5.109.sslip.io:3002",
+                            "http://ako08o4oscgc8sscs0cg4oco.185.139.5.109.sslip.io:3002",
+                            "http://v40w48gskgs4g84wg4g4gksw.185.139.5.109.sslip.io:3002",
+                            "http://e0wwo8c8c8swcokg04gwsw0c.185.139.5.109.sslip.io:3003",
+                            "http://pc4s00cckocww8gwwc4wwk8o.185.139.5.109.sslip.io:3003",
+                            "http://ako08o4oscgc8sscs0cg4oco.185.139.5.109.sslip.io:3003",
+                            "http://v40w48gskgs4g84wg4g4gksw.185.139.5.109.sslip.io:3003"
+
+
+                                       )
+                        //.AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                       .AllowCredentials());
             });
 
             var tokenOptions = Configuration.GetSection("TokenOptions").Get<TokenOptions>();
@@ -92,7 +141,49 @@ namespace WebAPI
                         IssuerSigningKey = SecurityKeyHelper.CreateSecurityKey(tokenOptions.SecurityKey),
                         ClockSkew = TimeSpan.Zero
                     };
+
+                    // SignalR için JWT authentication
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnMessageReceived = context =>
+                        {
+                            var path = context.HttpContext.Request.Path;
+
+                            // Sadece SignalR hub istekleri için query parameter'dan token al
+                            if (path.StartsWithSegments("/notificationhub"))
+                            {
+                                var accessToken = context.Request.Query["access_token"];
+                                if (!string.IsNullOrEmpty(accessToken))
+                                {
+                                    context.Token = accessToken;
+                                }
+                            }
+                            // Normal API istekleri için hiçbir şey yapma (default Authorization header kullanılır)
+
+                            return Task.CompletedTask;
+                        },
+                        OnAuthenticationFailed = context =>
+                        {
+                            // SignalR isteklerinde authentication hatası olursa log'la ama normal API'yi etkileme
+                            if (context.Request.Path.StartsWithSegments("/notificationhub"))
+                            {
+                                Console.WriteLine($"SignalR Authentication Failed: {context.Exception.Message}");
+                            }
+                            return Task.CompletedTask;
+                        }
+                    };
                 });
+
+            // SignalR ekle
+            services.AddSignalR(options =>
+            {
+                options.EnableDetailedErrors = true; // Development için detaylı hatalar
+                options.MaximumReceiveMessageSize = 1024 * 1024; // 1MB
+                options.ClientTimeoutInterval = TimeSpan.FromSeconds(30);
+                options.KeepAliveInterval = TimeSpan.FromSeconds(15);
+            });
+
+
             services.AddSwaggerGen(c =>
             {
                 c.IncludeXmlComments(Path.ChangeExtension(typeof(Startup).Assembly.Location, ".xml"));
@@ -114,6 +205,21 @@ namespace WebAPI
         /// <param name="env"></param>
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            // ✅ Auto Migration
+            using (var scope = app.ApplicationServices.CreateScope())
+            {
+                try
+                {
+                    var db = scope.ServiceProvider.GetRequiredService<DataAccess.Concrete.EntityFramework.Contexts.ProjectDbContext>();
+                    db.Database.Migrate(); // deploy sırasında migrationları uygular
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Migration hatası: {ex.Message}");
+                    // Hata olsa bile uygulamanın çalışmasına devam etsin
+                }
+            }
+
             // VERY IMPORTANT. Since we removed the build from AddDependencyResolvers, let's set the Service provider manually.
             // By the way, we can construct with DI by taking type to avoid calling static methods in aspects.
             ServiceTool.ServiceProvider = app.ApplicationServices;
@@ -136,26 +242,24 @@ namespace WebAPI
 
             app.UseDeveloperExceptionPage();
 
+
+
             app.ConfigureCustomExceptionMiddleware();
 
             _ = app.UseDbOperationClaimCreator();
-            
-            if (!env.IsProduction())
+
+            // Swagger'ı her environment'ta aktif et
+            app.UseSwagger();
+
+            app.UseSwaggerUI(c =>
             {
-                app.UseSwagger();
-
-                app.UseSwaggerUI(c =>
-                {
-                    c.SwaggerEndpoint("v1/swagger.json", "Mam Yazilim");
-                    c.DocExpansion(DocExpansion.None);
-                });
-            }
-            app.UseCors("AllowOrigin");
-
+                c.SwaggerEndpoint("v1/swagger.json", "Mam Yazilim");
+                c.DocExpansion(DocExpansion.None);
+            });
             app.UseHttpsRedirection();
 
             app.UseRouting();
-
+            app.UseCors("AllowOrigin");
             app.UseAuthentication();
 
             app.UseAuthorization();
@@ -175,9 +279,14 @@ namespace WebAPI
             app.UseStaticFiles();
 
             var taskSchedulerConfig = Configuration.GetSection("TaskSchedulerOptions").Get<TaskSchedulerConfig>();
-            
+
             if (taskSchedulerConfig.Enabled)
             {
+                // Hangfire'ın DI container'ını kullanmasını sağla
+                // app.ApplicationServices, Autofac'ın üzerindeki ASP.NET Core DI abstraction'ıdır
+                // Bu sayede Autofac veya başka bir DI container kullanılsa bile çalışır
+                GlobalConfiguration.Configuration.UseActivator(new ServiceProviderJobActivator(app.ApplicationServices));
+
                 app.UseHangfireDashboard(taskSchedulerConfig.Path, new DashboardOptions
                 {
                     DashboardTitle = taskSchedulerConfig.Title,
@@ -192,7 +301,11 @@ namespace WebAPI
                 });
             }
 
-            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+                endpoints.MapHub<Core.Hubs.NotificationHub>("/notificationhub");
+            });
         }
     }
 }

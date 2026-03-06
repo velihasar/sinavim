@@ -19,6 +19,7 @@ namespace Core.CrossCuttingConcerns.Caching.Microsoft
     public class MemoryCacheManager : ICacheManager
     {
         private readonly IMemoryCache _cache;
+        private readonly HashSet<string> _cacheKeys;
 
         public MemoryCacheManager()
             : this(ServiceTool.ServiceProvider.GetService<IMemoryCache>())
@@ -27,44 +28,71 @@ namespace Core.CrossCuttingConcerns.Caching.Microsoft
 
         public MemoryCacheManager(IMemoryCache cache)
         {
-            _cache = cache;
+            _cache = cache ?? throw new ArgumentNullException(nameof(cache));
+            _cacheKeys = new HashSet<string>();
         }
 
         public void Add(string key, object data, int duration)
         {
+            if (string.IsNullOrEmpty(key))
+                throw new ArgumentException("Cache key cannot be null or empty", nameof(key));
+
             _cache.Set(key, data, TimeSpan.FromMinutes(duration));
+            _cacheKeys.Add(key);
         }
 
         public void Add(string key, object data)
         {
+            if (string.IsNullOrEmpty(key))
+                throw new ArgumentException("Cache key cannot be null or empty", nameof(key));
+
             _cache.Set(key, data);
+            _cacheKeys.Add(key);
         }
 
         public void Add(string key, dynamic data, int duration, Type type)
         {
+            if (string.IsNullOrEmpty(key))
+                throw new ArgumentException("Cache key cannot be null or empty", nameof(key));
+
             var json = JsonSerializer.SerializeToString(data.Result, type);
             Add(key, json, duration);
         }
 
         public void Add(string key, dynamic data, Type type)
         {
+            if (string.IsNullOrEmpty(key))
+                throw new ArgumentException("Cache key cannot be null or empty", nameof(key));
+
             var json = JsonSerializer.SerializeToString(data.Result, type);
             Add(key, json);
         }
 
         public T Get<T>(string key)
         {
+            if (string.IsNullOrEmpty(key))
+                return default(T);
+
             return _cache.Get<T>(key);
         }
 
         public object Get(string key)
         {
+            if (string.IsNullOrEmpty(key))
+                return null;
+
             return _cache.Get(key);
         }
 
         public object Get(string key, Type type)
         {
+            if (string.IsNullOrEmpty(key))
+                return null;
+
             var json = Get<string>(key);
+            if (json == null)
+                return null;
+
             var result = JsonSerializer.DeserializeFromString(json, type);
 
             return typeof(Task)
@@ -75,45 +103,64 @@ namespace Core.CrossCuttingConcerns.Caching.Microsoft
 
         public bool IsAdd(string key)
         {
+            if (string.IsNullOrEmpty(key))
+                return false;
+
             return _cache.TryGetValue(key, out _);
         }
 
         public void Remove(string key)
         {
+            if (string.IsNullOrEmpty(key))
+                return;
+
             _cache.Remove(key);
+            _cacheKeys.Remove(key);
         }
 
         public void RemoveByPattern(string pattern)
         {
-            var coherentState = typeof(MemoryCache).GetField("_coherentState", BindingFlags.NonPublic | BindingFlags.Instance);
+            if (string.IsNullOrEmpty(pattern))
+                return;
 
-            var coherentStateValue = coherentState.GetValue(_cache);
-            var cacheEntriesCollectionDefinition = coherentStateValue.GetType().GetProperty("EntriesCollection", BindingFlags.NonPublic | BindingFlags.Instance);
-      
-
-            var cacheEntriesCollection = cacheEntriesCollectionDefinition.GetValue(coherentStateValue) as ICollection;
-
-            var cacheCollectionValues = new List<string>();
-
-            if (cacheEntriesCollection != null)
+            try
             {
-                foreach (var item in cacheEntriesCollection)
+                var regex = new Regex(pattern, RegexOptions.Singleline | RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                var keysToRemove = _cacheKeys.Where(key => regex.IsMatch(key)).ToList();
+
+                foreach (var key in keysToRemove)
                 {
-                    var methodInfo = item.GetType().GetProperty("Key");
-
-                    var val = methodInfo.GetValue(item);
-
-                    cacheCollectionValues.Add(val.ToString());
+                    _cache.Remove(key);
+                    _cacheKeys.Remove(key);
                 }
             }
+            catch (Exception ex)
+            {
+                // Log the exception but don't throw to prevent application crash
+                // In a real application, you might want to use a proper logging framework
+                System.Diagnostics.Debug.WriteLine($"Error in RemoveByPattern: {ex.Message}");
+            }
+        }
 
-            var regex = new Regex(pattern, RegexOptions.Singleline | RegexOptions.Compiled | RegexOptions.IgnoreCase);
-            var keysToRemove = cacheCollectionValues.Where(d => regex.IsMatch(d)).Select(d => d)
-                .ToList();
-            foreach (var key in keysToRemove)
+        /// <summary>
+        /// Gets all cache keys for debugging purposes
+        /// </summary>
+        /// <returns>List of all cache keys</returns>
+        public IEnumerable<string> GetAllKeys()
+        {
+            return _cacheKeys.ToList();
+        }
+
+        /// <summary>
+        /// Clears all cache entries
+        /// </summary>
+        public void Clear()
+        {
+            foreach (var key in _cacheKeys.ToList())
             {
                 _cache.Remove(key);
             }
+            _cacheKeys.Clear();
         }
     }
 }

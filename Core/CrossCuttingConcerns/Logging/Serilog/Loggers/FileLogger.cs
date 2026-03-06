@@ -1,19 +1,20 @@
 ﻿using System;
 using System.IO;
 using Core.CrossCuttingConcerns.Logging.Serilog.ConfigurationModels;
-using Core.Utilities.IoC;
 using Core.Utilities.Messages;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 
 namespace Core.CrossCuttingConcerns.Logging.Serilog.Loggers
 {
     public class FileLogger : LoggerServiceBase
     {
-        public FileLogger()
+        public FileLogger(IConfiguration configuration)
         {
-            var configuration = ServiceTool.ServiceProvider.GetService<IConfiguration>();
+            if (configuration == null)
+            {
+                throw new ArgumentNullException(nameof(configuration));
+            }
 
             var logConfig = configuration.GetSection("SeriLogConfigurations:FileLogConfiguration")
                                 .Get<FileLogConfiguration>() ??
