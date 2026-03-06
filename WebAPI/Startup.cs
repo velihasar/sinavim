@@ -130,6 +130,9 @@ namespace WebAPI
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
+                    // Claim mapping'i devre dışı bırak - tam URI formatında tut (SecuredOperation hatasını çözmek için eklendi)
+                    options.MapInboundClaims = false;
+
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuer = true,

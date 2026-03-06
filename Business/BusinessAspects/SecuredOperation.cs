@@ -1,4 +1,4 @@
-﻿using Business.Constants;
+using Business.Constants;
 using Castle.DynamicProxy;
 using Core.CrossCuttingConcerns.Caching;
 using Core.Utilities.Interceptors;
@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security;
+using System.Security.Claims;
 
 namespace Business.BusinessAspects
 {
@@ -38,7 +39,10 @@ namespace Business.BusinessAspects
             }
 
             var userId = _httpContextAccessor.HttpContext.User.Claims
-                ?.FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value;
+                ?.FirstOrDefault(x => x.Type.EndsWith("nameidentifier") || 
+                                      x.Type == ClaimTypes.NameIdentifier || 
+                                      x.Type == "nameid" || 
+                                      x.Type == "sub")?.Value;
 
             if (string.IsNullOrWhiteSpace(userId))
             {
