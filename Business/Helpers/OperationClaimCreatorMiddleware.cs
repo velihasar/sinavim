@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -29,9 +29,9 @@ namespace Business.Helpers
             var operationClaims = (await mediator.Send(new GetOperationClaimsInternalQuery())).Data;
             var user = await mediator.Send(new RegisterUserInternalCommand
             {
-                FullName = "System Admin",
-                Password = "Q1w212*_*",
-                Email = "admin@adminmail.com",
+                FullName = "System Administrator",
+                Password = "Adana.14531989",
+                Email = "no-reply@masavtech.com",
             });
             await mediator.Send(new CreateUserClaimsInternalCommand
             {
