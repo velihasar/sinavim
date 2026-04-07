@@ -151,6 +151,12 @@ namespace Business
         public void ConfigureDevelopmentServices(IServiceCollection services)
         {
             ConfigureServices(services);
+            services.AddTransient<IKullaniciSinavRepository, KullaniciSinavRepository>();
+            services.AddTransient<IKullaniciKonuIlerlemeRepository, KullaniciKonuIlerlemeRepository>();
+            services.AddTransient<IKonuRepository, KonuRepository>();
+            services.AddTransient<IDersRepository, DersRepository>();
+            services.AddTransient<IDenemeSinavSonucuRepository, DenemeSinavSonucuRepository>();
+            services.AddTransient<IDenemeSinaviRepository, DenemeSinaviRepository>();
             services.AddTransient<ISinavRepository, SinavRepository>();
             services.AddTransient<ILogRepository, LogRepository>();
             services.AddTransient<ITranslateRepository, TranslateRepository>();
@@ -175,6 +181,12 @@ namespace Business
         public void ConfigureStagingServices(IServiceCollection services)
         {
             ConfigureServices(services);
+            services.AddTransient<IKullaniciSinavRepository, KullaniciSinavRepository>();
+            services.AddTransient<IKullaniciKonuIlerlemeRepository, KullaniciKonuIlerlemeRepository>();
+            services.AddTransient<IKonuRepository, KonuRepository>();
+            services.AddTransient<IDersRepository, DersRepository>();
+            services.AddTransient<IDenemeSinavSonucuRepository, DenemeSinavSonucuRepository>();
+            services.AddTransient<IDenemeSinaviRepository, DenemeSinaviRepository>();
             services.AddTransient<ISinavRepository, SinavRepository>();
             services.AddTransient<ILogRepository, LogRepository>();
             services.AddTransient<ITranslateRepository, TranslateRepository>();
@@ -198,6 +210,12 @@ namespace Business
         public void ConfigureProductionServices(IServiceCollection services)
         {
             ConfigureServices(services);
+            services.AddTransient<IKullaniciSinavRepository, KullaniciSinavRepository>();
+            services.AddTransient<IKullaniciKonuIlerlemeRepository, KullaniciKonuIlerlemeRepository>();
+            services.AddTransient<IKonuRepository, KonuRepository>();
+            services.AddTransient<IDersRepository, DersRepository>();
+            services.AddTransient<IDenemeSinavSonucuRepository, DenemeSinavSonucuRepository>();
+            services.AddTransient<IDenemeSinaviRepository, DenemeSinaviRepository>();
             services.AddTransient<ISinavRepository, SinavRepository>();
             services.AddTransient<ILogRepository, LogRepository>();
             services.AddTransient<ITranslateRepository, TranslateRepository>();

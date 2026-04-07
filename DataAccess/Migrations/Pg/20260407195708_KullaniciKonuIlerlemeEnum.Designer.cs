@@ -3,6 +3,7 @@ using System;
 using DataAccess.Concrete.EntityFramework.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DataAccess.Migrations.Pg
 {
     [DbContext(typeof(ProjectDbContext))]
-    partial class ProjectDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260407195708_KullaniciKonuIlerlemeEnum")]
+    partial class KullaniciKonuIlerlemeEnum
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -344,58 +347,6 @@ namespace DataAccess.Migrations.Pg
                     b.HasIndex("DersId");
 
                     b.ToTable("Konus");
-                });
-
-            modelBuilder.Entity("Core.Entities.Concrete.Project.KullaniciKonuIlerleme", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<short>("Durum")
-                        .HasColumnType("smallint");
-
-                    b.Property<int>("KonuId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("KonuId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("KullaniciKonuIlerlemes");
-                });
-
-            modelBuilder.Entity("Core.Entities.Concrete.Project.KullaniciSinav", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("HedefPuan")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("SinavId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SinavId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("KullaniciSinavs");
                 });
 
             modelBuilder.Entity("Core.Entities.Concrete.Project.Sinav", b =>
@@ -1710,44 +1661,6 @@ namespace DataAccess.Migrations.Pg
                         .IsRequired();
 
                     b.Navigation("Ders");
-                });
-
-            modelBuilder.Entity("Core.Entities.Concrete.Project.KullaniciKonuIlerleme", b =>
-                {
-                    b.HasOne("Core.Entities.Concrete.Project.Konu", "Konu")
-                        .WithMany()
-                        .HasForeignKey("KonuId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Core.Entities.Concrete.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Konu");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Core.Entities.Concrete.Project.KullaniciSinav", b =>
-                {
-                    b.HasOne("Core.Entities.Concrete.Project.Sinav", "Sinav")
-                        .WithMany()
-                        .HasForeignKey("SinavId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Core.Entities.Concrete.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Sinav");
-
-                    b.Navigation("User");
                 });
 #pragma warning restore 612, 618
         }
