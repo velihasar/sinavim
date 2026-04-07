@@ -1,4 +1,4 @@
-﻿
+
 using Business.BusinessAspects;
 using Business.Constants;
 using Core.Aspects.Autofac.Caching;
@@ -14,13 +14,15 @@ using System.Threading.Tasks;
 using System.Linq;
 using Business.Handlers.KullaniciKonuIlerlemes.ValidationRules;
 using Core.Entities.Concrete.Project;
+using Core.Entities.Dtos.Project.KullaniciKonuIlerlemeDtos;
+using Core.Extensions;
 
 namespace Business.Handlers.KullaniciKonuIlerlemes.Commands
 {
     /// <summary>
     /// 
     /// </summary>
-    public class CreateKullaniciKonuIlerlemeCommand : IRequest<IResult>
+    public class CreateKullaniciKonuIlerlemeCommand : IRequest<IDataResult<CreateKullaniciKonuIlerlemeDto>>
     {
 
         public int UserId { get; set; }
@@ -28,7 +30,7 @@ namespace Business.Handlers.KullaniciKonuIlerlemes.Commands
         public Core.Enums.IlerlemeDurumu Durum { get; set; }
 
 
-        public class CreateKullaniciKonuIlerlemeCommandHandler : IRequestHandler<CreateKullaniciKonuIlerlemeCommand, IResult>
+        public class CreateKullaniciKonuIlerlemeCommandHandler : IRequestHandler<CreateKullaniciKonuIlerlemeCommand, IDataResult<CreateKullaniciKonuIlerlemeDto>>
         {
             private readonly IKullaniciKonuIlerlemeRepository _kullaniciKonuIlerlemeRepository;
             private readonly IMediator _mediator;
@@ -39,27 +41,38 @@ namespace Business.Handlers.KullaniciKonuIlerlemes.Commands
             }
 
             [ValidationAspect(typeof(CreateKullaniciKonuIlerlemeValidator), Priority = 1)]
-            [CacheRemoveAspect("Get")]
-            [LogAspect(typeof(FileLogger))]
+            //[CacheRemoveAspect("Get")]
+            //[LogAspect(typeof(FileLogger))]
             [SecuredOperation(Priority = 1)]
-            public async Task<IResult> Handle(CreateKullaniciKonuIlerlemeCommand request, CancellationToken cancellationToken)
+            public async Task<IDataResult<CreateKullaniciKonuIlerlemeDto>> Handle(CreateKullaniciKonuIlerlemeCommand request, CancellationToken cancellationToken)
             {
-                var isThereKullaniciKonuIlerlemeRecord = _kullaniciKonuIlerlemeRepository.Query().Any(u => u.UserId == request.UserId);
+                var isThereKullaniciKonuIlerlemeRecord = _kullaniciKonuIlerlemeRepository.Query().Any(u => u.UserId == request.UserId && u.KonuId == request.KonuId);
 
                 if (isThereKullaniciKonuIlerlemeRecord == true)
-                    return new ErrorResult(Messages.NameAlreadyExist);
+                    return new ErrorDataResult<CreateKullaniciKonuIlerlemeDto>(Messages.NameAlreadyExist);
 
                 var addedKullaniciKonuIlerleme = new KullaniciKonuIlerleme
                 {
                     UserId = request.UserId,
                     KonuId = request.KonuId,
                     Durum = request.Durum,
-
+                    CreatedBy = UserInfoExtensions.GetUserId(),
+                    CreatedDate = System.DateTime.Now,
+                    IsActive = true
                 };
 
                 _kullaniciKonuIlerlemeRepository.Add(addedKullaniciKonuIlerleme);
                 await _kullaniciKonuIlerlemeRepository.SaveChangesAsync();
-                return new SuccessResult(Messages.Added);
+                
+                var dto = new CreateKullaniciKonuIlerlemeDto
+                {
+                    Id = addedKullaniciKonuIlerleme.Id,
+                    UserId = addedKullaniciKonuIlerleme.UserId,
+                    KonuId = addedKullaniciKonuIlerleme.KonuId,
+                    Durum = addedKullaniciKonuIlerleme.Durum
+                };
+
+                return new SuccessDataResult<CreateKullaniciKonuIlerlemeDto>(dto, Messages.Added);
             }
         }
     }

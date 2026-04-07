@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DataAccess.Migrations.Pg
 {
     [DbContext(typeof(ProjectDbContext))]
-    [Migration("20260407194304_InitialCreate")]
+    [Migration("20260407210841_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -242,6 +242,255 @@ namespace DataAccess.Migrations.Pg
                     b.ToTable("OperationClaims");
                 });
 
+            modelBuilder.Entity("Core.Entities.Concrete.Project.DenemeSinavSonucu", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BosSayisi")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("DersId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("DogruSayisi")
+                        .HasColumnType("integer");
+
+                    b.Property<bool?>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<decimal>("ToplamNet")
+                        .HasColumnType("numeric");
+
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("YanlisSayisi")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DersId");
+
+                    b.ToTable("DenemeSinavSonucus");
+                });
+
+            modelBuilder.Entity("Core.Entities.Concrete.Project.DenemeSinavi", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Aciklama")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Ad")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<bool?>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("SinavId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("Tarih")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SinavId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("DenemeSinavis");
+                });
+
+            modelBuilder.Entity("Core.Entities.Concrete.Project.Ders", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Ad")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<bool?>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("SinavId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SinavId");
+
+                    b.ToTable("Derses");
+                });
+
+            modelBuilder.Entity("Core.Entities.Concrete.Project.Konu", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Ad")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("DersId")
+                        .HasColumnType("integer");
+
+                    b.Property<bool?>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("SiraNo")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DersId");
+
+                    b.ToTable("Konus");
+                });
+
+            modelBuilder.Entity("Core.Entities.Concrete.Project.KullaniciKonuIlerleme", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<short>("Durum")
+                        .HasColumnType("smallint");
+
+                    b.Property<bool?>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("KonuId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("KonuId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("KullaniciKonuIlerlemes");
+                });
+
+            modelBuilder.Entity("Core.Entities.Concrete.Project.KullaniciSinav", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("HedefPuan")
+                        .HasColumnType("integer");
+
+                    b.Property<bool?>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("SinavId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SinavId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("KullaniciSinavs");
+                });
+
             modelBuilder.Entity("Core.Entities.Concrete.Project.Sinav", b =>
                 {
                     b.Property<int>("Id")
@@ -253,13 +502,28 @@ namespace DataAccess.Migrations.Pg
                     b.Property<string>("Ad")
                         .HasColumnType("text");
 
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("timestamp without time zone");
+
                     b.Property<int>("DogruyuGoturenYanlisSay")
                         .HasColumnType("integer");
+
+                    b.Property<bool?>("IsActive")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("KısaAd")
                         .HasColumnType("text");
 
                     b.Property<DateTime>("Tarih")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("timestamp without time zone");
 
                     b.HasKey("Id");
@@ -1502,6 +1766,96 @@ namespace DataAccess.Migrations.Pg
                     b.HasKey("UserId", "GroupId");
 
                     b.ToTable("UserGroups");
+                });
+
+            modelBuilder.Entity("Core.Entities.Concrete.Project.DenemeSinavSonucu", b =>
+                {
+                    b.HasOne("Core.Entities.Concrete.Project.Ders", "Ders")
+                        .WithMany()
+                        .HasForeignKey("DersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Ders");
+                });
+
+            modelBuilder.Entity("Core.Entities.Concrete.Project.DenemeSinavi", b =>
+                {
+                    b.HasOne("Core.Entities.Concrete.Project.Sinav", "Sinav")
+                        .WithMany()
+                        .HasForeignKey("SinavId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Core.Entities.Concrete.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Sinav");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Core.Entities.Concrete.Project.Ders", b =>
+                {
+                    b.HasOne("Core.Entities.Concrete.Project.Sinav", "Sinav")
+                        .WithMany()
+                        .HasForeignKey("SinavId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Sinav");
+                });
+
+            modelBuilder.Entity("Core.Entities.Concrete.Project.Konu", b =>
+                {
+                    b.HasOne("Core.Entities.Concrete.Project.Ders", "Ders")
+                        .WithMany()
+                        .HasForeignKey("DersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Ders");
+                });
+
+            modelBuilder.Entity("Core.Entities.Concrete.Project.KullaniciKonuIlerleme", b =>
+                {
+                    b.HasOne("Core.Entities.Concrete.Project.Konu", "Konu")
+                        .WithMany()
+                        .HasForeignKey("KonuId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Core.Entities.Concrete.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Konu");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Core.Entities.Concrete.Project.KullaniciSinav", b =>
+                {
+                    b.HasOne("Core.Entities.Concrete.Project.Sinav", "Sinav")
+                        .WithMany()
+                        .HasForeignKey("SinavId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Core.Entities.Concrete.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Sinav");
+
+                    b.Navigation("User");
                 });
 #pragma warning restore 612, 618
         }

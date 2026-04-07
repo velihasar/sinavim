@@ -1,4 +1,4 @@
-﻿
+
 using Business.BusinessAspects;
 using Core.Aspects.Autofac.Performance;
 using Core.Utilities.Results;
@@ -12,13 +12,15 @@ using Core.Aspects.Autofac.Logging;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Aspects.Autofac.Caching;
 using Core.Entities.Concrete.Project;
+using System.Linq;
+using Core.Entities.Dtos.Project.KullaniciKonuIlerlemeDtos;
 
 namespace Business.Handlers.KullaniciKonuIlerlemes.Queries
 {
 
-    public class GetKullaniciKonuIlerlemesQuery : IRequest<IDataResult<IEnumerable<KullaniciKonuIlerleme>>>
+    public class GetKullaniciKonuIlerlemesQuery : IRequest<IDataResult<IEnumerable<KullaniciKonuIlerlemeListDto>>>
     {
-        public class GetKullaniciKonuIlerlemesQueryHandler : IRequestHandler<GetKullaniciKonuIlerlemesQuery, IDataResult<IEnumerable<KullaniciKonuIlerleme>>>
+        public class GetKullaniciKonuIlerlemesQueryHandler : IRequestHandler<GetKullaniciKonuIlerlemesQuery, IDataResult<IEnumerable<KullaniciKonuIlerlemeListDto>>>
         {
             private readonly IKullaniciKonuIlerlemeRepository _kullaniciKonuIlerlemeRepository;
             private readonly IMediator _mediator;
@@ -29,13 +31,22 @@ namespace Business.Handlers.KullaniciKonuIlerlemes.Queries
                 _mediator = mediator;
             }
 
-            [PerformanceAspect(5)]
-            [CacheAspect(10)]
-            [LogAspect(typeof(FileLogger))]
+            //[PerformanceAspect(5)]
+            //[CacheAspect(10)]
+            //[LogAspect(typeof(FileLogger))]
             [SecuredOperation(Priority = 1)]
-            public async Task<IDataResult<IEnumerable<KullaniciKonuIlerleme>>> Handle(GetKullaniciKonuIlerlemesQuery request, CancellationToken cancellationToken)
+            public async Task<IDataResult<IEnumerable<KullaniciKonuIlerlemeListDto>>> Handle(GetKullaniciKonuIlerlemesQuery request, CancellationToken cancellationToken)
             {
-                return new SuccessDataResult<IEnumerable<KullaniciKonuIlerleme>>(await _kullaniciKonuIlerlemeRepository.GetListAsync());
+                var list = await _kullaniciKonuIlerlemeRepository.GetListAsync();
+                var dtoList = list.Select(k => new KullaniciKonuIlerlemeListDto
+                {
+                    Id = k.Id,
+                    UserId = k.UserId,
+                    KonuId = k.KonuId,
+                    Durum = k.Durum
+                });
+
+                return new SuccessDataResult<IEnumerable<KullaniciKonuIlerlemeListDto>>(dtoList);
             }
         }
     }

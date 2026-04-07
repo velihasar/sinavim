@@ -1,4 +1,4 @@
-﻿
+
 using Business.Constants;
 using Business.BusinessAspects;
 using Core.Aspects.Autofac.Caching;
@@ -13,20 +13,21 @@ using System.Threading.Tasks;
 using System.Linq;
 using Core.Aspects.Autofac.Validation;
 using Business.Handlers.Konus.ValidationRules;
-
+using Core.Entities.Dtos.Project.KonuDtos;
+using Core.Extensions;
 
 namespace Business.Handlers.Konus.Commands
 {
 
 
-    public class UpdateKonuCommand : IRequest<IResult>
+    public class UpdateKonuCommand : IRequest<IDataResult<UpdateKonuDto>>
     {
         public int Id { get; set; }
         public string Ad { get; set; }
         public int SiraNo { get; set; }
         public int DersId { get; set; }
 
-        public class UpdateKonuCommandHandler : IRequestHandler<UpdateKonuCommand, IResult>
+        public class UpdateKonuCommandHandler : IRequestHandler<UpdateKonuCommand, IDataResult<UpdateKonuDto>>
         {
             private readonly IKonuRepository _konuRepository;
             private readonly IMediator _mediator;
@@ -38,22 +39,37 @@ namespace Business.Handlers.Konus.Commands
             }
 
             [ValidationAspect(typeof(UpdateKonuValidator), Priority = 1)]
-            [CacheRemoveAspect("Get")]
-            [LogAspect(typeof(FileLogger))]
+            //[CacheRemoveAspect("Get")]
+            //[LogAspect(typeof(FileLogger))]
             [SecuredOperation(Priority = 1)]
-            public async Task<IResult> Handle(UpdateKonuCommand request, CancellationToken cancellationToken)
+            public async Task<IDataResult<UpdateKonuDto>> Handle(UpdateKonuCommand request, CancellationToken cancellationToken)
             {
                 var isThereKonuRecord = await _konuRepository.GetAsync(u => u.Id == request.Id);
 
+                if(isThereKonuRecord == null)
+                {
+                    return new ErrorDataResult<UpdateKonuDto>("Kayıt bulunamadı");
+                }
 
                 isThereKonuRecord.Ad = request.Ad;
                 isThereKonuRecord.SiraNo = request.SiraNo;
                 isThereKonuRecord.DersId = request.DersId;
+                isThereKonuRecord.UpdatedBy = UserInfoExtensions.GetUserId();
+                isThereKonuRecord.UpdatedDate = System.DateTime.Now;
 
 
                 _konuRepository.Update(isThereKonuRecord);
                 await _konuRepository.SaveChangesAsync();
-                return new SuccessResult(Messages.Updated);
+                
+                var dto = new UpdateKonuDto
+                {
+                    Id = isThereKonuRecord.Id,
+                    Ad = isThereKonuRecord.Ad,
+                    SiraNo = isThereKonuRecord.SiraNo,
+                    DersId = isThereKonuRecord.DersId
+                };
+
+                return new SuccessDataResult<UpdateKonuDto>(dto, Messages.Updated);
             }
         }
     }

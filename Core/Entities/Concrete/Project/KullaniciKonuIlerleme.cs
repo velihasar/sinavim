@@ -7,9 +7,8 @@ using Core.Enums;
 
 namespace Core.Entities.Concrete.Project
 {
-    public class KullaniciKonuIlerleme:IEntity
+    public class KullaniciKonuIlerleme: BaseEntity, IEntity
     {
-        public int Id { get; set; }
         public int UserId { get; set; }
         public User User { get; set; }
         public int KonuId { get; set; }

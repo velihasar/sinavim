@@ -1,4 +1,4 @@
-﻿
+
 using Business.Handlers.Derses.Commands;
 using Business.Handlers.Derses.Queries;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Entities.Concrete;
 using System.Collections.Generic;
 using Core.Entities.Concrete.Project;
+using Core.Entities.Dtos.Project.DersDtos;
 
 namespace WebAPI.Controllers
 {
@@ -24,8 +25,9 @@ namespace WebAPI.Controllers
         ///<remarks>Derses</remarks>
         ///<return>List Derses</return>
         ///<response code="200"></response>
+        [Authorize]
         [Produces("application/json", "text/plain")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<Ders>))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<DersListDto>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         [HttpGet("getall")]
         public async Task<IActionResult> GetList()
@@ -44,8 +46,9 @@ namespace WebAPI.Controllers
         ///<remarks>Derses</remarks>
         ///<return>Derses List</return>
         ///<response code="200"></response>  
+        [Authorize]
         [Produces("application/json", "text/plain")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Ders))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DersDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         [HttpGet("getbyid")]
         public async Task<IActionResult> GetById(int id)
@@ -63,8 +66,9 @@ namespace WebAPI.Controllers
         /// </summary>
         /// <param name="createDers"></param>
         /// <returns></returns>
+        [Authorize]
         [Produces("application/json", "text/plain")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CreateDersDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         [HttpPost]
         public async Task<IActionResult> Add([FromBody] CreateDersCommand createDers)
@@ -72,7 +76,7 @@ namespace WebAPI.Controllers
             var result = await Mediator.Send(createDers);
             if (result.Success)
             {
-                return Ok(result.Message);
+                return Ok(result.Data);
             }
             return BadRequest(result.Message);
         }
@@ -82,8 +86,9 @@ namespace WebAPI.Controllers
         /// </summary>
         /// <param name="updateDers"></param>
         /// <returns></returns>
+        [Authorize]
         [Produces("application/json", "text/plain")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UpdateDersDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         [HttpPut]
         public async Task<IActionResult> Update([FromBody] UpdateDersCommand updateDers)
@@ -91,16 +96,18 @@ namespace WebAPI.Controllers
             var result = await Mediator.Send(updateDers);
             if (result.Success)
             {
-                return Ok(result.Message);
+                return Ok(result.Data);
             }
             return BadRequest(result.Message);
         }
+
 
         /// <summary>
         /// Delete Ders.
         /// </summary>
         /// <param name="deleteDers"></param>
         /// <returns></returns>
+        [Authorize]
         [Produces("application/json", "text/plain")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]

@@ -250,14 +250,29 @@ namespace DataAccess.Migrations.Pg
                     b.Property<int>("BosSayisi")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("timestamp without time zone");
+
                     b.Property<int>("DersId")
                         .HasColumnType("integer");
 
                     b.Property<int>("DogruSayisi")
                         .HasColumnType("integer");
 
+                    b.Property<bool?>("IsActive")
+                        .HasColumnType("boolean");
+
                     b.Property<decimal>("ToplamNet")
                         .HasColumnType("numeric");
+
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<int>("YanlisSayisi")
                         .HasColumnType("integer");
@@ -283,10 +298,25 @@ namespace DataAccess.Migrations.Pg
                     b.Property<string>("Ad")
                         .HasColumnType("text");
 
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<bool?>("IsActive")
+                        .HasColumnType("boolean");
+
                     b.Property<int>("SinavId")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("Tarih")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<int>("UserId")
@@ -312,8 +342,23 @@ namespace DataAccess.Migrations.Pg
                     b.Property<string>("Ad")
                         .HasColumnType("text");
 
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<bool?>("IsActive")
+                        .HasColumnType("boolean");
+
                     b.Property<int>("SinavId")
                         .HasColumnType("integer");
+
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("timestamp without time zone");
 
                     b.HasKey("Id");
 
@@ -333,11 +378,26 @@ namespace DataAccess.Migrations.Pg
                     b.Property<string>("Ad")
                         .HasColumnType("text");
 
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("timestamp without time zone");
+
                     b.Property<int>("DersId")
                         .HasColumnType("integer");
 
+                    b.Property<bool?>("IsActive")
+                        .HasColumnType("boolean");
+
                     b.Property<int>("SiraNo")
                         .HasColumnType("integer");
+
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("timestamp without time zone");
 
                     b.HasKey("Id");
 
@@ -354,11 +414,26 @@ namespace DataAccess.Migrations.Pg
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("timestamp without time zone");
+
                     b.Property<short>("Durum")
                         .HasColumnType("smallint");
 
+                    b.Property<bool?>("IsActive")
+                        .HasColumnType("boolean");
+
                     b.Property<int>("KonuId")
                         .HasColumnType("integer");
+
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
@@ -380,11 +455,26 @@ namespace DataAccess.Migrations.Pg
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("timestamp without time zone");
+
                     b.Property<int>("HedefPuan")
                         .HasColumnType("integer");
 
+                    b.Property<bool?>("IsActive")
+                        .HasColumnType("boolean");
+
                     b.Property<int>("SinavId")
                         .HasColumnType("integer");
+
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
@@ -409,13 +499,28 @@ namespace DataAccess.Migrations.Pg
                     b.Property<string>("Ad")
                         .HasColumnType("text");
 
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("timestamp without time zone");
+
                     b.Property<int>("DogruyuGoturenYanlisSay")
                         .HasColumnType("integer");
+
+                    b.Property<bool?>("IsActive")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("KısaAd")
                         .HasColumnType("text");
 
                     b.Property<DateTime>("Tarih")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("timestamp without time zone");
 
                     b.HasKey("Id");

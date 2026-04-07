@@ -1,4 +1,4 @@
-﻿
+
 using Business.BusinessAspects;
 using Core.Aspects.Autofac.Performance;
 using Core.Utilities.Results;
@@ -12,13 +12,15 @@ using Core.Aspects.Autofac.Logging;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Aspects.Autofac.Caching;
 using Core.Entities.Concrete.Project;
+using System.Linq;
+using Core.Entities.Dtos.Project.DenemeSinavSonucuDtos;
 
 namespace Business.Handlers.DenemeSinavSonucus.Queries
 {
 
-    public class GetDenemeSinavSonucusQuery : IRequest<IDataResult<IEnumerable<DenemeSinavSonucu>>>
+    public class GetDenemeSinavSonucusQuery : IRequest<IDataResult<IEnumerable<DenemeSinavSonucuListDto>>>
     {
-        public class GetDenemeSinavSonucusQueryHandler : IRequestHandler<GetDenemeSinavSonucusQuery, IDataResult<IEnumerable<DenemeSinavSonucu>>>
+        public class GetDenemeSinavSonucusQueryHandler : IRequestHandler<GetDenemeSinavSonucusQuery, IDataResult<IEnumerable<DenemeSinavSonucuListDto>>>
         {
             private readonly IDenemeSinavSonucuRepository _denemeSinavSonucuRepository;
             private readonly IMediator _mediator;
@@ -29,13 +31,24 @@ namespace Business.Handlers.DenemeSinavSonucus.Queries
                 _mediator = mediator;
             }
 
-            [PerformanceAspect(5)]
-            [CacheAspect(10)]
-            [LogAspect(typeof(FileLogger))]
+            //[PerformanceAspect(5)]
+            //[CacheAspect(10)]
+            //[LogAspect(typeof(FileLogger))]
             [SecuredOperation(Priority = 1)]
-            public async Task<IDataResult<IEnumerable<DenemeSinavSonucu>>> Handle(GetDenemeSinavSonucusQuery request, CancellationToken cancellationToken)
+            public async Task<IDataResult<IEnumerable<DenemeSinavSonucuListDto>>> Handle(GetDenemeSinavSonucusQuery request, CancellationToken cancellationToken)
             {
-                return new SuccessDataResult<IEnumerable<DenemeSinavSonucu>>(await _denemeSinavSonucuRepository.GetListAsync());
+                var list = await _denemeSinavSonucuRepository.GetListAsync();
+                var dtoList = list.Select(d => new DenemeSinavSonucuListDto
+                {
+                    Id = d.Id,
+                    DersId = d.DersId,
+                    DogruSayisi = d.DogruSayisi,
+                    YanlisSayisi = d.YanlisSayisi,
+                    BosSayisi = d.BosSayisi,
+                    ToplamNet = d.ToplamNet
+                });
+
+                return new SuccessDataResult<IEnumerable<DenemeSinavSonucuListDto>>(dtoList);
             }
         }
     }

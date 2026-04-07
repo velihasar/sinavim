@@ -1,4 +1,4 @@
-﻿
+
 using Business.Handlers.Sinavs.Commands;
 using Business.Handlers.Sinavs.Queries;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Entities.Concrete;
 using System.Collections.Generic;
 using Core.Entities.Concrete.Project;
+using Core.Entities.Dtos.Project.SinavDtos;
 
 namespace WebAPI.Controllers
 {
@@ -24,8 +25,9 @@ namespace WebAPI.Controllers
         ///<remarks>Sinavs</remarks>
         ///<return>List Sinavs</return>
         ///<response code="200"></response>
+        [Authorize]
         [Produces("application/json", "text/plain")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<Sinav>))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<SinavListDto>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         [HttpGet("getall")]
         public async Task<IActionResult> GetList()
@@ -44,8 +46,9 @@ namespace WebAPI.Controllers
         ///<remarks>Sinavs</remarks>
         ///<return>Sinavs List</return>
         ///<response code="200"></response>  
+        [Authorize]
         [Produces("application/json", "text/plain")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Sinav))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SinavDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         [HttpGet("getbyid")]
         public async Task<IActionResult> GetById(int id)
@@ -63,8 +66,9 @@ namespace WebAPI.Controllers
         /// </summary>
         /// <param name="createSinav"></param>
         /// <returns></returns>
+        [Authorize]
         [Produces("application/json", "text/plain")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CreateSinavDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         [HttpPost]
         public async Task<IActionResult> Add([FromBody] CreateSinavCommand createSinav)
@@ -72,7 +76,7 @@ namespace WebAPI.Controllers
             var result = await Mediator.Send(createSinav);
             if (result.Success)
             {
-                return Ok(result.Message);
+                return Ok(result.Data);
             }
             return BadRequest(result.Message);
         }
@@ -82,8 +86,9 @@ namespace WebAPI.Controllers
         /// </summary>
         /// <param name="updateSinav"></param>
         /// <returns></returns>
+        [Authorize]
         [Produces("application/json", "text/plain")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UpdateSinavDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         [HttpPut]
         public async Task<IActionResult> Update([FromBody] UpdateSinavCommand updateSinav)
@@ -91,16 +96,18 @@ namespace WebAPI.Controllers
             var result = await Mediator.Send(updateSinav);
             if (result.Success)
             {
-                return Ok(result.Message);
+                return Ok(result.Data);
             }
             return BadRequest(result.Message);
         }
+
 
         /// <summary>
         /// Delete Sinav.
         /// </summary>
         /// <param name="deleteSinav"></param>
         /// <returns></returns>
+        [Authorize]
         [Produces("application/json", "text/plain")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]

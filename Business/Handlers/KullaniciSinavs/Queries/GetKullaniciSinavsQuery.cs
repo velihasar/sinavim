@@ -1,4 +1,4 @@
-﻿
+
 using Business.BusinessAspects;
 using Core.Aspects.Autofac.Performance;
 using Core.Utilities.Results;
@@ -12,13 +12,15 @@ using Core.Aspects.Autofac.Logging;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Aspects.Autofac.Caching;
 using Core.Entities.Concrete.Project;
+using System.Linq;
+using Core.Entities.Dtos.Project.KullaniciSinavDtos;
 
 namespace Business.Handlers.KullaniciSinavs.Queries
 {
 
-    public class GetKullaniciSinavsQuery : IRequest<IDataResult<IEnumerable<KullaniciSinav>>>
+    public class GetKullaniciSinavsQuery : IRequest<IDataResult<IEnumerable<KullaniciSinavListDto>>>
     {
-        public class GetKullaniciSinavsQueryHandler : IRequestHandler<GetKullaniciSinavsQuery, IDataResult<IEnumerable<KullaniciSinav>>>
+        public class GetKullaniciSinavsQueryHandler : IRequestHandler<GetKullaniciSinavsQuery, IDataResult<IEnumerable<KullaniciSinavListDto>>>
         {
             private readonly IKullaniciSinavRepository _kullaniciSinavRepository;
             private readonly IMediator _mediator;
@@ -29,13 +31,22 @@ namespace Business.Handlers.KullaniciSinavs.Queries
                 _mediator = mediator;
             }
 
-            [PerformanceAspect(5)]
-            [CacheAspect(10)]
-            [LogAspect(typeof(FileLogger))]
+            //[PerformanceAspect(5)]
+            //[CacheAspect(10)]
+            //[LogAspect(typeof(FileLogger))]
             [SecuredOperation(Priority = 1)]
-            public async Task<IDataResult<IEnumerable<KullaniciSinav>>> Handle(GetKullaniciSinavsQuery request, CancellationToken cancellationToken)
+            public async Task<IDataResult<IEnumerable<KullaniciSinavListDto>>> Handle(GetKullaniciSinavsQuery request, CancellationToken cancellationToken)
             {
-                return new SuccessDataResult<IEnumerable<KullaniciSinav>>(await _kullaniciSinavRepository.GetListAsync());
+                var list = await _kullaniciSinavRepository.GetListAsync();
+                var dtoList = list.Select(k => new KullaniciSinavListDto
+                {
+                    Id = k.Id,
+                    UserId = k.UserId,
+                    SinavId = k.SinavId,
+                    HedefPuan = k.HedefPuan
+                });
+
+                return new SuccessDataResult<IEnumerable<KullaniciSinavListDto>>(dtoList);
             }
         }
     }

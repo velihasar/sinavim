@@ -1,4 +1,4 @@
-﻿
+
 using Business.BusinessAspects;
 using Business.Constants;
 using Core.Aspects.Autofac.Caching;
@@ -14,13 +14,15 @@ using System.Threading.Tasks;
 using System.Linq;
 using Business.Handlers.Konus.ValidationRules;
 using Core.Entities.Concrete.Project;
+using Core.Entities.Dtos.Project.KonuDtos;
+using Core.Extensions;
 
 namespace Business.Handlers.Konus.Commands
 {
     /// <summary>
     /// 
     /// </summary>
-    public class CreateKonuCommand : IRequest<IResult>
+    public class CreateKonuCommand : IRequest<IDataResult<CreateKonuDto>>
     {
 
         public string Ad { get; set; }
@@ -28,7 +30,7 @@ namespace Business.Handlers.Konus.Commands
         public int DersId { get; set; }
 
 
-        public class CreateKonuCommandHandler : IRequestHandler<CreateKonuCommand, IResult>
+        public class CreateKonuCommandHandler : IRequestHandler<CreateKonuCommand, IDataResult<CreateKonuDto>>
         {
             private readonly IKonuRepository _konuRepository;
             private readonly IMediator _mediator;
@@ -39,27 +41,38 @@ namespace Business.Handlers.Konus.Commands
             }
 
             [ValidationAspect(typeof(CreateKonuValidator), Priority = 1)]
-            [CacheRemoveAspect("Get")]
-            [LogAspect(typeof(FileLogger))]
+            //[CacheRemoveAspect("Get")]
+            //[LogAspect(typeof(FileLogger))]
             [SecuredOperation(Priority = 1)]
-            public async Task<IResult> Handle(CreateKonuCommand request, CancellationToken cancellationToken)
+            public async Task<IDataResult<CreateKonuDto>> Handle(CreateKonuCommand request, CancellationToken cancellationToken)
             {
                 var isThereKonuRecord = _konuRepository.Query().Any(u => u.Ad == request.Ad);
 
                 if (isThereKonuRecord == true)
-                    return new ErrorResult(Messages.NameAlreadyExist);
+                    return new ErrorDataResult<CreateKonuDto>(Messages.NameAlreadyExist);
 
                 var addedKonu = new Konu
                 {
                     Ad = request.Ad,
                     SiraNo = request.SiraNo,
                     DersId = request.DersId,
-
+                    CreatedBy = UserInfoExtensions.GetUserId(),
+                    CreatedDate = System.DateTime.Now,
+                    IsActive = true
                 };
 
                 _konuRepository.Add(addedKonu);
                 await _konuRepository.SaveChangesAsync();
-                return new SuccessResult(Messages.Added);
+                
+                var dto = new CreateKonuDto
+                {
+                    Id = addedKonu.Id,
+                    Ad = addedKonu.Ad,
+                    SiraNo = addedKonu.SiraNo,
+                    DersId = addedKonu.DersId
+                };
+
+                return new SuccessDataResult<CreateKonuDto>(dto, Messages.Added);
             }
         }
     }

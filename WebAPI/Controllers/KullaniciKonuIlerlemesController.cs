@@ -1,4 +1,4 @@
-﻿
+
 using Business.Handlers.KullaniciKonuIlerlemes.Commands;
 using Business.Handlers.KullaniciKonuIlerlemes.Queries;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Entities.Concrete;
 using System.Collections.Generic;
 using Core.Entities.Concrete.Project;
+using Core.Entities.Dtos.Project.KullaniciKonuIlerlemeDtos;
 
 namespace WebAPI.Controllers
 {
@@ -24,8 +25,9 @@ namespace WebAPI.Controllers
         ///<remarks>KullaniciKonuIlerlemes</remarks>
         ///<return>List KullaniciKonuIlerlemes</return>
         ///<response code="200"></response>
+        [Authorize]
         [Produces("application/json", "text/plain")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<KullaniciKonuIlerleme>))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<KullaniciKonuIlerlemeListDto>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         [HttpGet("getall")]
         public async Task<IActionResult> GetList()
@@ -44,8 +46,9 @@ namespace WebAPI.Controllers
         ///<remarks>KullaniciKonuIlerlemes</remarks>
         ///<return>KullaniciKonuIlerlemes List</return>
         ///<response code="200"></response>  
+        [Authorize]
         [Produces("application/json", "text/plain")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(KullaniciKonuIlerleme))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(KullaniciKonuIlerlemeDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         [HttpGet("getbyid")]
         public async Task<IActionResult> GetById(int id)
@@ -63,8 +66,9 @@ namespace WebAPI.Controllers
         /// </summary>
         /// <param name="createKullaniciKonuIlerleme"></param>
         /// <returns></returns>
+        [Authorize]
         [Produces("application/json", "text/plain")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CreateKullaniciKonuIlerlemeDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         [HttpPost]
         public async Task<IActionResult> Add([FromBody] CreateKullaniciKonuIlerlemeCommand createKullaniciKonuIlerleme)
@@ -72,7 +76,7 @@ namespace WebAPI.Controllers
             var result = await Mediator.Send(createKullaniciKonuIlerleme);
             if (result.Success)
             {
-                return Ok(result.Message);
+                return Ok(result.Data);
             }
             return BadRequest(result.Message);
         }
@@ -82,8 +86,9 @@ namespace WebAPI.Controllers
         /// </summary>
         /// <param name="updateKullaniciKonuIlerleme"></param>
         /// <returns></returns>
+        [Authorize]
         [Produces("application/json", "text/plain")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UpdateKullaniciKonuIlerlemeDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         [HttpPut]
         public async Task<IActionResult> Update([FromBody] UpdateKullaniciKonuIlerlemeCommand updateKullaniciKonuIlerleme)
@@ -91,16 +96,18 @@ namespace WebAPI.Controllers
             var result = await Mediator.Send(updateKullaniciKonuIlerleme);
             if (result.Success)
             {
-                return Ok(result.Message);
+                return Ok(result.Data);
             }
             return BadRequest(result.Message);
         }
+
 
         /// <summary>
         /// Delete KullaniciKonuIlerleme.
         /// </summary>
         /// <param name="deleteKullaniciKonuIlerleme"></param>
         /// <returns></returns>
+        [Authorize]
         [Produces("application/json", "text/plain")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]

@@ -1,4 +1,4 @@
-﻿
+
 using Business.Handlers.KullaniciSinavs.Commands;
 using Business.Handlers.KullaniciSinavs.Queries;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Entities.Concrete;
 using System.Collections.Generic;
 using Core.Entities.Concrete.Project;
+using Core.Entities.Dtos.Project.KullaniciSinavDtos;
 
 namespace WebAPI.Controllers
 {
@@ -24,8 +25,9 @@ namespace WebAPI.Controllers
         ///<remarks>KullaniciSinavs</remarks>
         ///<return>List KullaniciSinavs</return>
         ///<response code="200"></response>
+        [Authorize]
         [Produces("application/json", "text/plain")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<KullaniciSinav>))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<KullaniciSinavListDto>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         [HttpGet("getall")]
         public async Task<IActionResult> GetList()
@@ -44,8 +46,9 @@ namespace WebAPI.Controllers
         ///<remarks>KullaniciSinavs</remarks>
         ///<return>KullaniciSinavs List</return>
         ///<response code="200"></response>  
+        [Authorize]
         [Produces("application/json", "text/plain")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(KullaniciSinav))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(KullaniciSinavDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         [HttpGet("getbyid")]
         public async Task<IActionResult> GetById(int id)
@@ -63,8 +66,9 @@ namespace WebAPI.Controllers
         /// </summary>
         /// <param name="createKullaniciSinav"></param>
         /// <returns></returns>
+        [Authorize]
         [Produces("application/json", "text/plain")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CreateKullaniciSinavDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         [HttpPost]
         public async Task<IActionResult> Add([FromBody] CreateKullaniciSinavCommand createKullaniciSinav)
@@ -72,7 +76,7 @@ namespace WebAPI.Controllers
             var result = await Mediator.Send(createKullaniciSinav);
             if (result.Success)
             {
-                return Ok(result.Message);
+                return Ok(result.Data);
             }
             return BadRequest(result.Message);
         }
@@ -82,8 +86,9 @@ namespace WebAPI.Controllers
         /// </summary>
         /// <param name="updateKullaniciSinav"></param>
         /// <returns></returns>
+        [Authorize]
         [Produces("application/json", "text/plain")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UpdateKullaniciSinavDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         [HttpPut]
         public async Task<IActionResult> Update([FromBody] UpdateKullaniciSinavCommand updateKullaniciSinav)
@@ -91,16 +96,18 @@ namespace WebAPI.Controllers
             var result = await Mediator.Send(updateKullaniciSinav);
             if (result.Success)
             {
-                return Ok(result.Message);
+                return Ok(result.Data);
             }
             return BadRequest(result.Message);
         }
+
 
         /// <summary>
         /// Delete KullaniciSinav.
         /// </summary>
         /// <param name="deleteKullaniciSinav"></param>
         /// <returns></returns>
+        [Authorize]
         [Produces("application/json", "text/plain")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]

@@ -1,4 +1,4 @@
-﻿
+
 using Business.BusinessAspects;
 using Core.Aspects.Autofac.Performance;
 using Core.Utilities.Results;
@@ -12,13 +12,15 @@ using Core.Aspects.Autofac.Logging;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Aspects.Autofac.Caching;
 using Core.Entities.Concrete.Project;
+using System.Linq;
+using Core.Entities.Dtos.Project.SinavDtos;
 
 namespace Business.Handlers.Sinavs.Queries
 {
 
-    public class GetSinavsQuery : IRequest<IDataResult<IEnumerable<Sinav>>>
+    public class GetSinavsQuery : IRequest<IDataResult<IEnumerable<SinavListDto>>>
     {
-        public class GetSinavsQueryHandler : IRequestHandler<GetSinavsQuery, IDataResult<IEnumerable<Sinav>>>
+        public class GetSinavsQueryHandler : IRequestHandler<GetSinavsQuery, IDataResult<IEnumerable<SinavListDto>>>
         {
             private readonly ISinavRepository _sinavRepository;
             private readonly IMediator _mediator;
@@ -29,13 +31,23 @@ namespace Business.Handlers.Sinavs.Queries
                 _mediator = mediator;
             }
 
-            [PerformanceAspect(5)]
-            [CacheAspect(10)]
-            [LogAspect(typeof(FileLogger))]
+            //[PerformanceAspect(5)]
+            //[CacheAspect(10)]
+            //[LogAspect(typeof(FileLogger))]
             [SecuredOperation(Priority = 1)]
-            public async Task<IDataResult<IEnumerable<Sinav>>> Handle(GetSinavsQuery request, CancellationToken cancellationToken)
+            public async Task<IDataResult<IEnumerable<SinavListDto>>> Handle(GetSinavsQuery request, CancellationToken cancellationToken)
             {
-                return new SuccessDataResult<IEnumerable<Sinav>>(await _sinavRepository.GetListAsync());
+                var sinavs = await _sinavRepository.GetListAsync();
+                var sinavDtos = sinavs.Select(s => new SinavListDto
+                {
+                    Id = s.Id,
+                    KısaAd = s.KısaAd,
+                    Ad = s.Ad,
+                    Tarih = s.Tarih,
+                    DogruyuGoturenYanlisSay = s.DogruyuGoturenYanlisSay
+                });
+
+                return new SuccessDataResult<IEnumerable<SinavListDto>>(sinavDtos);
             }
         }
     }

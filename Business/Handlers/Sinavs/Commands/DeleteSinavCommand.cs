@@ -31,8 +31,8 @@ namespace Business.Handlers.Sinavs.Commands
                 _mediator = mediator;
             }
 
-            [CacheRemoveAspect("Get")]
-            [LogAspect(typeof(FileLogger))]
+            //[CacheRemoveAspect("Get")]
+            //[LogAspect(typeof(FileLogger))]
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(DeleteSinavCommand request, CancellationToken cancellationToken)
             {

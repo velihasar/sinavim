@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace Core.Entities.Concrete.Project
 {
-    public class DenemeSinavSonucu:IEntity
+    public class DenemeSinavSonucu: BaseEntity, IEntity
     {
-        public int Id { get; set; }
         public int DersId { get; set; }
         public Ders Ders { get; set; }
         public int DogruSayisi { get; set; }

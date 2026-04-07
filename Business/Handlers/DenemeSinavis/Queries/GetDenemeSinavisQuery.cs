@@ -1,4 +1,4 @@
-﻿
+
 using Business.BusinessAspects;
 using Core.Aspects.Autofac.Performance;
 using Core.Utilities.Results;
@@ -12,13 +12,15 @@ using Core.Aspects.Autofac.Logging;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Aspects.Autofac.Caching;
 using Core.Entities.Concrete.Project;
+using System.Linq;
+using Core.Entities.Dtos.Project.DenemeSinaviDtos;
 
 namespace Business.Handlers.DenemeSinavis.Queries
 {
 
-    public class GetDenemeSinavisQuery : IRequest<IDataResult<IEnumerable<DenemeSinavi>>>
+    public class GetDenemeSinavisQuery : IRequest<IDataResult<IEnumerable<DenemeSinaviListDto>>>
     {
-        public class GetDenemeSinavisQueryHandler : IRequestHandler<GetDenemeSinavisQuery, IDataResult<IEnumerable<DenemeSinavi>>>
+        public class GetDenemeSinavisQueryHandler : IRequestHandler<GetDenemeSinavisQuery, IDataResult<IEnumerable<DenemeSinaviListDto>>>
         {
             private readonly IDenemeSinaviRepository _denemeSinaviRepository;
             private readonly IMediator _mediator;
@@ -29,13 +31,23 @@ namespace Business.Handlers.DenemeSinavis.Queries
                 _mediator = mediator;
             }
 
-            [PerformanceAspect(5)]
-            [CacheAspect(10)]
-            [LogAspect(typeof(FileLogger))]
+            //[PerformanceAspect(5)]
+            //[CacheAspect(10)]
+            //[LogAspect(typeof(FileLogger))]
             [SecuredOperation(Priority = 1)]
-            public async Task<IDataResult<IEnumerable<DenemeSinavi>>> Handle(GetDenemeSinavisQuery request, CancellationToken cancellationToken)
+            public async Task<IDataResult<IEnumerable<DenemeSinaviListDto>>> Handle(GetDenemeSinavisQuery request, CancellationToken cancellationToken)
             {
-                return new SuccessDataResult<IEnumerable<DenemeSinavi>>(await _denemeSinaviRepository.GetListAsync());
+                var list = await _denemeSinaviRepository.GetListAsync();
+                var dtoList = list.Select(d => new DenemeSinaviListDto
+                {
+                    Id = d.Id,
+                    Ad = d.Ad,
+                    Aciklama = d.Aciklama,
+                    UserId = d.UserId,
+                    SinavId = d.SinavId,
+                    Tarih = d.Tarih
+                });
+                return new SuccessDataResult<IEnumerable<DenemeSinaviListDto>>(dtoList);
             }
         }
     }

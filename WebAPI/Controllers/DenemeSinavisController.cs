@@ -1,4 +1,4 @@
-﻿
+
 using Business.Handlers.DenemeSinavis.Commands;
 using Business.Handlers.DenemeSinavis.Queries;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Entities.Concrete;
 using System.Collections.Generic;
 using Core.Entities.Concrete.Project;
+using Core.Entities.Dtos.Project.DenemeSinaviDtos;
 
 namespace WebAPI.Controllers
 {
@@ -24,8 +25,9 @@ namespace WebAPI.Controllers
         ///<remarks>DenemeSinavis</remarks>
         ///<return>List DenemeSinavis</return>
         ///<response code="200"></response>
+        [Authorize]
         [Produces("application/json", "text/plain")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<DenemeSinavi>))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<DenemeSinaviListDto>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         [HttpGet("getall")]
         public async Task<IActionResult> GetList()
@@ -44,8 +46,9 @@ namespace WebAPI.Controllers
         ///<remarks>DenemeSinavis</remarks>
         ///<return>DenemeSinavis List</return>
         ///<response code="200"></response>  
+        [Authorize]
         [Produces("application/json", "text/plain")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DenemeSinavi))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DenemeSinaviDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         [HttpGet("getbyid")]
         public async Task<IActionResult> GetById(int id)
@@ -63,8 +66,9 @@ namespace WebAPI.Controllers
         /// </summary>
         /// <param name="createDenemeSinavi"></param>
         /// <returns></returns>
+        [Authorize]
         [Produces("application/json", "text/plain")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CreateDenemeSinaviDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         [HttpPost]
         public async Task<IActionResult> Add([FromBody] CreateDenemeSinaviCommand createDenemeSinavi)
@@ -72,7 +76,7 @@ namespace WebAPI.Controllers
             var result = await Mediator.Send(createDenemeSinavi);
             if (result.Success)
             {
-                return Ok(result.Message);
+                return Ok(result.Data);
             }
             return BadRequest(result.Message);
         }
@@ -82,8 +86,9 @@ namespace WebAPI.Controllers
         /// </summary>
         /// <param name="updateDenemeSinavi"></param>
         /// <returns></returns>
+        [Authorize]
         [Produces("application/json", "text/plain")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UpdateDenemeSinaviDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         [HttpPut]
         public async Task<IActionResult> Update([FromBody] UpdateDenemeSinaviCommand updateDenemeSinavi)
@@ -91,7 +96,7 @@ namespace WebAPI.Controllers
             var result = await Mediator.Send(updateDenemeSinavi);
             if (result.Success)
             {
-                return Ok(result.Message);
+                return Ok(result.Data);
             }
             return BadRequest(result.Message);
         }
@@ -101,6 +106,7 @@ namespace WebAPI.Controllers
         /// </summary>
         /// <param name="deleteDenemeSinavi"></param>
         /// <returns></returns>
+        [Authorize]
         [Produces("application/json", "text/plain")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]

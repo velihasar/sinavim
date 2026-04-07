@@ -31,8 +31,8 @@ namespace Business.Handlers.DenemeSinavis.Commands
                 _mediator = mediator;
             }
 
-            [CacheRemoveAspect("Get")]
-            [LogAspect(typeof(FileLogger))]
+          // [CacheRemoveAspect("Get")]
+          //  [LogAspect(typeof(FileLogger))]
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(DeleteDenemeSinaviCommand request, CancellationToken cancellationToken)
             {

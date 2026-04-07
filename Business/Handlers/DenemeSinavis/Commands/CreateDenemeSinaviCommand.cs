@@ -1,4 +1,4 @@
-﻿
+
 using Business.BusinessAspects;
 using Business.Constants;
 using Core.Aspects.Autofac.Caching;
@@ -14,13 +14,15 @@ using System.Threading.Tasks;
 using System.Linq;
 using Business.Handlers.DenemeSinavis.ValidationRules;
 using Core.Entities.Concrete.Project;
+using Core.Entities.Dtos.Project.DenemeSinaviDtos;
+using Core.Extensions;
 
 namespace Business.Handlers.DenemeSinavis.Commands
 {
     /// <summary>
     /// 
     /// </summary>
-    public class CreateDenemeSinaviCommand : IRequest<IResult>
+    public class CreateDenemeSinaviCommand : IRequest<IDataResult<CreateDenemeSinaviDto>>
     {
 
         public string Ad { get; set; }
@@ -30,7 +32,7 @@ namespace Business.Handlers.DenemeSinavis.Commands
         public System.DateTime Tarih { get; set; }
 
 
-        public class CreateDenemeSinaviCommandHandler : IRequestHandler<CreateDenemeSinaviCommand, IResult>
+        public class CreateDenemeSinaviCommandHandler : IRequestHandler<CreateDenemeSinaviCommand, IDataResult<CreateDenemeSinaviDto>>
         {
             private readonly IDenemeSinaviRepository _denemeSinaviRepository;
             private readonly IMediator _mediator;
@@ -41,15 +43,15 @@ namespace Business.Handlers.DenemeSinavis.Commands
             }
 
             [ValidationAspect(typeof(CreateDenemeSinaviValidator), Priority = 1)]
-            [CacheRemoveAspect("Get")]
-            [LogAspect(typeof(FileLogger))]
+            //[CacheRemoveAspect("Get")]
+            //[LogAspect(typeof(FileLogger))]
             [SecuredOperation(Priority = 1)]
-            public async Task<IResult> Handle(CreateDenemeSinaviCommand request, CancellationToken cancellationToken)
+            public async Task<IDataResult<CreateDenemeSinaviDto>> Handle(CreateDenemeSinaviCommand request, CancellationToken cancellationToken)
             {
                 var isThereDenemeSinaviRecord = _denemeSinaviRepository.Query().Any(u => u.Ad == request.Ad);
 
                 if (isThereDenemeSinaviRecord == true)
-                    return new ErrorResult(Messages.NameAlreadyExist);
+                    return new ErrorDataResult<CreateDenemeSinaviDto>(Messages.NameAlreadyExist);
 
                 var addedDenemeSinavi = new DenemeSinavi
                 {
@@ -58,12 +60,25 @@ namespace Business.Handlers.DenemeSinavis.Commands
                     UserId = request.UserId,
                     SinavId = request.SinavId,
                     Tarih = request.Tarih,
-
+                    CreatedBy = UserInfoExtensions.GetUserId(),
+                    CreatedDate = System.DateTime.Now,
+                    IsActive = true
                 };
 
                 _denemeSinaviRepository.Add(addedDenemeSinavi);
                 await _denemeSinaviRepository.SaveChangesAsync();
-                return new SuccessResult(Messages.Added);
+                
+                var dto = new CreateDenemeSinaviDto
+                {
+                    Id = addedDenemeSinavi.Id,
+                    Ad = addedDenemeSinavi.Ad,
+                    Aciklama = addedDenemeSinavi.Aciklama,
+                    UserId = addedDenemeSinavi.UserId,
+                    SinavId = addedDenemeSinavi.SinavId,
+                    Tarih = addedDenemeSinavi.Tarih
+                };
+                
+                return new SuccessDataResult<CreateDenemeSinaviDto>(dto, Messages.Added);
             }
         }
     }

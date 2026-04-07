@@ -1,4 +1,4 @@
-﻿
+
 using Business.BusinessAspects;
 using Business.Constants;
 using Core.Aspects.Autofac.Caching;
@@ -14,13 +14,15 @@ using System.Threading.Tasks;
 using System.Linq;
 using Business.Handlers.DenemeSinavSonucus.ValidationRules;
 using Core.Entities.Concrete.Project;
+using Core.Entities.Dtos.Project.DenemeSinavSonucuDtos;
+using Core.Extensions;
 
 namespace Business.Handlers.DenemeSinavSonucus.Commands
 {
     /// <summary>
     /// 
     /// </summary>
-    public class CreateDenemeSinavSonucuCommand : IRequest<IResult>
+    public class CreateDenemeSinavSonucuCommand : IRequest<IDataResult<CreateDenemeSinavSonucuDto>>
     {
 
         public int DersId { get; set; }
@@ -30,7 +32,7 @@ namespace Business.Handlers.DenemeSinavSonucus.Commands
         public decimal ToplamNet { get; set; }
 
 
-        public class CreateDenemeSinavSonucuCommandHandler : IRequestHandler<CreateDenemeSinavSonucuCommand, IResult>
+        public class CreateDenemeSinavSonucuCommandHandler : IRequestHandler<CreateDenemeSinavSonucuCommand, IDataResult<CreateDenemeSinavSonucuDto>>
         {
             private readonly IDenemeSinavSonucuRepository _denemeSinavSonucuRepository;
             private readonly IMediator _mediator;
@@ -41,15 +43,15 @@ namespace Business.Handlers.DenemeSinavSonucus.Commands
             }
 
             [ValidationAspect(typeof(CreateDenemeSinavSonucuValidator), Priority = 1)]
-            [CacheRemoveAspect("Get")]
-            [LogAspect(typeof(FileLogger))]
+            //[CacheRemoveAspect("Get")]
+            //[LogAspect(typeof(FileLogger))]
             [SecuredOperation(Priority = 1)]
-            public async Task<IResult> Handle(CreateDenemeSinavSonucuCommand request, CancellationToken cancellationToken)
+            public async Task<IDataResult<CreateDenemeSinavSonucuDto>> Handle(CreateDenemeSinavSonucuCommand request, CancellationToken cancellationToken)
             {
                 var isThereDenemeSinavSonucuRecord = _denemeSinavSonucuRepository.Query().Any(u => u.DersId == request.DersId);
 
                 if (isThereDenemeSinavSonucuRecord == true)
-                    return new ErrorResult(Messages.NameAlreadyExist);
+                    return new ErrorDataResult<CreateDenemeSinavSonucuDto>(Messages.NameAlreadyExist);
 
                 var addedDenemeSinavSonucu = new DenemeSinavSonucu
                 {
@@ -58,12 +60,25 @@ namespace Business.Handlers.DenemeSinavSonucus.Commands
                     YanlisSayisi = request.YanlisSayisi,
                     BosSayisi = request.BosSayisi,
                     ToplamNet = request.ToplamNet,
-
+                    CreatedBy = UserInfoExtensions.GetUserId(),
+                    CreatedDate = System.DateTime.Now,
+                    IsActive = true
                 };
 
                 _denemeSinavSonucuRepository.Add(addedDenemeSinavSonucu);
                 await _denemeSinavSonucuRepository.SaveChangesAsync();
-                return new SuccessResult(Messages.Added);
+                
+                var dto = new CreateDenemeSinavSonucuDto
+                {
+                    Id = addedDenemeSinavSonucu.Id,
+                    DersId = addedDenemeSinavSonucu.DersId,
+                    DogruSayisi = addedDenemeSinavSonucu.DogruSayisi,
+                    YanlisSayisi = addedDenemeSinavSonucu.YanlisSayisi,
+                    BosSayisi = addedDenemeSinavSonucu.BosSayisi,
+                    ToplamNet = addedDenemeSinavSonucu.ToplamNet
+                };
+
+                return new SuccessDataResult<CreateDenemeSinavSonucuDto>(dto, Messages.Added);
             }
         }
     }
