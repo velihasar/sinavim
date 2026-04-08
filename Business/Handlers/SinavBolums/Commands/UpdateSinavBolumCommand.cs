@@ -4,6 +4,7 @@ using Business.Constants;
 using Business.Handlers.SinavBolums.ValidationRules;
 using Core.Aspects.Autofac.Validation;
 using Core.Entities.Dtos.Project.SinavBolumDtos;
+using Core.Extensions;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using MediatR;
@@ -53,6 +54,8 @@ namespace Business.Handlers.SinavBolums.Commands
 
                 entity.SinavId = request.SinavId;
                 entity.Isim = request.Isim;
+                entity.UpdatedBy = UserInfoExtensions.GetUserId();
+                entity.UpdatedDate = System.DateTime.Now;
 
                 _sinavBolumRepository.Update(entity);
                 await _sinavBolumRepository.SaveChangesAsync();
@@ -60,7 +63,7 @@ namespace Business.Handlers.SinavBolums.Commands
                 var dto = new UpdateSinavBolumDto
                 {
                     Id = entity.Id,
-                    SinavId = (int)entity.SinavId,
+                    SinavId = entity.SinavId,
                     Isim = entity.Isim
                 };
 

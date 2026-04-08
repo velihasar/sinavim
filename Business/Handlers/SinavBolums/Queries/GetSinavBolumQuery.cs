@@ -38,7 +38,7 @@ namespace Business.Handlers.SinavBolums.Queries
                 var dto = new SinavBolumDto
                 {
                     Id = entity.Id,
-                    SinavId = (int)entity.SinavId,
+                    SinavId = entity.SinavId,
                     Isim = entity.Isim,
                     SinavAd = entity.Sinav?.Ad
                 };

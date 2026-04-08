@@ -5,6 +5,7 @@ using Business.Handlers.SinavBolums.ValidationRules;
 using Core.Aspects.Autofac.Validation;
 using Core.Entities.Concrete.Project;
 using Core.Entities.Dtos.Project.SinavBolumDtos;
+using Core.Extensions;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using MediatR;
@@ -49,7 +50,10 @@ namespace Business.Handlers.SinavBolums.Commands
                 var entity = new SinavBolum
                 {
                     SinavId = request.SinavId,
-                    Isim = request.Isim
+                    Isim = request.Isim,
+                    CreatedBy = UserInfoExtensions.GetUserId(),
+                    CreatedDate = System.DateTime.Now,
+                    IsActive = true
                 };
 
                 _sinavBolumRepository.Add(entity);
@@ -58,7 +62,7 @@ namespace Business.Handlers.SinavBolums.Commands
                 var dto = new CreateSinavBolumDto
                 {
                     Id = entity.Id,
-                    SinavId = (int)entity.SinavId,
+                    SinavId = entity.SinavId,
                     Isim = entity.Isim
                 };
 

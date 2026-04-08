@@ -40,7 +40,7 @@ namespace Business.Handlers.SinavBolums.Queries
                 var dtoList = list.Select(b => new SinavBolumListDto
                 {
                     Id = b.Id,
-                    SinavId = (int)b.SinavId,
+                    SinavId = b.SinavId,
                     Isim = b.Isim,
                     SinavAd = b.Sinav?.Ad
                 });
