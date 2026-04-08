@@ -1,4 +1,4 @@
-﻿
+
 using Business.Handlers.Derses.Queries;
 using DataAccess.Abstract;
 using Moq;
@@ -27,11 +27,13 @@ namespace Tests.Business.HandlersTest
     public class DersHandlerTests
     {
         Mock<IDersRepository> _dersRepository;
+        Mock<ISinavBolumRepository> _sinavBolumRepository;
         Mock<IMediator> _mediator;
         [SetUp]
         public void Setup()
         {
             _dersRepository = new Mock<IDersRepository>();
+            _sinavBolumRepository = new Mock<ISinavBolumRepository>();
             _mediator = new Mock<IMediator>();
         }
 
@@ -94,7 +96,7 @@ namespace Tests.Business.HandlersTest
 
             _dersRepository.Setup(x => x.Add(It.IsAny<Ders>())).Returns(new Ders());
 
-            var handler = new CreateDersCommandHandler(_dersRepository.Object, _mediator.Object);
+            var handler = new CreateDersCommandHandler(_dersRepository.Object, _sinavBolumRepository.Object, _mediator.Object);
             var x = await handler.Handle(command, new System.Threading.CancellationToken());
 
             _dersRepository.Verify(x => x.SaveChangesAsync());
@@ -115,7 +117,7 @@ namespace Tests.Business.HandlersTest
 
             _dersRepository.Setup(x => x.Add(It.IsAny<Ders>())).Returns(new Ders());
 
-            var handler = new CreateDersCommandHandler(_dersRepository.Object, _mediator.Object);
+            var handler = new CreateDersCommandHandler(_dersRepository.Object, _sinavBolumRepository.Object, _mediator.Object);
             var x = await handler.Handle(command, new System.Threading.CancellationToken());
 
             x.Success.Should().BeFalse();
@@ -134,7 +136,7 @@ namespace Tests.Business.HandlersTest
 
             _dersRepository.Setup(x => x.Update(It.IsAny<Ders>())).Returns(new Ders());
 
-            var handler = new UpdateDersCommandHandler(_dersRepository.Object, _mediator.Object);
+            var handler = new UpdateDersCommandHandler(_dersRepository.Object, _sinavBolumRepository.Object, _mediator.Object);
             var x = await handler.Handle(command, new System.Threading.CancellationToken());
 
             _dersRepository.Verify(x => x.SaveChangesAsync());

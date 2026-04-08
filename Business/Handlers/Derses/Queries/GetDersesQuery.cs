@@ -14,6 +14,7 @@ using Core.Aspects.Autofac.Caching;
 using Core.Entities.Concrete.Project;
 using System.Linq;
 using Core.Entities.Dtos.Project.DersDtos;
+using Microsoft.EntityFrameworkCore;
 
 namespace Business.Handlers.Derses.Queries
 {
@@ -37,12 +38,16 @@ namespace Business.Handlers.Derses.Queries
             [SecuredOperation(Priority = 1)]
             public async Task<IDataResult<IEnumerable<DersListDto>>> Handle(GetDersesQuery request, CancellationToken cancellationToken)
             {
-                var list = await _dersRepository.GetListAsync();
+                var list = await _dersRepository.Query()
+                    .Include(d => d.SinavBolum)
+                    .ToListAsync(cancellationToken);
                 var dtoList = list.Select(d => new DersListDto
                 {
                     Id = d.Id,
                     Ad = d.Ad,
-                    SinavId = d.SinavId
+                    SinavId = d.SinavId,
+                    SinavBolumId = d.SinavBolumId,
+                    SinavBolumIsim = d.SinavBolum?.Isim
                 });
 
                 return new SuccessDataResult<IEnumerable<DersListDto>>(dtoList);

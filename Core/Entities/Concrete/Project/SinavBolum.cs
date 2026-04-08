@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,12 +6,13 @@ using System.Threading.Tasks;
 
 namespace Core.Entities.Concrete.Project
 {
-    public class Ders: BaseEntity, IEntity
+    public class SinavBolum :IEntity
     {
-        public string Ad { get; set; }
+        public int Id { get; set; }
         public int SinavId { get; set; }
+
         public Sinav Sinav { get; set; }
-        public int? SinavBolumId { get; set; }
-        public SinavBolum? SinavBolum { get; set; }
+
+        public string Isim { get; set; } 
     }
 }

@@ -158,6 +158,7 @@ namespace Business
             services.AddTransient<IDenemeSinavSonucuRepository, DenemeSinavSonucuRepository>();
             services.AddTransient<IDenemeSinaviRepository, DenemeSinaviRepository>();
             services.AddTransient<ISinavRepository, SinavRepository>();
+            services.AddTransient<ISinavBolumRepository, SinavBolumRepository>();
             services.AddTransient<ILogRepository, LogRepository>();
             services.AddTransient<ITranslateRepository, TranslateRepository>();
             services.AddTransient<ILanguageRepository, LanguageRepository>();
@@ -188,6 +189,7 @@ namespace Business
             services.AddTransient<IDenemeSinavSonucuRepository, DenemeSinavSonucuRepository>();
             services.AddTransient<IDenemeSinaviRepository, DenemeSinaviRepository>();
             services.AddTransient<ISinavRepository, SinavRepository>();
+            services.AddTransient<ISinavBolumRepository, SinavBolumRepository>();
             services.AddTransient<ILogRepository, LogRepository>();
             services.AddTransient<ITranslateRepository, TranslateRepository>();
             services.AddTransient<ILanguageRepository, LanguageRepository>();
@@ -217,6 +219,7 @@ namespace Business
             services.AddTransient<IDenemeSinavSonucuRepository, DenemeSinavSonucuRepository>();
             services.AddTransient<IDenemeSinaviRepository, DenemeSinaviRepository>();
             services.AddTransient<ISinavRepository, SinavRepository>();
+            services.AddTransient<ISinavBolumRepository, SinavBolumRepository>();
             services.AddTransient<ILogRepository, LogRepository>();
             services.AddTransient<ITranslateRepository, TranslateRepository>();
             services.AddTransient<ILanguageRepository, LanguageRepository>();

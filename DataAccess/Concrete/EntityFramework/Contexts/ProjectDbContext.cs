@@ -51,6 +51,7 @@ namespace DataAccess.Concrete.EntityFramework.Contexts
         public DbSet<Language> Languages { get; set; }
         public DbSet<Translate> Translates { get; set; }
         public DbSet<Sinav> Sinavs { get; set; }
+        public DbSet<SinavBolum> SinavBolums { get; set; }
         public DbSet<DenemeSinavi> DenemeSinavis { get; set; }
         public DbSet<DenemeSinavSonucu> DenemeSinavSonucus { get; set; }
         public DbSet<Ders> Derses { get; set; }

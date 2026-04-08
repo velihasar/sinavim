@@ -10,6 +10,7 @@ using Core.Aspects.Autofac.Logging;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Entities.Concrete.Project;
 using Core.Entities.Dtos.Project.DersDtos;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace Business.Handlers.Derses.Queries
@@ -32,7 +33,9 @@ namespace Business.Handlers.Derses.Queries
             [SecuredOperation(Priority = 1)]
             public async Task<IDataResult<DersDto>> Handle(GetDersQuery request, CancellationToken cancellationToken)
             {
-                var ders = await _dersRepository.GetAsync(p => p.Id == request.Id);
+                var ders = await _dersRepository.Query()
+                    .Include(d => d.SinavBolum)
+                    .FirstOrDefaultAsync(p => p.Id == request.Id, cancellationToken);
                 
                 if(ders == null)
                 {
@@ -43,7 +46,9 @@ namespace Business.Handlers.Derses.Queries
                 {
                     Id = ders.Id,
                     Ad = ders.Ad,
-                    SinavId = ders.SinavId
+                    SinavId = ders.SinavId,
+                    SinavBolumId = ders.SinavBolumId,
+                    SinavBolumIsim = ders.SinavBolum?.Isim
                 };
 
                 return new SuccessDataResult<DersDto>(dto);
