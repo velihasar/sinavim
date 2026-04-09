@@ -40,6 +40,24 @@ namespace WebAPI.Controllers
             return BadRequest(result.Message);
         }
 
+        /// <summary>
+        /// Oturumdaki kullanıcının sınav seçimleri (boşsa henüz seçim yoktur).
+        /// </summary>
+        [Authorize]
+        [Produces("application/json", "text/plain")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<KullaniciSinavListDto>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
+        [HttpGet("getmy")]
+        public async Task<IActionResult> GetMyList()
+        {
+            var result = await Mediator.Send(new GetMyKullaniciSinavsQuery());
+            if (result.Success)
+            {
+                return Ok(result.Data);
+            }
+            return BadRequest(result.Message);
+        }
+
         ///<summary>
         ///It brings the details according to its id.
         ///</summary>
@@ -74,6 +92,24 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> Add([FromBody] CreateKullaniciSinavCommand createKullaniciSinav)
         {
             var result = await Mediator.Send(createKullaniciSinav);
+            if (result.Success)
+            {
+                return Ok(result.Data);
+            }
+            return BadRequest(result.Message);
+        }
+
+        /// <summary>
+        /// Giriş yapan kullanıcı için sınav seçimi (UserId token’dan alınır).
+        /// </summary>
+        [Authorize]
+        [Produces("application/json", "text/plain")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CreateKullaniciSinavDto))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
+        [HttpPost("sec")]
+        public async Task<IActionResult> SecForMe([FromBody] CreateKullaniciSinavSelfCommand command)
+        {
+            var result = await Mediator.Send(command);
             if (result.Success)
             {
                 return Ok(result.Data);

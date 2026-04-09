@@ -14,6 +14,7 @@ using Core.Aspects.Autofac.Caching;
 using Core.Entities.Concrete.Project;
 using System.Linq;
 using Core.Entities.Dtos.Project.SinavDtos;
+using Microsoft.EntityFrameworkCore;
 
 namespace Business.Handlers.Sinavs.Queries
 {
@@ -37,13 +38,18 @@ namespace Business.Handlers.Sinavs.Queries
             [SecuredOperation(Priority = 1)]
             public async Task<IDataResult<IEnumerable<SinavListDto>>> Handle(GetSinavsQuery request, CancellationToken cancellationToken)
             {
-                var sinavs = await _sinavRepository.GetListAsync();
+                var sinavs = await _sinavRepository.Query()
+                    .OrderBy(s => s.Index)
+                    .ThenBy(s => s.Id)
+                    .ToListAsync(cancellationToken);
                 var sinavDtos = sinavs.Select(s => new SinavListDto
                 {
                     Id = s.Id,
                     KısaAd = s.KısaAd,
                     Ad = s.Ad,
+                    Aciklama = s.Aciklama,
                     Tarih = s.Tarih,
+                    Index = s.Index,
                     DogruyuGoturenYanlisSay = s.DogruyuGoturenYanlisSay
                 });
 

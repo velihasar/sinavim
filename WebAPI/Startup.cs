@@ -74,55 +74,12 @@ namespace WebAPI
                 v.ApiVersionReader = new HeaderApiVersionReader("x-dev-arch-version");
             });
 
-            // CORS configuration
+            // CORS — JWT header ile çalıştığı için cookie/credentials gerekmez; AllowAnyOrigin kullanılabilir.
             services.AddCors(options =>
             {
                 options.AddPolicy(
                     "AllowOrigin",
-                    builder => builder
-                        .WithOrigins(
-                            "http://192.168.1.10:5173",
-                            "http://localhost:3000",
-                            "https://f957a04b03a6.ngrok-free.app",
-                            "http://localhost:3001",
-                            "http://127.0.0.1:3000",
-                            "http://127.0.0.1:3001",
-                            "http://192.168.1.6:5173",
-                            "http://192.168.106.125:5173",
-                            "http://localhost:8081",
-                            "http://192.168.106.115:8081",
-                            "http://localhost:5173",
-                            "http://e0wwo8c8c8swcokg04gwsw0c.185.139.5.109.sslip.io",
-                            "http://pc4s00cckocww8gwwc4wwk8o.185.139.5.109.sslip.io",
-                            "http://ako08o4oscgc8sscs0cg4oco.185.139.5.109.sslip.io",
-                            "http://v40w48gskgs4g84wg4g4gksw.185.139.5.109.sslip.io",
-                            "http://e0wwo8c8c8swcokg04gwsw0c.185.139.5.109.sslip.io:5000",
-                            "http://pc4s00cckocww8gwwc4wwk8o.185.139.5.109.sslip.io:5000",
-                            "http://ako08o4oscgc8sscs0cg4oco.185.139.5.109.sslip.io:5000",
-                            "http://v40w48gskgs4g84wg4g4gksw.185.139.5.109.sslip.io:5000",
-                            "http://e0wwo8c8c8swcokg04gwsw0c.185.139.5.109.sslip.io:3000",
-                            "http://pc4s00cckocww8gwwc4wwk8o.185.139.5.109.sslip.io:3000",
-                            "http://ako08o4oscgc8sscs0cg4oco.185.139.5.109.sslip.io:3000",
-                            "http://v40w48gskgs4g84wg4g4gksw.185.139.5.109.sslip.io:3000",
-                            "http://e0wwo8c8c8swcokg04gwsw0c.185.139.5.109.sslip.io:3001",
-                            "http://pc4s00cckocww8gwwc4wwk8o.185.139.5.109.sslip.io:3001",
-                            "http://ako08o4oscgc8sscs0cg4oco.185.139.5.109.sslip.io:3001",
-                            "http://v40w48gskgs4g84wg4g4gksw.185.139.5.109.sslip.io:3001",
-                            "http://e0wwo8c8c8swcokg04gwsw0c.185.139.5.109.sslip.io:3002",
-                            "http://pc4s00cckocww8gwwc4wwk8o.185.139.5.109.sslip.io:3002",
-                            "http://ako08o4oscgc8sscs0cg4oco.185.139.5.109.sslip.io:3002",
-                            "http://v40w48gskgs4g84wg4g4gksw.185.139.5.109.sslip.io:3002",
-                            "http://e0wwo8c8c8swcokg04gwsw0c.185.139.5.109.sslip.io:3003",
-                            "http://pc4s00cckocww8gwwc4wwk8o.185.139.5.109.sslip.io:3003",
-                            "http://ako08o4oscgc8sscs0cg4oco.185.139.5.109.sslip.io:3003",
-                            "http://v40w48gskgs4g84wg4g4gksw.185.139.5.109.sslip.io:3003"
-
-
-                                       )
-                        //.AllowAnyOrigin()
-                        .AllowAnyMethod()
-                        .AllowAnyHeader()
-                       .AllowCredentials());
+                    builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             });
 
             var tokenOptions = Configuration.GetSection("TokenOptions").Get<TokenOptions>();
@@ -259,7 +216,11 @@ namespace WebAPI
                 c.SwaggerEndpoint("v1/swagger.json", "Mam Yazilim");
                 c.DocExpansion(DocExpansion.None);
             });
-            app.UseHttpsRedirection();
+            // Development’ta HTTP→HTTPS yönlendirmesi telefon/Expo Go’yu kırar (Location: https://localhost:5001).
+            if (!env.IsDevelopment())
+            {
+                app.UseHttpsRedirection();
+            }
 
             app.UseRouting();
             app.UseCors("AllowOrigin");
