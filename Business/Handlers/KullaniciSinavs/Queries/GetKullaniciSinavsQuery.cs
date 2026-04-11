@@ -1,19 +1,14 @@
 
 using Business.BusinessAspects;
-using Core.Aspects.Autofac.Performance;
+using Core.Entities.Dtos.Project.KullaniciSinavDtos;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
-using Entities.Concrete;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Core.Aspects.Autofac.Logging;
-using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
-using Core.Aspects.Autofac.Caching;
-using Core.Entities.Concrete.Project;
-using System.Linq;
-using Core.Entities.Dtos.Project.KullaniciSinavDtos;
 
 namespace Business.Handlers.KullaniciSinavs.Queries
 {
@@ -37,13 +32,19 @@ namespace Business.Handlers.KullaniciSinavs.Queries
             [SecuredOperation(Priority = 1)]
             public async Task<IDataResult<IEnumerable<KullaniciSinavListDto>>> Handle(GetKullaniciSinavsQuery request, CancellationToken cancellationToken)
             {
-                var list = await _kullaniciSinavRepository.GetListAsync();
+                var list = await _kullaniciSinavRepository.Query()
+                    .Include(k => k.Sinav)
+                    .ToListAsync(cancellationToken);
+
                 var dtoList = list.Select(k => new KullaniciSinavListDto
                 {
                     Id = k.Id,
                     UserId = k.UserId,
                     SinavId = k.SinavId,
-                    HedefPuan = k.HedefPuan
+                    HedefPuan = k.HedefPuan,
+                    SinavTarih = k.Sinav?.Tarih,
+                    SinavKisaAd = k.Sinav?.KısaAd,
+                    SinavAd = k.Sinav?.Ad,
                 });
 
                 return new SuccessDataResult<IEnumerable<KullaniciSinavListDto>>(dtoList);

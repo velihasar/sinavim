@@ -1,38 +1,34 @@
 
-using Business.Handlers.KullaniciKonuIlerlemes.Commands;
-using Business.Handlers.KullaniciKonuIlerlemes.Queries;
-using Core.Entities.Dtos.Project.KullaniciKonuIlerlemeDtos;
-using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+using Business.Handlers.Motivasyons.Commands;
+using Business.Handlers.Motivasyons.Queries;
+using Core.Entities.Dtos.Project.MotivasyonDtos;
 using Microsoft.AspNetCore.Http;
-using Entities.Concrete;
+using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using Core.Entities.Concrete.Project;
+using System.Threading.Tasks;
 
 namespace WebAPI.Controllers
 {
     /// <summary>
-    /// KullaniciKonuIlerlemes If controller methods will not be Authorize, [AllowAnonymous] is used.
+    /// Motivasyons If controller methods will not be Authorize, [AllowAnonymous] is used.
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    public class KullaniciKonuIlerlemesController : BaseApiController
+    public class MotivasyonsController : BaseApiController
     {
         ///<summary>
-        ///List KullaniciKonuIlerlemes
+        ///List Motivasyons
         ///</summary>
-        ///<remarks>KullaniciKonuIlerlemes</remarks>
-        ///<return>List KullaniciKonuIlerlemes</return>
+        ///<remarks>Motivasyons</remarks>
+        ///<return>List Motivasyons</return>
         ///<response code="200"></response>
-        [Authorize]
         [Produces("application/json", "text/plain")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<KullaniciKonuIlerlemeListDto>))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<MotivasyonListDto>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         [HttpGet("getall")]
         public async Task<IActionResult> GetList()
         {
-            var result = await Mediator.Send(new GetKullaniciKonuIlerlemesQuery());
+            var result = await Mediator.Send(new GetMotivasyonsQuery());
             if (result.Success)
             {
                 return Ok(result.Data);
@@ -43,17 +39,16 @@ namespace WebAPI.Controllers
         ///<summary>
         ///It brings the details according to its id.
         ///</summary>
-        ///<remarks>KullaniciKonuIlerlemes</remarks>
-        ///<return>KullaniciKonuIlerlemes List</return>
+        ///<remarks>Motivasyons</remarks>
+        ///<return>Motivasyons List</return>
         ///<response code="200"></response>  
-        [Authorize]
         [Produces("application/json", "text/plain")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(KullaniciKonuIlerlemeDto))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(MotivasyonDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         [HttpGet("getbyid")]
         public async Task<IActionResult> GetById(int id)
         {
-            var result = await Mediator.Send(new GetKullaniciKonuIlerlemeQuery { Id = id });
+            var result = await Mediator.Send(new GetMotivasyonQuery { Id = id });
             if (result.Success)
             {
                 return Ok(result.Data);
@@ -62,16 +57,15 @@ namespace WebAPI.Controllers
         }
 
         /// <summary>
-        /// Oturumdaki kullanıcı için konu durumu (ekle veya güncelle).
+        /// Aktif motivasyonlar arasından rastgele bir kayıt (anasayfa).
         /// </summary>
-        [Authorize]
         [Produces("application/json", "text/plain")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SetMyKonuIlerlemeDto))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(MotivasyonDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
-        [HttpPost("setmy")]
-        public async Task<IActionResult> SetMy([FromBody] SetMyKonuIlerlemeCommand command)
+        [HttpGet("getrandom")]
+        public async Task<IActionResult> GetRandom()
         {
-            var result = await Mediator.Send(command);
+            var result = await Mediator.Send(new GetRandomMotivasyonQuery());
             if (result.Success)
             {
                 return Ok(result.Data);
@@ -80,16 +74,17 @@ namespace WebAPI.Controllers
         }
 
         /// <summary>
-        /// Add KullaniciKonuIlerleme.
+        /// Add Motivasyon.
         /// </summary>
-        [Authorize]
+        /// <param name="createMotivasyon"></param>
+        /// <returns></returns>
         [Produces("application/json", "text/plain")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CreateKullaniciKonuIlerlemeDto))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CreateMotivasyonDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         [HttpPost]
-        public async Task<IActionResult> Add([FromBody] CreateKullaniciKonuIlerlemeCommand createKullaniciKonuIlerleme)
+        public async Task<IActionResult> Add([FromBody] CreateMotivasyonCommand createMotivasyon)
         {
-            var result = await Mediator.Send(createKullaniciKonuIlerleme);
+            var result = await Mediator.Send(createMotivasyon);
             if (result.Success)
             {
                 return Ok(result.Data);
@@ -98,18 +93,17 @@ namespace WebAPI.Controllers
         }
 
         /// <summary>
-        /// Update KullaniciKonuIlerleme.
+        /// Update Motivasyon.
         /// </summary>
-        /// <param name="updateKullaniciKonuIlerleme"></param>
+        /// <param name="updateMotivasyon"></param>
         /// <returns></returns>
-        [Authorize]
         [Produces("application/json", "text/plain")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UpdateKullaniciKonuIlerlemeDto))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UpdateMotivasyonDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         [HttpPut]
-        public async Task<IActionResult> Update([FromBody] UpdateKullaniciKonuIlerlemeCommand updateKullaniciKonuIlerleme)
+        public async Task<IActionResult> Update([FromBody] UpdateMotivasyonCommand updateMotivasyon)
         {
-            var result = await Mediator.Send(updateKullaniciKonuIlerleme);
+            var result = await Mediator.Send(updateMotivasyon);
             if (result.Success)
             {
                 return Ok(result.Data);
@@ -117,20 +111,18 @@ namespace WebAPI.Controllers
             return BadRequest(result.Message);
         }
 
-
         /// <summary>
-        /// Delete KullaniciKonuIlerleme.
+        /// Delete Motivasyon.
         /// </summary>
-        /// <param name="deleteKullaniciKonuIlerleme"></param>
+        /// <param name="deleteMotivasyon"></param>
         /// <returns></returns>
-        [Authorize]
         [Produces("application/json", "text/plain")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         [HttpDelete]
-        public async Task<IActionResult> Delete([FromBody] DeleteKullaniciKonuIlerlemeCommand deleteKullaniciKonuIlerleme)
+        public async Task<IActionResult> Delete([FromBody] DeleteMotivasyonCommand deleteMotivasyon)
         {
-            var result = await Mediator.Send(deleteKullaniciKonuIlerleme);
+            var result = await Mediator.Send(deleteMotivasyon);
             if (result.Success)
             {
                 return Ok(result.Message);
