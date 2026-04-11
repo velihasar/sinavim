@@ -28,7 +28,7 @@ namespace Business.Handlers.Sinavs.Commands
         public string Ad { get; set; }
         public string? Aciklama { get; set; }
         public System.DateTime Tarih { get; set; }
-        public int Index { get; set; }
+        public int SiraNo { get; set; }
         public int DogruyuGoturenYanlisSay { get; set; }
 
         public class UpdateSinavCommandHandler : IRequestHandler<UpdateSinavCommand, IDataResult<UpdateSinavDto>>
@@ -59,7 +59,7 @@ namespace Business.Handlers.Sinavs.Commands
                 isThereSinavRecord.Ad = request.Ad;
                 isThereSinavRecord.Aciklama = request.Aciklama;
                 isThereSinavRecord.Tarih = request.Tarih;
-                isThereSinavRecord.Index = request.Index;
+                isThereSinavRecord.SiraNo = request.SiraNo;
                 isThereSinavRecord.DogruyuGoturenYanlisSay = request.DogruyuGoturenYanlisSay;
                 isThereSinavRecord.UpdatedBy = UserInfoExtensions.GetUserId();
                 isThereSinavRecord.UpdatedDate = System.DateTime.Now;
@@ -75,7 +75,7 @@ namespace Business.Handlers.Sinavs.Commands
                     Ad = isThereSinavRecord.Ad,
                     Aciklama = isThereSinavRecord.Aciklama,
                     Tarih = isThereSinavRecord.Tarih,
-                    Index = isThereSinavRecord.Index,
+                    SiraNo = isThereSinavRecord.SiraNo,
                     DogruyuGoturenYanlisSay = isThereSinavRecord.DogruyuGoturenYanlisSay
                 };
 

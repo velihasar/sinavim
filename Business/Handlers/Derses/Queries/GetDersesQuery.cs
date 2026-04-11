@@ -40,11 +40,15 @@ namespace Business.Handlers.Derses.Queries
             {
                 var list = await _dersRepository.Query()
                     .Include(d => d.SinavBolum)
+                    .OrderBy(d => d.SiraNo)
+                    .ThenBy(d => d.Id)
                     .ToListAsync(cancellationToken);
                 var dtoList = list.Select(d => new DersListDto
                 {
                     Id = d.Id,
                     Ad = d.Ad,
+                    IkonAnahtari = d.IkonAnahtari,
+                    SiraNo = d.SiraNo,
                     SinavId = d.SinavId,
                     SinavBolumId = d.SinavBolumId,
                     SinavBolumIsim = d.SinavBolum?.Isim

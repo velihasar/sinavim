@@ -26,6 +26,12 @@ namespace Business.Handlers.Derses.Commands
     {
 
         public string Ad { get; set; }
+
+        /// <summary>Ionicons glyph adı (ör. book-outline).</summary>
+        public string IkonAnahtari { get; set; }
+
+        public int SiraNo { get; set; }
+
         public int SinavId { get; set; }
         public int? SinavBolumId { get; set; }
 
@@ -66,6 +72,8 @@ namespace Business.Handlers.Derses.Commands
                 var addedDers = new Ders
                 {
                     Ad = request.Ad,
+                    IkonAnahtari = request.IkonAnahtari,
+                    SiraNo = request.SiraNo,
                     SinavId = request.SinavId,
                     SinavBolumId = request.SinavBolumId,
                     CreatedBy = UserInfoExtensions.GetUserId(),
@@ -80,6 +88,8 @@ namespace Business.Handlers.Derses.Commands
                 {
                     Id = addedDers.Id,
                     Ad = addedDers.Ad,
+                    IkonAnahtari = addedDers.IkonAnahtari,
+                    SiraNo = addedDers.SiraNo,
                     SinavId = addedDers.SinavId,
                     SinavBolumId = addedDers.SinavBolumId
                 };

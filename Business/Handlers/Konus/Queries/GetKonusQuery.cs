@@ -14,6 +14,7 @@ using Core.Aspects.Autofac.Caching;
 using Core.Entities.Concrete.Project;
 using System.Linq;
 using Core.Entities.Dtos.Project.KonuDtos;
+using Microsoft.EntityFrameworkCore;
 
 namespace Business.Handlers.Konus.Queries
 {
@@ -37,7 +38,11 @@ namespace Business.Handlers.Konus.Queries
             [SecuredOperation(Priority = 1)]
             public async Task<IDataResult<IEnumerable<KonuListDto>>> Handle(GetKonusQuery request, CancellationToken cancellationToken)
             {
-                var list = await _konuRepository.GetListAsync();
+                var list = await _konuRepository.Query()
+                    .OrderBy(k => k.DersId)
+                    .ThenBy(k => k.SiraNo)
+                    .ThenBy(k => k.Id)
+                    .ToListAsync(cancellationToken);
                 var dtoList = list.Select(k => new KonuListDto
                 {
                     Id = k.Id,

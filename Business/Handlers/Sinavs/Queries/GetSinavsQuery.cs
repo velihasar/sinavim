@@ -39,7 +39,7 @@ namespace Business.Handlers.Sinavs.Queries
             public async Task<IDataResult<IEnumerable<SinavListDto>>> Handle(GetSinavsQuery request, CancellationToken cancellationToken)
             {
                 var sinavs = await _sinavRepository.Query()
-                    .OrderBy(s => s.Index)
+                    .OrderBy(s => s.SiraNo)
                     .ThenBy(s => s.Id)
                     .ToListAsync(cancellationToken);
                 var sinavDtos = sinavs.Select(s => new SinavListDto
@@ -49,7 +49,7 @@ namespace Business.Handlers.Sinavs.Queries
                     Ad = s.Ad,
                     Aciklama = s.Aciklama,
                     Tarih = s.Tarih,
-                    Index = s.Index,
+                    SiraNo = s.SiraNo,
                     DogruyuGoturenYanlisSay = s.DogruyuGoturenYanlisSay
                 });
 

@@ -1,4 +1,4 @@
-﻿
+
 using Business.Handlers.Sinavs.Commands;
 using FluentValidation;
 
@@ -11,7 +11,7 @@ namespace Business.Handlers.Sinavs.ValidationRules
         {
             RuleFor(x => x.Ad).NotEmpty();
             RuleFor(x => x.Tarih).NotEmpty();
-
+            RuleFor(x => x.SiraNo).GreaterThanOrEqualTo(0);
         }
     }
     public class UpdateSinavValidator : AbstractValidator<UpdateSinavCommand>
@@ -20,7 +20,7 @@ namespace Business.Handlers.Sinavs.ValidationRules
         {
             RuleFor(x => x.Ad).NotEmpty();
             RuleFor(x => x.Tarih).NotEmpty();
-
+            RuleFor(x => x.SiraNo).GreaterThanOrEqualTo(0);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿
+
 using Business.Handlers.Konus.Commands;
 using FluentValidation;
 
@@ -10,9 +10,8 @@ namespace Business.Handlers.Konus.ValidationRules
         public CreateKonuValidator()
         {
             RuleFor(x => x.Ad).NotEmpty();
-            RuleFor(x => x.SiraNo).NotEmpty();
+            RuleFor(x => x.SiraNo).GreaterThanOrEqualTo(0);
             RuleFor(x => x.DersId).NotEmpty();
-
         }
     }
     public class UpdateKonuValidator : AbstractValidator<UpdateKonuCommand>
@@ -20,9 +19,8 @@ namespace Business.Handlers.Konus.ValidationRules
         public UpdateKonuValidator()
         {
             RuleFor(x => x.Ad).NotEmpty();
-            RuleFor(x => x.SiraNo).NotEmpty();
+            RuleFor(x => x.SiraNo).GreaterThanOrEqualTo(0);
             RuleFor(x => x.DersId).NotEmpty();
-
         }
     }
 }

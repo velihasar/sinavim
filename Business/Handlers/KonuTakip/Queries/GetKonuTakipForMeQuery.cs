@@ -96,7 +96,7 @@ namespace Business.Handlers.KonuTakip.Queries
                     dersQuery = dersQuery.Where(d => d.SinavBolumId == aktifBolumId);
                 }
 
-                var dersler = await dersQuery.OrderBy(d => d.Id).ToListAsync(cancellationToken);
+                var dersler = await dersQuery.OrderBy(d => d.SiraNo).ThenBy(d => d.Id).ToListAsync(cancellationToken);
                 if (dersler.Count == 0)
                 {
                     return new SuccessDataResult<KonuTakipForMeDto>(new KonuTakipForMeDto
@@ -134,6 +134,8 @@ namespace Business.Handlers.KonuTakip.Queries
                         {
                             Id = ders.Id,
                             Ad = ders.Ad,
+                            IkonAnahtari = ders.IkonAnahtari,
+                            SiraNo = ders.SiraNo,
                             ToplamKonu = 0,
                             TamamlananKonu = 0,
                             Konular = new List<KonuTakipKonuSatirDto>(),
@@ -166,6 +168,8 @@ namespace Business.Handlers.KonuTakip.Queries
                     {
                         Id = ders.Id,
                         Ad = ders.Ad,
+                        IkonAnahtari = ders.IkonAnahtari,
+                        SiraNo = ders.SiraNo,
                         ToplamKonu = konular.Count,
                         TamamlananKonu = tam,
                         Konular = satirlar,

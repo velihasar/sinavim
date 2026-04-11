@@ -28,7 +28,7 @@ namespace Business.Handlers.Sinavs.Commands
         public string Ad { get; set; }
         public string? Aciklama { get; set; }
         public System.DateTime Tarih { get; set; }
-        public int Index { get; set; }
+        public int SiraNo { get; set; }
         public int DogruyuGoturenYanlisSay { get; set; }
 
         public class CreateSinavCommandHandler : IRequestHandler<CreateSinavCommand, IDataResult<CreateSinavDto>>
@@ -58,7 +58,7 @@ namespace Business.Handlers.Sinavs.Commands
                     Ad = request.Ad,
                     Aciklama = request.Aciklama,
                     Tarih = request.Tarih,
-                    Index = request.Index,
+                    SiraNo = request.SiraNo,
                     DogruyuGoturenYanlisSay = request.DogruyuGoturenYanlisSay,
                     CreatedBy = UserInfoExtensions.GetUserId(),
                     CreatedDate = System.DateTime.Now,
@@ -75,7 +75,7 @@ namespace Business.Handlers.Sinavs.Commands
                     Ad = addedSinav.Ad,
                     Aciklama = addedSinav.Aciklama,
                     Tarih = addedSinav.Tarih,
-                    Index = addedSinav.Index,
+                    SiraNo = addedSinav.SiraNo,
                     DogruyuGoturenYanlisSay = addedSinav.DogruyuGoturenYanlisSay
                 };
 

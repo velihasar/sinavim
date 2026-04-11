@@ -24,6 +24,11 @@ namespace Business.Handlers.Derses.Commands
     {
         public int Id { get; set; }
         public string Ad { get; set; }
+
+        public string IkonAnahtari { get; set; }
+
+        public int SiraNo { get; set; }
+
         public int SinavId { get; set; }
         public int? SinavBolumId { get; set; }
 
@@ -69,6 +74,8 @@ namespace Business.Handlers.Derses.Commands
                     return new ErrorDataResult<UpdateDersDto>(Messages.NameAlreadyExist);
 
                 isThereDersRecord.Ad = request.Ad;
+                isThereDersRecord.IkonAnahtari = request.IkonAnahtari;
+                isThereDersRecord.SiraNo = request.SiraNo;
                 isThereDersRecord.SinavId = request.SinavId;
                 isThereDersRecord.SinavBolumId = request.SinavBolumId;
                 isThereDersRecord.UpdatedBy = UserInfoExtensions.GetUserId();
@@ -82,6 +89,8 @@ namespace Business.Handlers.Derses.Commands
                 {
                     Id = isThereDersRecord.Id,
                     Ad = isThereDersRecord.Ad,
+                    IkonAnahtari = isThereDersRecord.IkonAnahtari,
+                    SiraNo = isThereDersRecord.SiraNo,
                     SinavId = isThereDersRecord.SinavId,
                     SinavBolumId = isThereDersRecord.SinavBolumId
                 };

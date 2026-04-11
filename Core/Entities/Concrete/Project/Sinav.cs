@@ -12,7 +12,7 @@ namespace Core.Entities.Concrete.Project
         public string Ad { get; set; }
         public string? Aciklama { get; set; }
         public DateTime Tarih { get; set; }
-        public int Index { get; set; }
+        public int SiraNo { get; set; }
         public int DogruyuGoturenYanlisSay { get; set; }
 
     }

@@ -46,6 +46,8 @@ namespace Business.Handlers.Derses.Queries
                 {
                     Id = ders.Id,
                     Ad = ders.Ad,
+                    IkonAnahtari = ders.IkonAnahtari,
+                    SiraNo = ders.SiraNo,
                     SinavId = ders.SinavId,
                     SinavBolumId = ders.SinavBolumId,
                     SinavBolumIsim = ders.SinavBolum?.Isim
