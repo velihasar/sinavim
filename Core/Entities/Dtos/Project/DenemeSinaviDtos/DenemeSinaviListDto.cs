@@ -9,6 +9,7 @@ namespace Core.Entities.Dtos.Project.DenemeSinaviDtos
         public string Aciklama { get; set; }
         public int UserId { get; set; }
         public int SinavId { get; set; }
+        public int? SinavBolumId { get; set; }
         public DateTime Tarih { get; set; }
     }
 }

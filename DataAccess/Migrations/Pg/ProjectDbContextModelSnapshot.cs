@@ -256,6 +256,9 @@ namespace DataAccess.Migrations.Pg
                     b.Property<DateTime?>("CreatedDate")
                         .HasColumnType("timestamp without time zone");
 
+                    b.Property<int>("DenemeSinaviId")
+                        .HasColumnType("integer");
+
                     b.Property<int>("DersId")
                         .HasColumnType("integer");
 
@@ -278,6 +281,8 @@ namespace DataAccess.Migrations.Pg
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DenemeSinaviId");
 
                     b.HasIndex("DersId");
 
@@ -307,6 +312,9 @@ namespace DataAccess.Migrations.Pg
                     b.Property<bool?>("IsActive")
                         .HasColumnType("boolean");
 
+                    b.Property<int?>("SinavBolumId")
+                        .HasColumnType("integer");
+
                     b.Property<int>("SinavId")
                         .HasColumnType("integer");
 
@@ -323,6 +331,8 @@ namespace DataAccess.Migrations.Pg
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("SinavBolumId");
 
                     b.HasIndex("SinavId");
 
@@ -1852,17 +1862,29 @@ namespace DataAccess.Migrations.Pg
 
             modelBuilder.Entity("Core.Entities.Concrete.Project.DenemeSinavSonucu", b =>
                 {
+                    b.HasOne("Core.Entities.Concrete.Project.DenemeSinavi", "DenemeSinavi")
+                        .WithMany("Sonuclar")
+                        .HasForeignKey("DenemeSinaviId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Core.Entities.Concrete.Project.Ders", "Ders")
                         .WithMany()
                         .HasForeignKey("DersId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("DenemeSinavi");
+
                     b.Navigation("Ders");
                 });
 
             modelBuilder.Entity("Core.Entities.Concrete.Project.DenemeSinavi", b =>
                 {
+                    b.HasOne("Core.Entities.Concrete.Project.SinavBolum", "SinavBolum")
+                        .WithMany()
+                        .HasForeignKey("SinavBolumId");
+
                     b.HasOne("Core.Entities.Concrete.Project.Sinav", "Sinav")
                         .WithMany()
                         .HasForeignKey("SinavId")
@@ -1876,6 +1898,8 @@ namespace DataAccess.Migrations.Pg
                         .IsRequired();
 
                     b.Navigation("Sinav");
+
+                    b.Navigation("SinavBolum");
 
                     b.Navigation("User");
                 });
@@ -1955,6 +1979,11 @@ namespace DataAccess.Migrations.Pg
                         .IsRequired();
 
                     b.Navigation("Sinav");
+                });
+
+            modelBuilder.Entity("Core.Entities.Concrete.Project.DenemeSinavi", b =>
+                {
+                    b.Navigation("Sonuclar");
                 });
 #pragma warning restore 612, 618
         }

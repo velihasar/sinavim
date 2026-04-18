@@ -45,6 +45,7 @@ namespace Business.Handlers.DenemeSinavis.Queries
                     Aciklama = d.Aciklama,
                     UserId = d.UserId,
                     SinavId = d.SinavId,
+                    SinavBolumId = d.SinavBolumId,
                     Tarih = d.Tarih
                 });
                 return new SuccessDataResult<IEnumerable<DenemeSinaviListDto>>(dtoList);

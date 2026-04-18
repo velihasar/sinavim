@@ -5,6 +5,7 @@ namespace Core.Entities.Dtos.Project.DenemeSinavSonucuDtos
     public class UpdateDenemeSinavSonucuDto : IDto
     {
         public int Id { get; set; }
+        public int DenemeSinaviId { get; set; }
         public int DersId { get; set; }
         public int DogruSayisi { get; set; }
         public int YanlisSayisi { get; set; }

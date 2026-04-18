@@ -23,6 +23,7 @@ namespace Business.Handlers.DenemeSinavSonucus.Commands
     public class UpdateDenemeSinavSonucuCommand : IRequest<IDataResult<UpdateDenemeSinavSonucuDto>>
     {
         public int Id { get; set; }
+        public int DenemeSinaviId { get; set; }
         public int DersId { get; set; }
         public int DogruSayisi { get; set; }
         public int YanlisSayisi { get; set; }
@@ -53,6 +54,7 @@ namespace Business.Handlers.DenemeSinavSonucus.Commands
                     return new ErrorDataResult<UpdateDenemeSinavSonucuDto>("Kayıt bulunamadı");
                 }
 
+                isThereDenemeSinavSonucuRecord.DenemeSinaviId = request.DenemeSinaviId;
                 isThereDenemeSinavSonucuRecord.DersId = request.DersId;
                 isThereDenemeSinavSonucuRecord.DogruSayisi = request.DogruSayisi;
                 isThereDenemeSinavSonucuRecord.YanlisSayisi = request.YanlisSayisi;
@@ -68,6 +70,7 @@ namespace Business.Handlers.DenemeSinavSonucus.Commands
                 var dto = new UpdateDenemeSinavSonucuDto
                 {
                     Id = isThereDenemeSinavSonucuRecord.Id,
+                    DenemeSinaviId = isThereDenemeSinavSonucuRecord.DenemeSinaviId,
                     DersId = isThereDenemeSinavSonucuRecord.DersId,
                     DogruSayisi = isThereDenemeSinavSonucuRecord.DogruSayisi,
                     YanlisSayisi = isThereDenemeSinavSonucuRecord.YanlisSayisi,

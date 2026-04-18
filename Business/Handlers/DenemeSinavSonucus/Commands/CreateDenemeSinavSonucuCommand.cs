@@ -24,7 +24,7 @@ namespace Business.Handlers.DenemeSinavSonucus.Commands
     /// </summary>
     public class CreateDenemeSinavSonucuCommand : IRequest<IDataResult<CreateDenemeSinavSonucuDto>>
     {
-
+        public int DenemeSinaviId { get; set; }
         public int DersId { get; set; }
         public int DogruSayisi { get; set; }
         public int YanlisSayisi { get; set; }
@@ -48,13 +48,16 @@ namespace Business.Handlers.DenemeSinavSonucus.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IDataResult<CreateDenemeSinavSonucuDto>> Handle(CreateDenemeSinavSonucuCommand request, CancellationToken cancellationToken)
             {
-                var isThereDenemeSinavSonucuRecord = _denemeSinavSonucuRepository.Query().Any(u => u.DersId == request.DersId);
+                var isThereDenemeSinavSonucuRecord = _denemeSinavSonucuRepository.Query().Any(
+                    u => u.DenemeSinaviId == request.DenemeSinaviId && u.DersId == request.DersId
+                );
 
                 if (isThereDenemeSinavSonucuRecord == true)
                     return new ErrorDataResult<CreateDenemeSinavSonucuDto>(Messages.NameAlreadyExist);
 
                 var addedDenemeSinavSonucu = new DenemeSinavSonucu
                 {
+                    DenemeSinaviId = request.DenemeSinaviId,
                     DersId = request.DersId,
                     DogruSayisi = request.DogruSayisi,
                     YanlisSayisi = request.YanlisSayisi,
@@ -71,6 +74,7 @@ namespace Business.Handlers.DenemeSinavSonucus.Commands
                 var dto = new CreateDenemeSinavSonucuDto
                 {
                     Id = addedDenemeSinavSonucu.Id,
+                    DenemeSinaviId = addedDenemeSinavSonucu.DenemeSinaviId,
                     DersId = addedDenemeSinavSonucu.DersId,
                     DogruSayisi = addedDenemeSinavSonucu.DogruSayisi,
                     YanlisSayisi = addedDenemeSinavSonucu.YanlisSayisi,

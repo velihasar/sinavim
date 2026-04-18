@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,7 +14,10 @@ namespace Core.Entities.Concrete.Project
         public User User { get; set; }
         public int SinavId { get; set; }
         public Sinav Sinav { get; set; }
+        public int? SinavBolumId { get; set; }
+        public SinavBolum? SinavBolum { get; set; }
         public DateTime Tarih { get; set; }
-        
+        public ICollection<DenemeSinavSonucu> Sonuclar { get; set; } = new List<DenemeSinavSonucu>();
+
     }
 }

@@ -29,6 +29,7 @@ namespace Business.Handlers.DenemeSinavis.Commands
         public string Aciklama { get; set; }
         public int UserId { get; set; }
         public int SinavId { get; set; }
+        public int? SinavBolumId { get; set; }
         public System.DateTime Tarih { get; set; }
 
 
@@ -59,6 +60,7 @@ namespace Business.Handlers.DenemeSinavis.Commands
                     Aciklama = request.Aciklama,
                     UserId = request.UserId,
                     SinavId = request.SinavId,
+                    SinavBolumId = request.SinavBolumId,
                     Tarih = request.Tarih,
                     CreatedBy = UserInfoExtensions.GetUserId(),
                     CreatedDate = System.DateTime.Now,
@@ -75,6 +77,7 @@ namespace Business.Handlers.DenemeSinavis.Commands
                     Aciklama = addedDenemeSinavi.Aciklama,
                     UserId = addedDenemeSinavi.UserId,
                     SinavId = addedDenemeSinavi.SinavId,
+                    SinavBolumId = addedDenemeSinavi.SinavBolumId,
                     Tarih = addedDenemeSinavi.Tarih
                 };
                 

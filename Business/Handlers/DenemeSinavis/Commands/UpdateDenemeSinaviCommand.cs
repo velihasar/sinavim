@@ -27,6 +27,7 @@ namespace Business.Handlers.DenemeSinavis.Commands
         public string Aciklama { get; set; }
         public int UserId { get; set; }
         public int SinavId { get; set; }
+        public int? SinavBolumId { get; set; }
         public System.DateTime Tarih { get; set; }
 
         public class UpdateDenemeSinaviCommandHandler : IRequestHandler<UpdateDenemeSinaviCommand, IDataResult<UpdateDenemeSinaviDto>>
@@ -57,6 +58,7 @@ namespace Business.Handlers.DenemeSinavis.Commands
                 isThereDenemeSinaviRecord.Aciklama = request.Aciklama;
                 isThereDenemeSinaviRecord.UserId = request.UserId;
                 isThereDenemeSinaviRecord.SinavId = request.SinavId;
+                isThereDenemeSinaviRecord.SinavBolumId = request.SinavBolumId;
                 isThereDenemeSinaviRecord.Tarih = request.Tarih;
                 isThereDenemeSinaviRecord.UpdatedBy = UserInfoExtensions.GetUserId();
                 isThereDenemeSinaviRecord.UpdatedDate = System.DateTime.Now;
@@ -72,6 +74,7 @@ namespace Business.Handlers.DenemeSinavis.Commands
                     Aciklama = isThereDenemeSinaviRecord.Aciklama,
                     UserId = isThereDenemeSinaviRecord.UserId,
                     SinavId = isThereDenemeSinaviRecord.SinavId,
+                    SinavBolumId = isThereDenemeSinaviRecord.SinavBolumId,
                     Tarih = isThereDenemeSinaviRecord.Tarih
                 };
 

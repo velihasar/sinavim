@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +8,8 @@ namespace Core.Entities.Concrete.Project
 {
     public class DenemeSinavSonucu: BaseEntity, IEntity
     {
+        public int DenemeSinaviId { get; set; }
+        public DenemeSinavi DenemeSinavi { get; set; }
         public int DersId { get; set; }
         public Ders Ders { get; set; }
         public int DogruSayisi { get; set; }

@@ -1,4 +1,4 @@
-﻿
+
 using Business.Handlers.DenemeSinavSonucus.Commands;
 using FluentValidation;
 
@@ -9,11 +9,11 @@ namespace Business.Handlers.DenemeSinavSonucus.ValidationRules
     {
         public CreateDenemeSinavSonucuValidator()
         {
+            RuleFor(x => x.DenemeSinaviId).NotEmpty();
             RuleFor(x => x.DersId).NotEmpty();
-            RuleFor(x => x.DogruSayisi).NotEmpty();
-            RuleFor(x => x.YanlisSayisi).NotEmpty();
-            RuleFor(x => x.BosSayisi).NotEmpty();
-            RuleFor(x => x.ToplamNet).NotEmpty();
+            RuleFor(x => x.DogruSayisi).GreaterThanOrEqualTo(0);
+            RuleFor(x => x.YanlisSayisi).GreaterThanOrEqualTo(0);
+            RuleFor(x => x.BosSayisi).GreaterThanOrEqualTo(0);
 
         }
     }
@@ -21,11 +21,11 @@ namespace Business.Handlers.DenemeSinavSonucus.ValidationRules
     {
         public UpdateDenemeSinavSonucuValidator()
         {
+            RuleFor(x => x.DenemeSinaviId).NotEmpty();
             RuleFor(x => x.DersId).NotEmpty();
-            RuleFor(x => x.DogruSayisi).NotEmpty();
-            RuleFor(x => x.YanlisSayisi).NotEmpty();
-            RuleFor(x => x.BosSayisi).NotEmpty();
-            RuleFor(x => x.ToplamNet).NotEmpty();
+            RuleFor(x => x.DogruSayisi).GreaterThanOrEqualTo(0);
+            RuleFor(x => x.YanlisSayisi).GreaterThanOrEqualTo(0);
+            RuleFor(x => x.BosSayisi).GreaterThanOrEqualTo(0);
 
         }
     }

@@ -41,6 +41,7 @@ namespace Business.Handlers.DenemeSinavSonucus.Queries
                 var dto = new DenemeSinavSonucuDto
                 {
                     Id = denemeSinavSonucu.Id,
+                    DenemeSinaviId = denemeSinavSonucu.DenemeSinaviId,
                     DersId = denemeSinavSonucu.DersId,
                     DogruSayisi = denemeSinavSonucu.DogruSayisi,
                     YanlisSayisi = denemeSinavSonucu.YanlisSayisi,

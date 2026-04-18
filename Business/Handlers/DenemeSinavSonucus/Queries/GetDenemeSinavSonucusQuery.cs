@@ -41,6 +41,7 @@ namespace Business.Handlers.DenemeSinavSonucus.Queries
                 var dtoList = list.Select(d => new DenemeSinavSonucuListDto
                 {
                     Id = d.Id,
+                    DenemeSinaviId = d.DenemeSinaviId,
                     DersId = d.DersId,
                     DogruSayisi = d.DogruSayisi,
                     YanlisSayisi = d.YanlisSayisi,

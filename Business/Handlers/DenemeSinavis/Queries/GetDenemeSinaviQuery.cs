@@ -44,6 +44,7 @@ namespace Business.Handlers.DenemeSinavis.Queries
                     Aciklama = denemeSinavi.Aciklama,
                     UserId = denemeSinavi.UserId,
                     SinavId = denemeSinavi.SinavId,
+                    SinavBolumId = denemeSinavi.SinavBolumId,
                     Tarih = denemeSinavi.Tarih
                 };
                 return new SuccessDataResult<DenemeSinaviDto>(dto);
