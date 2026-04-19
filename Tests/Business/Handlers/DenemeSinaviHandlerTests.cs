@@ -1,4 +1,4 @@
-﻿
+
 using Business.Handlers.DenemeSinavis.Queries;
 using DataAccess.Abstract;
 using Moq;
@@ -103,26 +103,6 @@ namespace Tests.Business.HandlersTest
         }
 
         [Test]
-        public async Task DenemeSinavi_CreateCommand_NameAlreadyExist()
-        {
-            //Arrange
-            var command = new CreateDenemeSinaviCommand();
-            //propertyler buraya yazılacak 
-            //command.DenemeSinaviName = "test";
-
-            _denemeSinaviRepository.Setup(x => x.Query())
-                                           .Returns(new List<DenemeSinavi> { new DenemeSinavi() { /*TODO:propertyler buraya yazılacak DenemeSinaviId = 1, DenemeSinaviName = "test"*/ } }.AsQueryable());
-
-            _denemeSinaviRepository.Setup(x => x.Add(It.IsAny<DenemeSinavi>())).Returns(new DenemeSinavi());
-
-            var handler = new CreateDenemeSinaviCommandHandler(_denemeSinaviRepository.Object, _mediator.Object);
-            var x = await handler.Handle(command, new System.Threading.CancellationToken());
-
-            x.Success.Should().BeFalse();
-            x.Message.Should().Be(Messages.NameAlreadyExist);
-        }
-
-        [Test]
         public async Task DenemeSinavi_UpdateCommand_Success()
         {
             //Arrange
@@ -143,22 +123,22 @@ namespace Tests.Business.HandlersTest
         }
 
         [Test]
-        public async Task DenemeSinavi_DeleteCommand_Success()
+        public async Task DenemeSinavi_DeleteCommand_WithoutHttpUser_ReturnsSessionError()
         {
-            //Arrange
-            var command = new DeleteDenemeSinaviCommand();
+            //Arrange — UserInfoExtensions.GetUserId() is 0 without HttpContext; handler buna göre hata döner.
+            var command = new DeleteDenemeSinaviCommand { Id = 1 };
 
             _denemeSinaviRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<DenemeSinavi, bool>>>()))
-                        .ReturnsAsync(new DenemeSinavi() { /*TODO:propertyler buraya yazılacak DenemeSinaviId = 1, DenemeSinaviName = "deneme"*/});
+                        .ReturnsAsync(new DenemeSinavi { Id = 1, UserId = 1 });
 
-            _denemeSinaviRepository.Setup(x => x.Delete(It.IsAny<DenemeSinavi>()));
+            var sonucRepo = new Mock<IDenemeSinavSonucuRepository>();
+            sonucRepo.Setup(x => x.Query()).Returns(new List<DenemeSinavSonucu>().AsQueryable());
 
-            var handler = new DeleteDenemeSinaviCommandHandler(_denemeSinaviRepository.Object, _mediator.Object);
+            var handler = new DeleteDenemeSinaviCommandHandler(_denemeSinaviRepository.Object, sonucRepo.Object);
             var x = await handler.Handle(command, new System.Threading.CancellationToken());
 
-            _denemeSinaviRepository.Verify(x => x.SaveChangesAsync());
-            x.Success.Should().BeTrue();
-            x.Message.Should().Be(Messages.Deleted);
+            x.Success.Should().BeFalse();
+            x.Message.Should().Contain("Oturum");
         }
     }
 }

@@ -107,6 +107,24 @@ namespace WebAPI.Controllers
         }
 
         /// <summary>
+        /// Oturumdaki kullanıcının tek bir denemesi (ders sonuç Id'leri dahil, düzenleme formu için).
+        /// </summary>
+        [Authorize]
+        [Produces("application/json", "text/plain")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DenemeSinaviOzetListDto))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
+        [HttpGet("formeedit")]
+        public async Task<IActionResult> GetMyByIdForEdit([FromQuery] int id)
+        {
+            var result = await Mediator.Send(new GetMyDenemeSinaviByIdQuery { Id = id });
+            if (result.Success)
+            {
+                return Ok(result.Data);
+            }
+            return BadRequest(result.Message);
+        }
+
+        /// <summary>
         /// Add DenemeSinavi.
         /// </summary>
         /// <param name="createDenemeSinavi"></param>

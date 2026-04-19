@@ -33,11 +33,16 @@ namespace Business.Handlers.DenemeSinavSonucus.Commands
         public class UpdateDenemeSinavSonucuCommandHandler : IRequestHandler<UpdateDenemeSinavSonucuCommand, IDataResult<UpdateDenemeSinavSonucuDto>>
         {
             private readonly IDenemeSinavSonucuRepository _denemeSinavSonucuRepository;
+            private readonly IDenemeSinaviRepository _denemeSinaviRepository;
             private readonly IMediator _mediator;
 
-            public UpdateDenemeSinavSonucuCommandHandler(IDenemeSinavSonucuRepository denemeSinavSonucuRepository, IMediator mediator)
+            public UpdateDenemeSinavSonucuCommandHandler(
+                IDenemeSinavSonucuRepository denemeSinavSonucuRepository,
+                IDenemeSinaviRepository denemeSinaviRepository,
+                IMediator mediator)
             {
                 _denemeSinavSonucuRepository = denemeSinavSonucuRepository;
+                _denemeSinaviRepository = denemeSinaviRepository;
                 _mediator = mediator;
             }
 
@@ -52,6 +57,23 @@ namespace Business.Handlers.DenemeSinavSonucus.Commands
                 if(isThereDenemeSinavSonucuRecord == null)
                 {
                     return new ErrorDataResult<UpdateDenemeSinavSonucuDto>("Kayıt bulunamadı");
+                }
+
+                if (request.DenemeSinaviId != isThereDenemeSinavSonucuRecord.DenemeSinaviId)
+                {
+                    return new ErrorDataResult<UpdateDenemeSinavSonucuDto>("Geçersiz deneme bilgisi.");
+                }
+
+                var deneme = await _denemeSinaviRepository.GetAsync(d => d.Id == isThereDenemeSinavSonucuRecord.DenemeSinaviId);
+                if (deneme == null)
+                {
+                    return new ErrorDataResult<UpdateDenemeSinavSonucuDto>("Deneme bulunamadı.");
+                }
+
+                var uid = UserInfoExtensions.GetUserId();
+                if (uid == 0 || deneme.UserId != uid)
+                {
+                    return new ErrorDataResult<UpdateDenemeSinavSonucuDto>("Bu işlem için yetkiniz yok.");
                 }
 
                 isThereDenemeSinavSonucuRecord.DenemeSinaviId = request.DenemeSinaviId;

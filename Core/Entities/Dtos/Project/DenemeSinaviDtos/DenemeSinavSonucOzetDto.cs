@@ -5,6 +5,8 @@ namespace Core.Entities.Dtos.Project.DenemeSinaviDtos
     /// </summary>
     public class DenemeSinavSonucOzetDto : IDto
     {
+        /// <summary>DenemeSinavSonucu tablo Id; satır yoksa 0.</summary>
+        public int Id { get; set; }
         public int DersId { get; set; }
         public string DersAd { get; set; }
         public int DogruSayisi { get; set; }

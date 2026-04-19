@@ -10,6 +10,7 @@ using Core.Aspects.Autofac.Logging;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Entities.Concrete.Project;
 using Core.Entities.Dtos.Project.DenemeSinaviDtos;
+using Core.Extensions;
 
 
 namespace Business.Handlers.DenemeSinavis.Queries
@@ -37,6 +38,18 @@ namespace Business.Handlers.DenemeSinavis.Queries
                 {
                     return new ErrorDataResult<DenemeSinaviDto>(null, "Kayıt bulunamadı");
                 }
+
+                var uid = UserInfoExtensions.GetUserId();
+                if (uid == 0)
+                {
+                    return new ErrorDataResult<DenemeSinaviDto>(null, "Oturum bulunamadı.");
+                }
+
+                if (denemeSinavi.UserId != uid)
+                {
+                    return new ErrorDataResult<DenemeSinaviDto>(null, "Bu işlem için yetkiniz yok.");
+                }
+
                 var dto = new DenemeSinaviDto
                 {
                     Id = denemeSinavi.Id,

@@ -11,7 +11,6 @@ using Entities.Concrete;
 using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Linq;
 using Business.Handlers.DenemeSinavis.ValidationRules;
 using Core.Entities.Concrete.Project;
 using Core.Entities.Dtos.Project.DenemeSinaviDtos;
@@ -49,11 +48,6 @@ namespace Business.Handlers.DenemeSinavis.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IDataResult<CreateDenemeSinaviDto>> Handle(CreateDenemeSinaviCommand request, CancellationToken cancellationToken)
             {
-                var isThereDenemeSinaviRecord = _denemeSinaviRepository.Query().Any(u => u.Ad == request.Ad);
-
-                if (isThereDenemeSinaviRecord == true)
-                    return new ErrorDataResult<CreateDenemeSinaviDto>(Messages.NameAlreadyExist);
-
                 var addedDenemeSinavi = new DenemeSinavi
                 {
                     Ad = request.Ad,

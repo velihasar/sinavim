@@ -1,14 +1,12 @@
-﻿
+
 using Business.Constants;
-using Core.Aspects.Autofac.Caching;
 using Business.BusinessAspects;
-using Core.Aspects.Autofac.Logging;
-using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
+using Core.Extensions;
 
 
 namespace Business.Handlers.DenemeSinavSonucus.Commands
@@ -23,20 +21,31 @@ namespace Business.Handlers.DenemeSinavSonucus.Commands
         public class DeleteDenemeSinavSonucuCommandHandler : IRequestHandler<DeleteDenemeSinavSonucuCommand, IResult>
         {
             private readonly IDenemeSinavSonucuRepository _denemeSinavSonucuRepository;
-            private readonly IMediator _mediator;
+            private readonly IDenemeSinaviRepository _denemeSinaviRepository;
 
-            public DeleteDenemeSinavSonucuCommandHandler(IDenemeSinavSonucuRepository denemeSinavSonucuRepository, IMediator mediator)
+            public DeleteDenemeSinavSonucuCommandHandler(
+                IDenemeSinavSonucuRepository denemeSinavSonucuRepository,
+                IDenemeSinaviRepository denemeSinaviRepository)
             {
                 _denemeSinavSonucuRepository = denemeSinavSonucuRepository;
-                _mediator = mediator;
+                _denemeSinaviRepository = denemeSinaviRepository;
             }
 
-            //[CacheRemoveAspect("Get")]
-            //[LogAspect(typeof(FileLogger))]
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(DeleteDenemeSinavSonucuCommand request, CancellationToken cancellationToken)
             {
-                var denemeSinavSonucuToDelete = _denemeSinavSonucuRepository.Get(p => p.Id == request.Id);
+                var denemeSinavSonucuToDelete = await _denemeSinavSonucuRepository.GetAsync(p => p.Id == request.Id);
+                if (denemeSinavSonucuToDelete == null)
+                {
+                    return new ErrorResult("Kayıt bulunamadı.");
+                }
+
+                var deneme = await _denemeSinaviRepository.GetAsync(d => d.Id == denemeSinavSonucuToDelete.DenemeSinaviId);
+                var uid = UserInfoExtensions.GetUserId();
+                if (uid == 0 || deneme == null || deneme.UserId != uid)
+                {
+                    return new ErrorResult("Bu işlem için yetkiniz yok.");
+                }
 
                 _denemeSinavSonucuRepository.Delete(denemeSinavSonucuToDelete);
                 await _denemeSinavSonucuRepository.SaveChangesAsync();

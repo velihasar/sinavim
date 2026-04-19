@@ -54,9 +54,19 @@ namespace Business.Handlers.DenemeSinavis.Commands
                     return new ErrorDataResult<UpdateDenemeSinaviDto>("Kayıt bulunamadı");
                 }
 
+                var uid = UserInfoExtensions.GetUserId();
+                if (uid == 0)
+                {
+                    return new ErrorDataResult<UpdateDenemeSinaviDto>("Oturum bulunamadı.");
+                }
+
+                if (isThereDenemeSinaviRecord.UserId != uid)
+                {
+                    return new ErrorDataResult<UpdateDenemeSinaviDto>("Bu işlem için yetkiniz yok.");
+                }
+
                 isThereDenemeSinaviRecord.Ad = request.Ad;
                 isThereDenemeSinaviRecord.Aciklama = request.Aciklama;
-                isThereDenemeSinaviRecord.UserId = request.UserId;
                 isThereDenemeSinaviRecord.SinavId = request.SinavId;
                 isThereDenemeSinaviRecord.SinavBolumId = request.SinavBolumId;
                 isThereDenemeSinaviRecord.Tarih = request.Tarih;

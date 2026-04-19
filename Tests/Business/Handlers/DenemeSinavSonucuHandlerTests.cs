@@ -1,4 +1,4 @@
-﻿
+
 using Business.Handlers.DenemeSinavSonucus.Queries;
 using DataAccess.Abstract;
 using Moq;
@@ -27,11 +27,13 @@ namespace Tests.Business.HandlersTest
     public class DenemeSinavSonucuHandlerTests
     {
         Mock<IDenemeSinavSonucuRepository> _denemeSinavSonucuRepository;
+        Mock<IDenemeSinaviRepository> _denemeSinaviRepository;
         Mock<IMediator> _mediator;
         [SetUp]
         public void Setup()
         {
             _denemeSinavSonucuRepository = new Mock<IDenemeSinavSonucuRepository>();
+            _denemeSinaviRepository = new Mock<IDenemeSinaviRepository>();
             _mediator = new Mock<IMediator>();
         }
 
@@ -123,42 +125,53 @@ namespace Tests.Business.HandlersTest
         }
 
         [Test]
-        public async Task DenemeSinavSonucu_UpdateCommand_Success()
+        public async Task DenemeSinavSonucu_UpdateCommand_WithoutHttpUser_ReturnsSessionError()
         {
-            //Arrange
-            var command = new UpdateDenemeSinavSonucuCommand();
-            //command.DenemeSinavSonucuName = "test";
+            //Arrange — oturum yokken GetUserId() = 0
+            var command = new UpdateDenemeSinavSonucuCommand
+            {
+                Id = 1,
+                DenemeSinaviId = 1,
+                DersId = 1,
+            };
 
             _denemeSinavSonucuRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<DenemeSinavSonucu, bool>>>()))
-                        .ReturnsAsync(new DenemeSinavSonucu() { /*TODO:propertyler buraya yazılacak DenemeSinavSonucuId = 1, DenemeSinavSonucuName = "deneme"*/ });
+                        .ReturnsAsync(new DenemeSinavSonucu { Id = 1, DenemeSinaviId = 1, DersId = 1 });
+
+            _denemeSinaviRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<DenemeSinavi, bool>>>()))
+                .ReturnsAsync(new DenemeSinavi { Id = 1, UserId = 1 });
 
             _denemeSinavSonucuRepository.Setup(x => x.Update(It.IsAny<DenemeSinavSonucu>())).Returns(new DenemeSinavSonucu());
 
-            var handler = new UpdateDenemeSinavSonucuCommandHandler(_denemeSinavSonucuRepository.Object, _mediator.Object);
+            var handler = new UpdateDenemeSinavSonucuCommandHandler(
+                _denemeSinavSonucuRepository.Object,
+                _denemeSinaviRepository.Object,
+                _mediator.Object);
             var x = await handler.Handle(command, new System.Threading.CancellationToken());
 
-            _denemeSinavSonucuRepository.Verify(x => x.SaveChangesAsync());
-            x.Success.Should().BeTrue();
-            x.Message.Should().Be(Messages.Updated);
+            x.Success.Should().BeFalse();
+            x.Message.Should().Contain("yetkiniz");
         }
 
         [Test]
-        public async Task DenemeSinavSonucu_DeleteCommand_Success()
+        public async Task DenemeSinavSonucu_DeleteCommand_WithoutHttpUser_ReturnsAuthError()
         {
             //Arrange
-            var command = new DeleteDenemeSinavSonucuCommand();
+            var command = new DeleteDenemeSinavSonucuCommand { Id = 1 };
 
             _denemeSinavSonucuRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<DenemeSinavSonucu, bool>>>()))
-                        .ReturnsAsync(new DenemeSinavSonucu() { /*TODO:propertyler buraya yazılacak DenemeSinavSonucuId = 1, DenemeSinavSonucuName = "deneme"*/});
+                        .ReturnsAsync(new DenemeSinavSonucu { Id = 1, DenemeSinaviId = 1 });
 
-            _denemeSinavSonucuRepository.Setup(x => x.Delete(It.IsAny<DenemeSinavSonucu>()));
+            _denemeSinaviRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<DenemeSinavi, bool>>>()))
+                .ReturnsAsync(new DenemeSinavi { Id = 1, UserId = 1 });
 
-            var handler = new DeleteDenemeSinavSonucuCommandHandler(_denemeSinavSonucuRepository.Object, _mediator.Object);
+            var handler = new DeleteDenemeSinavSonucuCommandHandler(
+                _denemeSinavSonucuRepository.Object,
+                _denemeSinaviRepository.Object);
             var x = await handler.Handle(command, new System.Threading.CancellationToken());
 
-            _denemeSinavSonucuRepository.Verify(x => x.SaveChangesAsync());
-            x.Success.Should().BeTrue();
-            x.Message.Should().Be(Messages.Deleted);
+            x.Success.Should().BeFalse();
+            x.Message.Should().Contain("yetkiniz");
         }
     }
 }
