@@ -1,13 +1,11 @@
-﻿
+
 using Business.Handlers.KullaniciGunlukSoruCozumus.Commands;
 using Business.Handlers.KullaniciGunlukSoruCozumus.Queries;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
-using Entities.Concrete;
 using System.Collections.Generic;
-using Core.Entities.Concrete.Project;
+using Core.Entities.Dtos.Project.KullaniciGunlukSoruCozumuDtos;
 
 namespace WebAPI.Controllers
 {
@@ -25,7 +23,7 @@ namespace WebAPI.Controllers
         ///<return>List KullaniciGunlukSoruCozumus</return>
         ///<response code="200"></response>
         [Produces("application/json", "text/plain")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<KullaniciGunlukSoruCozumu>))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<KullaniciGunlukSoruCozumuDto>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         [HttpGet("getall")]
         public async Task<IActionResult> GetList()
@@ -45,7 +43,7 @@ namespace WebAPI.Controllers
         ///<return>KullaniciGunlukSoruCozumus List</return>
         ///<response code="200"></response>  
         [Produces("application/json", "text/plain")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(KullaniciGunlukSoruCozumu))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(KullaniciGunlukSoruCozumuDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         [HttpGet("getbyid")]
         public async Task<IActionResult> GetById(int id)
@@ -54,6 +52,55 @@ namespace WebAPI.Controllers
             if (result.Success)
             {
                 return Ok(result.Data);
+            }
+            return BadRequest(result.Message);
+        }
+
+        /// <summary>Oturumdaki kullanıcı: anasayfa için 8 gün, Türkiye takvimi (en eski gün yalnızca trend kıyası); grafikte son 7 gün gösterilir.</summary>
+        [Produces("application/json", "text/plain")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<GunlukSoruGunOzetDto>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
+        [HttpGet("ben/son-7-gun")]
+        public async Task<IActionResult> GetSon7GunForMe()
+        {
+            var result = await Mediator.Send(new GetGunlukSoruCozumuSon7ForMeQuery());
+            if (result.Success)
+            {
+                return Ok(result.Data);
+            }
+            return BadRequest(result.Message);
+        }
+
+        /// <summary>Oturumdaki kullanıcı: günlük çözüm sayfalama (bugünden geçmişe, eksik gün 0). En fazla son 90 gün.</summary>
+        [Produces("application/json", "text/plain")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GunlukSoruCozumuPageForMeDto))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
+        [HttpGet("ben/gunler")]
+        public async Task<IActionResult> GetGunlerForMe([FromQuery] int offsetDays = 0, [FromQuery] int take = 30)
+        {
+            var result = await Mediator.Send(new GetGunlukSoruCozumuPageForMeQuery
+            {
+                OffsetDays = offsetDays,
+                Take = take,
+            });
+            if (result.Success)
+            {
+                return Ok(result.Data);
+            }
+            return BadRequest(result.Message);
+        }
+
+        /// <summary>Oturumdaki kullanıcı için seçilen güne çözülen soru sayısı (varsa günceller, yoksa ekler).</summary>
+        [Produces("application/json", "text/plain")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
+        [HttpPost("ben")]
+        public async Task<IActionResult> UpsertMy([FromBody] UpsertMyKullaniciGunlukSoruCozumuCommand command)
+        {
+            var result = await Mediator.Send(command);
+            if (result.Success)
+            {
+                return Ok(result.Message);
             }
             return BadRequest(result.Message);
         }

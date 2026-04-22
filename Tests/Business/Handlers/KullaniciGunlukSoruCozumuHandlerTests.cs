@@ -1,25 +1,24 @@
-﻿
+
+using Business.Constants;
+using Business.Handlers.KullaniciGunlukSoruCozumus.Commands;
 using Business.Handlers.KullaniciGunlukSoruCozumus.Queries;
+using Core.Entities.Concrete.Project;
+using Core.Entities.Dtos.Project.KullaniciGunlukSoruCozumuDtos;
 using DataAccess.Abstract;
+using FluentAssertions;
+using MediatR;
 using Moq;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using static Business.Handlers.KullaniciGunlukSoruCozumus.Queries.GetKullaniciGunlukSoruCozumuQuery;
-using Entities.Concrete;
-using static Business.Handlers.KullaniciGunlukSoruCozumus.Queries.GetKullaniciGunlukSoruCozumusQuery;
 using static Business.Handlers.KullaniciGunlukSoruCozumus.Commands.CreateKullaniciGunlukSoruCozumuCommand;
-using Business.Handlers.KullaniciGunlukSoruCozumus.Commands;
-using Business.Constants;
-using static Business.Handlers.KullaniciGunlukSoruCozumus.Commands.UpdateKullaniciGunlukSoruCozumuCommand;
 using static Business.Handlers.KullaniciGunlukSoruCozumus.Commands.DeleteKullaniciGunlukSoruCozumuCommand;
-using MediatR;
-using System.Linq;
-using FluentAssertions;
-using Core.Entities.Concrete.Project;
-
+using static Business.Handlers.KullaniciGunlukSoruCozumus.Commands.UpdateKullaniciGunlukSoruCozumuCommand;
+using static Business.Handlers.KullaniciGunlukSoruCozumus.Queries.GetKullaniciGunlukSoruCozumuQuery;
+using static Business.Handlers.KullaniciGunlukSoruCozumus.Queries.GetKullaniciGunlukSoruCozumusQuery;
 
 namespace Tests.Business.HandlersTest
 {
@@ -28,6 +27,7 @@ namespace Tests.Business.HandlersTest
     {
         Mock<IKullaniciGunlukSoruCozumuRepository> _kullaniciGunlukSoruCozumuRepository;
         Mock<IMediator> _mediator;
+
         [SetUp]
         public void Setup()
         {
@@ -38,66 +38,82 @@ namespace Tests.Business.HandlersTest
         [Test]
         public async Task KullaniciGunlukSoruCozumu_GetQuery_Success()
         {
-            //Arrange
-            var query = new GetKullaniciGunlukSoruCozumuQuery();
+            var query = new GetKullaniciGunlukSoruCozumuQuery { Id = 1 };
 
-            _kullaniciGunlukSoruCozumuRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<KullaniciGunlukSoruCozumu, bool>>>())).ReturnsAsync(new KullaniciGunlukSoruCozumu()
-//propertyler buraya yazılacak
-//{																		
-//KullaniciGunlukSoruCozumuId = 1,
-//KullaniciGunlukSoruCozumuName = "Test"
-//}
-);
+            _kullaniciGunlukSoruCozumuRepository
+                .Setup(x => x.GetAsync(It.IsAny<Expression<Func<KullaniciGunlukSoruCozumu, bool>>>()))
+                .ReturnsAsync(
+                    new KullaniciGunlukSoruCozumu
+                    {
+                        Id = 1,
+                        UserId = 10,
+                        Tarih = DateTime.UtcNow.Date,
+                        CozulenSoruSayisi = 5,
+                    });
 
-            var handler = new GetKullaniciGunlukSoruCozumuQueryHandler(_kullaniciGunlukSoruCozumuRepository.Object, _mediator.Object);
+            var handler = new GetKullaniciGunlukSoruCozumuQueryHandler(
+                _kullaniciGunlukSoruCozumuRepository.Object,
+                _mediator.Object);
 
-            //Act
-            var x = await handler.Handle(query, new System.Threading.CancellationToken());
+            var x = await handler.Handle(query, default);
 
-            //Asset
             x.Success.Should().BeTrue();
-            //x.Data.KullaniciGunlukSoruCozumuId.Should().Be(1);
-
+            x.Data.Should().NotBeNull();
+            x.Data!.Id.Should().Be(1);
+            x.Data.UserId.Should().Be(10);
+            x.Data.CozulenSoruSayisi.Should().Be(5);
         }
 
         [Test]
         public async Task KullaniciGunlukSoruCozumu_GetQueries_Success()
         {
-            //Arrange
             var query = new GetKullaniciGunlukSoruCozumusQuery();
 
-            _kullaniciGunlukSoruCozumuRepository.Setup(x => x.GetListAsync(It.IsAny<Expression<Func<KullaniciGunlukSoruCozumu, bool>>>()))
-                        .ReturnsAsync(new List<KullaniciGunlukSoruCozumu> { new KullaniciGunlukSoruCozumu() { /*TODO:propertyler buraya yazılacak KullaniciGunlukSoruCozumuId = 1, KullaniciGunlukSoruCozumuName = "test"*/ } });
+            _kullaniciGunlukSoruCozumuRepository
+                .Setup(x => x.GetListAsync(It.IsAny<Expression<Func<KullaniciGunlukSoruCozumu, bool>>>()))
+                .ReturnsAsync(
+                    new List<KullaniciGunlukSoruCozumu>
+                    {
+                        new KullaniciGunlukSoruCozumu { Id = 1, UserId = 1, Tarih = DateTime.UtcNow.Date, CozulenSoruSayisi = 1 },
+                        new KullaniciGunlukSoruCozumu { Id = 2, UserId = 1, Tarih = DateTime.UtcNow.Date.AddDays(-1), CozulenSoruSayisi = 2 },
+                    });
 
-            var handler = new GetKullaniciGunlukSoruCozumusQueryHandler(_kullaniciGunlukSoruCozumuRepository.Object, _mediator.Object);
+            var handler = new GetKullaniciGunlukSoruCozumusQueryHandler(
+                _kullaniciGunlukSoruCozumuRepository.Object,
+                _mediator.Object);
 
-            //Act
-            var x = await handler.Handle(query, new System.Threading.CancellationToken());
+            var x = await handler.Handle(query, default);
 
-            //Asset
             x.Success.Should().BeTrue();
-            ((List<KullaniciGunlukSoruCozumu>)x.Data).Count.Should().BeGreaterThan(1);
-
+            var list = x.Data!.ToList();
+            list.Count.Should().Be(2);
+            list[0].Should().BeOfType<KullaniciGunlukSoruCozumuDto>();
         }
 
         [Test]
         public async Task KullaniciGunlukSoruCozumu_CreateCommand_Success()
         {
-            KullaniciGunlukSoruCozumu rt = null;
-            //Arrange
-            var command = new CreateKullaniciGunlukSoruCozumuCommand();
-            //propertyler buraya yazılacak
-            //command.KullaniciGunlukSoruCozumuName = "deneme";
+            var command = new CreateKullaniciGunlukSoruCozumuCommand
+            {
+                UserId = 1,
+                Tarih = DateTime.UtcNow.Date,
+                CozulenSoruSayisi = 10,
+            };
 
-            _kullaniciGunlukSoruCozumuRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<KullaniciGunlukSoruCozumu, bool>>>()))
-                        .ReturnsAsync(rt);
+            _kullaniciGunlukSoruCozumuRepository
+                .Setup(x => x.Query())
+                .Returns(new List<KullaniciGunlukSoruCozumu>().AsQueryable());
 
-            _kullaniciGunlukSoruCozumuRepository.Setup(x => x.Add(It.IsAny<KullaniciGunlukSoruCozumu>())).Returns(new KullaniciGunlukSoruCozumu());
+            _kullaniciGunlukSoruCozumuRepository
+                .Setup(x => x.Add(It.IsAny<KullaniciGunlukSoruCozumu>()))
+                .Returns(new KullaniciGunlukSoruCozumu());
 
-            var handler = new CreateKullaniciGunlukSoruCozumuCommandHandler(_kullaniciGunlukSoruCozumuRepository.Object, _mediator.Object);
-            var x = await handler.Handle(command, new System.Threading.CancellationToken());
+            var handler = new CreateKullaniciGunlukSoruCozumuCommandHandler(
+                _kullaniciGunlukSoruCozumuRepository.Object,
+                _mediator.Object);
+            var x = await handler.Handle(command, default);
 
-            _kullaniciGunlukSoruCozumuRepository.Verify(x => x.SaveChangesAsync());
+            _kullaniciGunlukSoruCozumuRepository.Verify(r => r.SaveChangesAsync());
             x.Success.Should().BeTrue();
             x.Message.Should().Be(Messages.Added);
         }
@@ -105,18 +121,25 @@ namespace Tests.Business.HandlersTest
         [Test]
         public async Task KullaniciGunlukSoruCozumu_CreateCommand_NameAlreadyExist()
         {
-            //Arrange
-            var command = new CreateKullaniciGunlukSoruCozumuCommand();
-            //propertyler buraya yazılacak 
-            //command.KullaniciGunlukSoruCozumuName = "test";
+            var command = new CreateKullaniciGunlukSoruCozumuCommand
+            {
+                UserId = 1,
+                Tarih = DateTime.UtcNow.Date,
+                CozulenSoruSayisi = 5,
+            };
 
-            _kullaniciGunlukSoruCozumuRepository.Setup(x => x.Query())
-                                           .Returns(new List<KullaniciGunlukSoruCozumu> { new KullaniciGunlukSoruCozumu() { /*TODO:propertyler buraya yazılacak KullaniciGunlukSoruCozumuId = 1, KullaniciGunlukSoruCozumuName = "test"*/ } }.AsQueryable());
+            _kullaniciGunlukSoruCozumuRepository
+                .Setup(x => x.Query())
+                .Returns(
+                    new List<KullaniciGunlukSoruCozumu>
+                    {
+                        new KullaniciGunlukSoruCozumu { Id = 1, UserId = 1, Tarih = DateTime.UtcNow.Date, CozulenSoruSayisi = 1 },
+                    }.AsQueryable());
 
-            _kullaniciGunlukSoruCozumuRepository.Setup(x => x.Add(It.IsAny<KullaniciGunlukSoruCozumu>())).Returns(new KullaniciGunlukSoruCozumu());
-
-            var handler = new CreateKullaniciGunlukSoruCozumuCommandHandler(_kullaniciGunlukSoruCozumuRepository.Object, _mediator.Object);
-            var x = await handler.Handle(command, new System.Threading.CancellationToken());
+            var handler = new CreateKullaniciGunlukSoruCozumuCommandHandler(
+                _kullaniciGunlukSoruCozumuRepository.Object,
+                _mediator.Object);
+            var x = await handler.Handle(command, default);
 
             x.Success.Should().BeFalse();
             x.Message.Should().Be(Messages.NameAlreadyExist);
@@ -125,19 +148,35 @@ namespace Tests.Business.HandlersTest
         [Test]
         public async Task KullaniciGunlukSoruCozumu_UpdateCommand_Success()
         {
-            //Arrange
-            var command = new UpdateKullaniciGunlukSoruCozumuCommand();
-            //command.KullaniciGunlukSoruCozumuName = "test";
+            var command = new UpdateKullaniciGunlukSoruCozumuCommand
+            {
+                Id = 1,
+                UserId = 2,
+                Tarih = DateTime.UtcNow.Date,
+                CozulenSoruSayisi = 20,
+            };
 
-            _kullaniciGunlukSoruCozumuRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<KullaniciGunlukSoruCozumu, bool>>>()))
-                        .ReturnsAsync(new KullaniciGunlukSoruCozumu() { /*TODO:propertyler buraya yazılacak KullaniciGunlukSoruCozumuId = 1, KullaniciGunlukSoruCozumuName = "deneme"*/ });
+            _kullaniciGunlukSoruCozumuRepository
+                .Setup(x => x.GetAsync(It.IsAny<Expression<Func<KullaniciGunlukSoruCozumu, bool>>>()))
+                .ReturnsAsync(
+                    new KullaniciGunlukSoruCozumu
+                    {
+                        Id = 1,
+                        UserId = 1,
+                        Tarih = DateTime.UtcNow.Date.AddDays(-1),
+                        CozulenSoruSayisi = 1,
+                    });
 
-            _kullaniciGunlukSoruCozumuRepository.Setup(x => x.Update(It.IsAny<KullaniciGunlukSoruCozumu>())).Returns(new KullaniciGunlukSoruCozumu());
+            _kullaniciGunlukSoruCozumuRepository
+                .Setup(x => x.Update(It.IsAny<KullaniciGunlukSoruCozumu>()))
+                .Returns(new KullaniciGunlukSoruCozumu());
 
-            var handler = new UpdateKullaniciGunlukSoruCozumuCommandHandler(_kullaniciGunlukSoruCozumuRepository.Object, _mediator.Object);
-            var x = await handler.Handle(command, new System.Threading.CancellationToken());
+            var handler = new UpdateKullaniciGunlukSoruCozumuCommandHandler(
+                _kullaniciGunlukSoruCozumuRepository.Object,
+                _mediator.Object);
+            var x = await handler.Handle(command, default);
 
-            _kullaniciGunlukSoruCozumuRepository.Verify(x => x.SaveChangesAsync());
+            _kullaniciGunlukSoruCozumuRepository.Verify(r => r.SaveChangesAsync());
             x.Success.Should().BeTrue();
             x.Message.Should().Be(Messages.Updated);
         }
@@ -145,21 +184,29 @@ namespace Tests.Business.HandlersTest
         [Test]
         public async Task KullaniciGunlukSoruCozumu_DeleteCommand_Success()
         {
-            //Arrange
-            var command = new DeleteKullaniciGunlukSoruCozumuCommand();
+            var command = new DeleteKullaniciGunlukSoruCozumuCommand { Id = 1 };
 
-            _kullaniciGunlukSoruCozumuRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<KullaniciGunlukSoruCozumu, bool>>>()))
-                        .ReturnsAsync(new KullaniciGunlukSoruCozumu() { /*TODO:propertyler buraya yazılacak KullaniciGunlukSoruCozumuId = 1, KullaniciGunlukSoruCozumuName = "deneme"*/});
+            _kullaniciGunlukSoruCozumuRepository
+                .Setup(x => x.Get(It.IsAny<Expression<Func<KullaniciGunlukSoruCozumu, bool>>>()))
+                .Returns(
+                    new KullaniciGunlukSoruCozumu
+                    {
+                        Id = 1,
+                        UserId = 1,
+                        Tarih = DateTime.UtcNow.Date,
+                        CozulenSoruSayisi = 1,
+                    });
 
             _kullaniciGunlukSoruCozumuRepository.Setup(x => x.Delete(It.IsAny<KullaniciGunlukSoruCozumu>()));
 
-            var handler = new DeleteKullaniciGunlukSoruCozumuCommandHandler(_kullaniciGunlukSoruCozumuRepository.Object, _mediator.Object);
-            var x = await handler.Handle(command, new System.Threading.CancellationToken());
+            var handler = new DeleteKullaniciGunlukSoruCozumuCommandHandler(
+                _kullaniciGunlukSoruCozumuRepository.Object,
+                _mediator.Object);
+            var x = await handler.Handle(command, default);
 
-            _kullaniciGunlukSoruCozumuRepository.Verify(x => x.SaveChangesAsync());
+            _kullaniciGunlukSoruCozumuRepository.Verify(r => r.SaveChangesAsync());
             x.Success.Should().BeTrue();
             x.Message.Should().Be(Messages.Deleted);
         }
     }
 }
-

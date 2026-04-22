@@ -1,38 +1,32 @@
-﻿
 using Business.BusinessAspects;
 using Business.Constants;
+using Business.Handlers.KullaniciGunlukSoruCozumus.ValidationRules;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
 using Core.Aspects.Autofac.Validation;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
+using Core.Entities.Concrete.Project;
+using Core.Entities.Dtos.Project.KullaniciGunlukSoruCozumuDtos;
+using Core.Extensions;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
-using Entities.Concrete;
 using MediatR;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Linq;
-using Business.Handlers.KullaniciGunlukSoruCozumus.ValidationRules;
-using Core.Entities.Concrete.Project;
 
 namespace Business.Handlers.KullaniciGunlukSoruCozumus.Commands
 {
-    /// <summary>
-    /// 
-    /// </summary>
-    public class CreateKullaniciGunlukSoruCozumuCommand : IRequest<IResult>
+    public class CreateKullaniciGunlukSoruCozumuCommand : CreateKullaniciGunlukSoruCozumuDto, IRequest<IResult>
     {
-
-        public int UserId { get; set; }
-        public System.DateTime Tarih { get; set; }
-        public int CozulenSoruSayisi { get; set; }
-
-
         public class CreateKullaniciGunlukSoruCozumuCommandHandler : IRequestHandler<CreateKullaniciGunlukSoruCozumuCommand, IResult>
         {
             private readonly IKullaniciGunlukSoruCozumuRepository _kullaniciGunlukSoruCozumuRepository;
             private readonly IMediator _mediator;
-            public CreateKullaniciGunlukSoruCozumuCommandHandler(IKullaniciGunlukSoruCozumuRepository kullaniciGunlukSoruCozumuRepository, IMediator mediator)
+
+            public CreateKullaniciGunlukSoruCozumuCommandHandler(
+                IKullaniciGunlukSoruCozumuRepository kullaniciGunlukSoruCozumuRepository,
+                IMediator mediator)
             {
                 _kullaniciGunlukSoruCozumuRepository = kullaniciGunlukSoruCozumuRepository;
                 _mediator = mediator;
@@ -44,17 +38,19 @@ namespace Business.Handlers.KullaniciGunlukSoruCozumus.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(CreateKullaniciGunlukSoruCozumuCommand request, CancellationToken cancellationToken)
             {
-                var isThereKullaniciGunlukSoruCozumuRecord = _kullaniciGunlukSoruCozumuRepository.Query().Any(u => u.UserId == request.UserId);
+                var isThereKullaniciGunlukSoruCozumuRecord =
+                    _kullaniciGunlukSoruCozumuRepository.Query().Any(u => u.UserId == request.UserId);
 
-                if (isThereKullaniciGunlukSoruCozumuRecord == true)
+                if (isThereKullaniciGunlukSoruCozumuRecord)
+                {
                     return new ErrorResult(Messages.NameAlreadyExist);
+                }
 
                 var addedKullaniciGunlukSoruCozumu = new KullaniciGunlukSoruCozumu
                 {
                     UserId = request.UserId,
-                    Tarih = request.Tarih,
+                    Tarih = request.Tarih.ToNpgsqlDateOnly(),
                     CozulenSoruSayisi = request.CozulenSoruSayisi,
-
                 };
 
                 _kullaniciGunlukSoruCozumuRepository.Add(addedKullaniciGunlukSoruCozumu);
