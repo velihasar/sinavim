@@ -14,9 +14,8 @@ using System.Security.Claims;
 namespace Business.BusinessAspects
 {
     /// <summary>
-    /// This Aspect control the user's roles in HttpContext by inject the IHttpContextAccessor.
-    /// It is checked by writing as [SecuredOperation] on the handler.
-    /// If a valid authorization cannot be found in aspect, it throws an exception.
+    /// Cache'teki operasyon adlarıyla yetki kontrolü. Liste yok veya boşsa (claim atanmamış kullanıcı) giriş yeterli kabul edilir;
+    /// en az bir kayıt varsa yalnızca listedeki komut/sorgu adlarına izin verilir.
     /// </summary>
     public class SecuredOperation : MethodInterception
     {
@@ -136,13 +135,11 @@ namespace Business.BusinessAspects
 
             var oprClaims = _cacheManager.Get<IEnumerable<string>>($"{CacheKeys.UserIdForClaim}={userId}");
 
-            // Cache'de claim'ler yoksa veya null ise, yetkilendirme hatası ver
-            if (oprClaims == null)
+            if (oprClaims == null || !oprClaims.Any())
             {
-                throw new SecurityException(Messages.AuthorizationsDenied);
+                return;
             }
 
-            // Operation claim kontrolü
             if (oprClaims.Contains(operationName))
             {
                 return;

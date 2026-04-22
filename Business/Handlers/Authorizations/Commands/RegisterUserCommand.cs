@@ -1,6 +1,5 @@
-﻿using System.Threading;
+using System.Threading;
 using System.Threading.Tasks;
-using Business.BusinessAspects;
 using Business.Constants;
 using Business.Handlers.Authorizations.ValidationRules;
 using Core.Aspects.Autofac.Caching;
@@ -25,15 +24,22 @@ namespace Business.Handlers.Authorizations.Commands
         public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, IResult>
         {
             private readonly IUserRepository _userRepository;
+            private readonly IGroupRepository _groupRepository;
+            private readonly IUserGroupRepository _userGroupRepository;
 
 
-            public RegisterUserCommandHandler(IUserRepository userRepository)
+            public RegisterUserCommandHandler(
+                IUserRepository userRepository,
+                IGroupRepository groupRepository,
+                IUserGroupRepository userGroupRepository)
             {
                 _userRepository = userRepository;
+                _groupRepository = groupRepository;
+                _userGroupRepository = userGroupRepository;
             }
 
 
-            [SecuredOperation(Priority = 1)]
+            /** Kayıt herkese açık; SecuredOperation anonim istekleri reddeder. */
             [ValidationAspect(typeof(RegisterUserValidator), Priority = 2)]
             [CacheRemoveAspect()]
             [LogAspect(typeof(FileLogger))]
@@ -59,6 +65,23 @@ namespace Business.Handlers.Authorizations.Commands
 
                 _userRepository.Add(user);
                 await _userRepository.SaveChangesAsync();
+
+                var ogrenci = _groupRepository.Get(g => g.GroupName == StudentGroupConstants.GroupName);
+                if (ogrenci != null && user.UserId > 0)
+                {
+                    var already = await _userGroupRepository.GetAsync(
+                        ug => ug.UserId == user.UserId && ug.GroupId == ogrenci.Id);
+                    if (already == null)
+                    {
+                        _userGroupRepository.Add(new UserGroup
+                        {
+                            UserId = user.UserId,
+                            GroupId = ogrenci.Id,
+                        });
+                        await _userGroupRepository.SaveChangesAsync();
+                    }
+                }
+
                 return new SuccessResult(Messages.Added);
             }
         }

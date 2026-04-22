@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Business.BusinessAspects;
 using Business.Fakes.Handlers.Authorizations;
+using Business.Fakes.Handlers.Groups;
 using Business.Fakes.Handlers.OperationClaims;
 using Business.Fakes.Handlers.UserClaims;
 using Core.Utilities.IoC;
@@ -38,21 +39,39 @@ namespace Business.Helpers
                 UserId = 1,
                 OperationClaims = operationClaims
             });
+
+            await mediator.Send(new EnsureStudentGroupAndClaimsInternalCommand());
         }
 
+        /// <summary>
+        /// [SecuredOperation] ile işaretlenmiş handler'ların dış Command/Query sınıf adları (ör. GetKonuTakipForMeQuery).
+        /// </summary>
         private static IEnumerable<string> GetOperationNames()
         {
-            var assemblies = Assembly.GetExecutingAssembly().GetTypes()
-                .Where(x =>
-                    // runtime generated anonmous type'larin assemblysi olmadigi icin null cek yap
-                    x.Namespace != null && x.Namespace.StartsWith("Business.Handlers") &&
-                    (x.Name.EndsWith("Command") || x.Name.EndsWith("Query")));
+            var names = new HashSet<string>();
+            var handlerTypes = Assembly.GetExecutingAssembly().GetTypes()
+                .Where(t =>
+                    t.Namespace != null &&
+                    t.Namespace.StartsWith("Business.Handlers", System.StringComparison.Ordinal) &&
+                    t.IsNested &&
+                    t.Name.EndsWith("Handler", System.StringComparison.Ordinal) &&
+                    t.DeclaringType != null &&
+                    (t.DeclaringType.Name.EndsWith("Command", System.StringComparison.Ordinal) ||
+                     t.DeclaringType.Name.EndsWith("Query", System.StringComparison.Ordinal)));
 
-            return (from assembly in assemblies
-                    from nestedType in assembly.GetNestedTypes()
-                    from method in nestedType.GetMethods()
-                    where method.CustomAttributes.Any(u => u.AttributeType == typeof(SecuredOperation))
-                    select assembly.Name).ToList();
+            foreach (var handlerType in handlerTypes)
+            {
+                var handleMethod = handlerType.GetMethods(BindingFlags.Instance | BindingFlags.Public)
+                    .FirstOrDefault(m =>
+                        m.Name == "Handle" &&
+                        m.GetCustomAttributes(typeof(SecuredOperation), inherit: true).Length > 0);
+                if (handleMethod != null)
+                {
+                    names.Add(handlerType.DeclaringType!.Name);
+                }
+            }
+
+            return names;
         }
     }
 }
