@@ -151,6 +151,7 @@ namespace Business
         public void ConfigureDevelopmentServices(IServiceCollection services)
         {
             ConfigureServices(services);
+            services.AddTransient<IKullaniciGunlukSoruCozumuRepository, KullaniciGunlukSoruCozumuRepository>();
             services.AddTransient<IMotivasyonRepository, MotivasyonRepository>();
             services.AddTransient<IKullaniciSinavRepository, KullaniciSinavRepository>();
             services.AddTransient<IKullaniciKonuIlerlemeRepository, KullaniciKonuIlerlemeRepository>();
@@ -183,6 +184,7 @@ namespace Business
         public void ConfigureStagingServices(IServiceCollection services)
         {
             ConfigureServices(services);
+            services.AddTransient<IKullaniciGunlukSoruCozumuRepository, KullaniciGunlukSoruCozumuRepository>();
             services.AddTransient<IMotivasyonRepository, MotivasyonRepository>();
             services.AddTransient<IKullaniciSinavRepository, KullaniciSinavRepository>();
             services.AddTransient<IKullaniciKonuIlerlemeRepository, KullaniciKonuIlerlemeRepository>();
@@ -214,6 +216,7 @@ namespace Business
         public void ConfigureProductionServices(IServiceCollection services)
         {
             ConfigureServices(services);
+            services.AddTransient<IKullaniciGunlukSoruCozumuRepository, KullaniciGunlukSoruCozumuRepository>();
             services.AddTransient<IMotivasyonRepository, MotivasyonRepository>();
             services.AddTransient<IKullaniciSinavRepository, KullaniciSinavRepository>();
             services.AddTransient<IKullaniciKonuIlerlemeRepository, KullaniciKonuIlerlemeRepository>();

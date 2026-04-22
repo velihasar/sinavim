@@ -59,6 +59,7 @@ namespace DataAccess.Concrete.EntityFramework.Contexts
         public DbSet<KullaniciKonuIlerleme> KullaniciKonuIlerlemes { get; set; }
         public DbSet<KullaniciSinav> KullaniciSinavs { get; set; }
         public DbSet<Motivasyon> Motivasyons { get; set; }
+        public DbSet<KullaniciGunlukSoruCozumu> KullaniciGunlukSoruCozumus { get; set; }
 
         protected IConfiguration Configuration { get; }
 

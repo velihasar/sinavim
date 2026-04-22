@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading;
@@ -9,6 +9,7 @@ using Business.Handlers.Authorizations.Queries;
 using Business.Services.Authentication;
 using Core.CrossCuttingConcerns.Caching;
 using Core.Entities.Concrete;
+using Core.Utilities.Mail;
 using Core.Utilities.Security.Hashing;
 using Core.Utilities.Security.Jwt;
 using DataAccess.Abstract;
@@ -30,9 +31,12 @@ namespace Tests.Business.Handlers
     public class AuthorizationsTests
     {
         private Mock<IUserRepository> _userRepository;
+        private Mock<IGroupRepository> _groupRepository;
+        private Mock<IUserGroupRepository> _userGroupRepository;
         private Mock<ITokenHelper> _tokenHelper;
         private Mock<IMediator> _mediator;
         private Mock<ICacheManager> _cacheManager;
+        private Mock<IMailService> _mailService;
 
         private LoginUserQueryHandler _loginUserQueryHandler;
         private LoginUserQuery _loginUserQuery;
@@ -45,13 +49,19 @@ namespace Tests.Business.Handlers
         public void Setup()
         {
             _userRepository = new Mock<IUserRepository>();
+            _groupRepository = new Mock<IGroupRepository>();
+            _userGroupRepository = new Mock<IUserGroupRepository>();
             _tokenHelper = new Mock<ITokenHelper>();
             _mediator = new Mock<IMediator>();
             _cacheManager = new Mock<ICacheManager>();
+            _mailService = new Mock<IMailService>();
 
             _loginUserQueryHandler = new LoginUserQueryHandler(_userRepository.Object, _tokenHelper.Object, _mediator.Object, _cacheManager.Object);
-            _registerUserCommandHandler = new RegisterUserCommandHandler(_userRepository.Object);
-            //_forgotPasswordCommandHandler = new ForgotPasswordCommandHandler(_userRepository.Object);
+            _registerUserCommandHandler = new RegisterUserCommandHandler(
+                _userRepository.Object,
+                _groupRepository.Object,
+                _userGroupRepository.Object);
+            _forgotPasswordCommandHandler = new ForgotPasswordCommandHandler(_userRepository.Object, _mailService.Object);
         }
 
         [Test]
@@ -140,6 +150,13 @@ namespace Tests.Business.Handlers
         [Test]
         public async Task Handler_Register()
         {
+            _userRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<User, bool>>>()))
+                .ReturnsAsync((User)null);
+            _groupRepository.Setup(x => x.Get(It.IsAny<Expression<Func<Group, bool>>>()))
+                .Returns((Group)null);
+            _userRepository.Setup(x => x.Add(It.IsAny<User>())).Returns((User u) => u);
+            _userRepository.Setup(x => x.SaveChangesAsync()).ReturnsAsync(1);
+
             var registerUser = new User { Email = "test@test.com", FullName = "test test" };
             _command = new RegisterUserCommand
             {
