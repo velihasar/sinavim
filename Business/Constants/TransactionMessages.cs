@@ -11,6 +11,9 @@ namespace Business.Constants
         public static string Deleted => "Deleted";
         public static string Updated => "Updated";
         public static string NameAlreadyExist => "NameAlreadyExist";
+
+        /// <summary>Kayıt / kullanıcı oluşturma: aynı e-posta zaten var.</summary>
+        public static string EmailAlreadyRegistered => "Bu e-posta adresi zaten kullanılıyor.";
         public static string TokenProviderException => "TokenProviderException";
         public static string Unknown => "Unknown";
         public static string RecordNotFound => "RecordNotFound";

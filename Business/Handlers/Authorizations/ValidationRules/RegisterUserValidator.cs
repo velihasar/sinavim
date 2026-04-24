@@ -7,8 +7,16 @@ namespace Business.Handlers.Authorizations.ValidationRules
     {
         public RegisterUserValidator()
         {
-            RuleFor(p => p.Email).NotEmpty().EmailAddress();
-            RuleFor(p => p.FullName).NotEmpty().MaximumLength(200);
+            RuleFor(p => p.Email)
+                .NotEmpty()
+                .WithMessage("E-posta adresi gerekli.")
+                .EmailAddress()
+                .WithMessage("Geçerli bir e-posta adresi girin.");
+            RuleFor(p => p.FullName)
+                .NotEmpty()
+                .WithMessage("Ad soyad gerekli.")
+                .MaximumLength(200)
+                .WithMessage("Ad soyad en fazla 200 karakter olabilir.");
             RuleFor(p => p.Password).Password();
         }
     }

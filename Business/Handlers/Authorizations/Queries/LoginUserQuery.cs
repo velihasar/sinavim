@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -38,11 +38,19 @@ namespace Business.Handlers.Authorizations.Queries
             [LogAspect(typeof(FileLogger))]
             public async Task<IDataResult<AccessToken>> Handle(LoginUserQuery request, CancellationToken cancellationToken)
             {
-                var user = await _userRepository.GetAsync(u => u.Email == request.Email && u.Status);
+                var normalizedEmail = (request.Email ?? string.Empty).Trim().ToLowerInvariant();
+                var user = await _userRepository.GetAsync(u =>
+                    u.Email != null &&
+                    u.Email.Trim().ToLower() == normalizedEmail);
 
                 if (user == null)
                 {
                     return new ErrorDataResult<AccessToken>(Messages.UserNotFound);
+                }
+
+                if (!user.Status)
+                {
+                    return new ErrorDataResult<AccessToken>(Messages.EmailNotVerified);
                 }
 
                 if (!HashingHelper.VerifyPasswordHash(request.Password, user.PasswordSalt, user.PasswordHash))

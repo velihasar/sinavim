@@ -40,6 +40,10 @@ namespace Business.Handlers.Authorizations.Queries
                     return new ErrorDataResult<User>(Messages.UserNotFound);
                 }
 
+                if (!userToCheck.Status)
+                {
+                    return new ErrorDataResult<User>(Messages.EmailNotVerified);
+                }
 
 				var claims = _userRepository.GetClaims(userToCheck.UserId);
 				_cacheManager.Remove($"{CacheKeys.UserIdForClaim}={userToCheck.UserId}");

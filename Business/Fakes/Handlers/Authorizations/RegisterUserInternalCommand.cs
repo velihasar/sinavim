@@ -1,4 +1,4 @@
-﻿using System.Threading;
+using System.Threading;
 using System.Threading.Tasks;
 using Business.Constants;
 using Business.Handlers.Authorizations.ValidationRules;
@@ -38,7 +38,7 @@ namespace Business.Fakes.Handlers.Authorizations
 
                 if (isThereAnyUser != null)
                 {
-                    return new ErrorResult(Messages.NameAlreadyExist);
+                    return new ErrorResult(Messages.EmailAlreadyRegistered);
                 }
 
                 HashingHelper.CreatePasswordHash(request.Password, out var passwordSalt, out var passwordHash);
@@ -49,7 +49,7 @@ namespace Business.Fakes.Handlers.Authorizations
                     FullName = request.FullName,
                     PasswordHash = passwordHash,
                     PasswordSalt = passwordSalt,
-                    Status = true
+                    Status = true,
                 };
 
                 _userRepository.Add(user);

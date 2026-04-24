@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using Business.Constants;
 using Business.Handlers.Authorizations.Commands;
 using Business.Handlers.Authorizations.Queries;
@@ -15,10 +16,11 @@ using Core.Utilities.Security.Jwt;
 using DataAccess.Abstract;
 using FluentAssertions;
 using MediatR;
+using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using NUnit.Framework;
 using Tests.Helpers;
-using static Business.Handlers.Authorizations.Commands.ForgotPasswordCommand;
+using static Business.Handlers.Authorizations.Commands.RequestPasswordResetCommand;
 using static Business.Handlers.Authorizations.Queries.LoginUserQuery;
 using static Business.Handlers.Authorizations.Queries.LoginWithRefreshTokenQuery;
 using static Business.Handlers.Authorizations.Commands.RegisterUserCommand;
@@ -37,13 +39,13 @@ namespace Tests.Business.Handlers
         private Mock<IMediator> _mediator;
         private Mock<ICacheManager> _cacheManager;
         private Mock<IMailService> _mailService;
+        private IConfiguration _configuration;
 
         private LoginUserQueryHandler _loginUserQueryHandler;
         private LoginUserQuery _loginUserQuery;
         private RegisterUserCommandHandler _registerUserCommandHandler;
         private RegisterUserCommand _command;
-        private ForgotPasswordCommandHandler _forgotPasswordCommandHandler;
-        private ForgotPasswordCommand _forgotPasswordCommand;
+        private RequestPasswordResetCommandHandler _requestPasswordResetCommandHandler;
 
         [SetUp]
         public void Setup()
@@ -55,13 +57,29 @@ namespace Tests.Business.Handlers
             _mediator = new Mock<IMediator>();
             _cacheManager = new Mock<ICacheManager>();
             _mailService = new Mock<IMailService>();
+            _configuration = new ConfigurationBuilder()
+                .AddInMemoryCollection(new Dictionary<string, string>
+                {
+                    ["AppSettings:Mode"] = "Development",
+                    ["EmailConfiguration:SmtpServer"] = "",
+                    ["EmailConfiguration:SenderEmail"] = "",
+                    ["PasswordReset:CodeValidityMinutes"] = "15",
+                })
+                .Build();
 
             _loginUserQueryHandler = new LoginUserQueryHandler(_userRepository.Object, _tokenHelper.Object, _mediator.Object, _cacheManager.Object);
             _registerUserCommandHandler = new RegisterUserCommandHandler(
                 _userRepository.Object,
                 _groupRepository.Object,
-                _userGroupRepository.Object);
-            _forgotPasswordCommandHandler = new ForgotPasswordCommandHandler(_userRepository.Object, _mailService.Object);
+                _userGroupRepository.Object,
+                _mailService.Object,
+                _configuration,
+                NullLogger<RegisterUserCommandHandler>.Instance);
+            _requestPasswordResetCommandHandler = new RequestPasswordResetCommandHandler(
+                _userRepository.Object,
+                _mailService.Object,
+                _configuration,
+                NullLogger<RequestPasswordResetCommandHandler>.Instance);
         }
 
         [Test]
@@ -166,23 +184,26 @@ namespace Tests.Business.Handlers
             };
             var result = await _registerUserCommandHandler.Handle(_command, CancellationToken.None);
 
-            result.Message.Should().Be(Messages.Added);
+            result.Message.Should().Be(Messages.RegistrationPendingVerification);
         }
 
         [Test]
-        public async Task Handler_ForgotPassword()
+        public async Task Handler_RequestPasswordReset_WithUser_SavesCode()
         {
             var user = DataHelper.GetUser("test");
             _userRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<User, bool>>>()))
                 .Returns(() => Task.FromResult(user));
-            _forgotPasswordCommand = new ForgotPasswordCommand
-            {
-                Email = user.Email,
-                UserId = Convert.ToString(user.UserId)
-            };
-            var result =
-                await _forgotPasswordCommandHandler.Handle(_forgotPasswordCommand, new CancellationToken());
+            _userRepository.Setup(x => x.Update(It.IsAny<User>())).Returns((User u) => u);
+            _userRepository.Setup(x => x.SaveChangesAsync()).ReturnsAsync(1);
+
+            var cmd = new RequestPasswordResetCommand { Email = user.Email };
+            var result = await _requestPasswordResetCommandHandler.Handle(cmd, new CancellationToken());
+
             result.Success.Should().BeTrue();
+            result.Message.Should().Be(Messages.PasswordResetRequestSent);
+            _userRepository.Verify(x => x.Update(It.IsAny<User>()), Times.Once);
+            _userRepository.Verify(x => x.SaveChangesAsync(), Times.Once);
+            _mailService.Verify(x => x.Send(It.IsAny<EmailMessage>()), Times.Never);
         }
     }
 }

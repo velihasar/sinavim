@@ -1,4 +1,5 @@
-﻿using System.Threading;
+using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Business.BusinessAspects;
 using Business.Constants;
@@ -36,9 +37,20 @@ namespace Business.Handlers.Users.Commands
             public async Task<IResult> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
             {
                 var isThereAnyUser = await _userRepository.GetAsync(u => u.UserId == request.UserId);
+                if (isThereAnyUser == null)
+                {
+                    return new ErrorResult(Messages.UserNotFound);
+                }
+
+                var incoming = (request.Email ?? string.Empty).Trim();
+                var current = (isThereAnyUser.Email ?? string.Empty).Trim();
+                if (!string.Equals(incoming, current, StringComparison.OrdinalIgnoreCase))
+                {
+                    return new ErrorResult(Messages.EmailChangeRequiresVerification);
+                }
 
                 isThereAnyUser.FullName = request.FullName;
-                isThereAnyUser.Email = request.Email;
+                isThereAnyUser.Email = incoming;
                 isThereAnyUser.MobilePhones = request.MobilePhones;
                 isThereAnyUser.Address = request.Address;
                 isThereAnyUser.Notes = request.Notes;

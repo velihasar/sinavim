@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Business.BusinessAspects;
@@ -8,6 +8,7 @@ using Core.Aspects.Autofac.Logging;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Entities.Concrete;
 using Core.Utilities.Results;
+using Core.Utilities.Security.Hashing;
 using DataAccess.Abstract;
 using MediatR;
 
@@ -47,7 +48,7 @@ namespace Business.Handlers.Users.Commands
 
                 if (isThereAnyUser != null)
                 {
-                    return new ErrorResult(Messages.NameAlreadyExist);
+                    return new ErrorResult(Messages.EmailAlreadyRegistered);
                 }
 
                 var user = new User
@@ -59,11 +60,20 @@ namespace Business.Handlers.Users.Commands
                     BirthDate = request.BirthDate,
                     Gender = request.Gender,
                     Notes = request.Notes,
-                    MobilePhones = request.MobilePhones
+                    MobilePhones = request.MobilePhones,
                 };
+
+                var plainPassword = (request.Password ?? string.Empty).Trim();
+                if (!string.IsNullOrEmpty(plainPassword))
+                {
+                    HashingHelper.CreatePasswordHash(plainPassword, out var passwordSalt, out var passwordHash);
+                    user.PasswordSalt = passwordSalt;
+                    user.PasswordHash = passwordHash;
+                }
 
                 _userRepository.Add(user);
                 await _userRepository.SaveChangesAsync();
+
                 return new SuccessResult(Messages.Added);
             }
         }

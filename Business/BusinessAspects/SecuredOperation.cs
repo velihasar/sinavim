@@ -97,7 +97,15 @@ namespace Business.BusinessAspects
 
             // Özel durumlar: Kullanıcı kendi profilini güncelliyorsa izin ver
             // Bu kontrolü cache kontrolünden önce yapıyoruz
-            var allowedSelfUpdateOperations = new[] { "UpdateUserCommand", "ChangeEmailCommand", "CancelEmailChangeCommand", "UserChangePasswordCommand" };
+            var allowedSelfUpdateOperations = new[]
+            {
+                "UpdateUserCommand",
+                "ChangeEmailCommand",
+                "CancelEmailChangeCommand",
+                "UserChangePasswordCommand",
+                "RequestEmailChangeCommand",
+                "ConfirmEmailChangeCommand",
+            };
 
             if (allowedSelfUpdateOperations.Contains(operationName) && invocation.Arguments != null && invocation.Arguments.Length > 0)
             {

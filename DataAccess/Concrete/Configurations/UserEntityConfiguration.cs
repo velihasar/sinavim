@@ -1,4 +1,4 @@
-﻿using Core.Entities.Concrete;
+using Core.Entities.Concrete;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -18,6 +18,11 @@ namespace DataAccess.Concrete.Configurations
             builder.Property(x => x.Address).HasMaxLength(200);
             builder.Property(x => x.MobilePhones).HasMaxLength(30);
             builder.Property(x => x.Notes).HasMaxLength(500);
+            builder.Property(x => x.PasswordResetToken).HasMaxLength(32).IsRequired(false);
+            builder.Property(x => x.PasswordResetTokenExpiry).IsRequired(false);
+            builder.Property(x => x.EmailVerificationToken).HasMaxLength(32).IsRequired(false);
+            builder.Property(x => x.EmailVerificationTokenExpiry).IsRequired(false);
+            builder.Property(x => x.PendingEmail).HasMaxLength(50).IsRequired(false);
 
             builder.HasIndex(x => x.UserId);
             builder.HasIndex(x => x.Email);

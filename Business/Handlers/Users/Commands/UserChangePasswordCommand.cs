@@ -1,8 +1,10 @@
-﻿using System.Threading;
+using System.Threading;
 using System.Threading.Tasks;
 using Business.BusinessAspects;
 using Business.Constants;
+using Business.Handlers.Authorizations.ValidationRules;
 using Core.Aspects.Autofac.Logging;
+using Core.Aspects.Autofac.Validation;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Utilities.Results;
 using Core.Utilities.Security.Hashing;
@@ -14,6 +16,7 @@ namespace Business.Handlers.Users.Commands
     public class UserChangePasswordCommand : IRequest<IResult>
     {
         public int UserId { get; set; }
+        public string OldPassword { get; set; }
         public string Password { get; set; }
 
         public class UserChangePasswordCommandHandler : IRequestHandler<UserChangePasswordCommand, IResult>
@@ -28,6 +31,7 @@ namespace Business.Handlers.Users.Commands
             }
 
             [SecuredOperation(Priority = 1)]
+            [ValidationAspect(typeof(UserChangePasswordValidator), Priority = 2)]
             [LogAspect(typeof(FileLogger))]
             public async Task<IResult> Handle(UserChangePasswordCommand request, CancellationToken cancellationToken)
             {
@@ -35,6 +39,14 @@ namespace Business.Handlers.Users.Commands
                 if (isThereAnyUser == null)
                 {
                     return new ErrorResult(Messages.UserNotFound);
+                }
+
+                if (!HashingHelper.VerifyPasswordHash(
+                        request.OldPassword ?? string.Empty,
+                        isThereAnyUser.PasswordSalt,
+                        isThereAnyUser.PasswordHash))
+                {
+                    return new ErrorResult(Messages.CurrentPasswordIncorrect);
                 }
 
                 HashingHelper.CreatePasswordHash(request.Password, out var passwordSalt, out var passwordHash);

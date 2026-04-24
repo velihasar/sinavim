@@ -39,6 +39,20 @@ namespace Core.Extensions
         }
 
         /// <summary>
+        /// PostgreSQL <c>timestamp without time zone</c> kolonuna yazmak için: UTC anı, <see cref="DateTimeKind.Unspecified"/> ile (Npgsql kuralı).
+        /// </summary>
+        public static DateTime UtcNowPlusMinutesForNpgsqlTimestamp(int minutes)
+        {
+            return DateTime.SpecifyKind(DateTime.UtcNow.AddMinutes(minutes), DateTimeKind.Unspecified);
+        }
+
+        /// <summary><c>timestamp without time zone</c> kolonundan gelen süre ile aynı Kind ile şu anı karşılaştırmak için.</summary>
+        public static DateTime UtcNowForNpgsqlTimestampCompare()
+        {
+            return DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Unspecified);
+        }
+
+        /// <summary>
         /// PostgreSQL <c>timestamp without time zone</c> ile Npgsql: <see cref="DateTimeKind.Utc"/> / <see cref="DateTimeKind.Local"/>
         /// parametre veya kolon yazımında hata verir; günlük tarih için <see cref="DateTimeKind.Unspecified"/> üretir.
         /// </summary>

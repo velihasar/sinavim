@@ -1,10 +1,12 @@
-﻿namespace Core.Entities.Dtos
+namespace Core.Entities.Dtos
 {
     public class UserDto : IEntity
     {
         public int UserId { get; set; }
         public string FullName { get; set; }
         public string Email { get; set; }
+        /// <summary>Doğrulanmayı bekleyen yeni adres; yoksa null/boş.</summary>
+        public string PendingEmail { get; set; }
         public string MobilePhones { get; set; }
         public string Address { get; set; }
         public string Notes { get; set; }

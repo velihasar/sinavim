@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Linq;
 using System.Net;
 using System.Security;
 using System.Threading.Tasks;
@@ -37,9 +38,16 @@ namespace Core.Extensions
             httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
             _ = e.Message;
             string message;
-            if (e.GetType() == typeof(ValidationException))
+            if (e is ValidationException ve)
             {
-                message = e.Message;
+                var parts = ve.Errors
+                    .Select(err => err.ErrorMessage)
+                    .Where(m => !string.IsNullOrWhiteSpace(m))
+                    .Distinct()
+                    .ToList();
+                message = parts.Count > 0
+                    ? string.Join(" ", parts)
+                    : "Bilgiler doğrulanamadı. Lütfen kontrol edip tekrar deneyin.";
                 httpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
             }
             else if (e.GetType() == typeof(ApplicationException))

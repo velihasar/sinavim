@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Business.Handlers.Authorizations.Commands;
 using Business.Handlers.Authorizations.Queries;
 using Business.Handlers.Users.Commands;
@@ -67,20 +67,85 @@ namespace WebAPI.Controllers
         }
 
         /// <summary>
-        /// Make it Forgot Password operations
+        /// Kayıt sonrası e-posta doğrulama: 6 haneli kod ile onaylama.
         /// </summary>
-        /// <remarks>tckimlikno</remarks>
-        /// <return></return>
-        /// <response code="200"></response>
         [AllowAnonymous]
         [Consumes("application/json")]
         [Produces("application/json", "text/plain")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IResult))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(IResult))]
-        [HttpPut("forgot-password")]
-        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordCommand forgotPassword)
+        [HttpPost("verify-email/confirm")]
+        public async Task<IActionResult> ConfirmEmail([FromBody] ConfirmEmailCommand command)
         {
-            return GetResponseOnlyResult(await Mediator.Send(forgotPassword));
+            return GetResponseOnlyResult(await Mediator.Send(command));
+        }
+
+        /// <summary>
+        /// Doğrulanmamış hesaba yeni e-posta doğrulama kodu gönderir.
+        /// </summary>
+        [AllowAnonymous]
+        [Consumes("application/json")]
+        [Produces("application/json", "text/plain")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IResult))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(IResult))]
+        [HttpPost("verify-email/request")]
+        public async Task<IActionResult> RequestEmailVerification([FromBody] RequestEmailVerificationCommand command)
+        {
+            return GetResponseOnlyResult(await Mediator.Send(command));
+        }
+
+        /// <summary>
+        /// Giriş yapmış kullanıcı: yeni e-posta adresine doğrulama kodu gönderir.
+        /// </summary>
+        [Consumes("application/json")]
+        [Produces("application/json", "text/plain")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IResult))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(IResult))]
+        [HttpPost("verify-email/change/request")]
+        public async Task<IActionResult> RequestEmailChange([FromBody] RequestEmailChangeCommand command)
+        {
+            return GetResponseOnlyResult(await Mediator.Send(command));
+        }
+
+        /// <summary>
+        /// Yeni e-posta adresine gelen kod ile adres değişikliğini onaylar.
+        /// </summary>
+        [Consumes("application/json")]
+        [Produces("application/json", "text/plain")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IResult))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(IResult))]
+        [HttpPost("verify-email/change/confirm")]
+        public async Task<IActionResult> ConfirmEmailChange([FromBody] ConfirmEmailChangeCommand command)
+        {
+            return GetResponseOnlyResult(await Mediator.Send(command));
+        }
+
+        /// <summary>
+        /// Şifre sıfırlama: e-posta ile 6 haneli kod talebi (kayıtlı adreslere gönderilir).
+        /// </summary>
+        [AllowAnonymous]
+        [Consumes("application/json")]
+        [Produces("application/json", "text/plain")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IResult))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(IResult))]
+        [HttpPost("forgot-password/request")]
+        public async Task<IActionResult> RequestPasswordReset([FromBody] RequestPasswordResetCommand command)
+        {
+            return GetResponseOnlyResult(await Mediator.Send(command));
+        }
+
+        /// <summary>
+        /// Şifre sıfırlama: kod ve yeni şifre ile onaylama.
+        /// </summary>
+        [AllowAnonymous]
+        [Consumes("application/json")]
+        [Produces("application/json", "text/plain")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IResult))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(IResult))]
+        [HttpPost("forgot-password/confirm")]
+        public async Task<IActionResult> ConfirmPasswordReset([FromBody] ConfirmPasswordResetCommand command)
+        {
+            return GetResponseOnlyResult(await Mediator.Send(command));
         }
 
         /// <summary>
