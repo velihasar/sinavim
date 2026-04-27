@@ -51,6 +51,11 @@ namespace Core.Utilities.Mail
             var message = new MimeMessage();
             message.To.AddRange(emailMessage.ToAddresses.Select(x => new MailboxAddress(x.Name, x.Address)));
             message.From.AddRange(emailMessage.FromAddresses.Select(x => new MailboxAddress(x.Name, x.Address)));
+            if (emailMessage.ReplyToAddresses != null && emailMessage.ReplyToAddresses.Count > 0)
+            {
+                message.ReplyTo.AddRange(
+                    emailMessage.ReplyToAddresses.Select(x => new MailboxAddress(x.Name, x.Address)));
+            }
 
             message.Subject = emailMessage.Subject;
 

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 namespace Core.Utilities.Mail
 {
@@ -8,10 +8,13 @@ namespace Core.Utilities.Mail
         {
             ToAddresses = new List<EmailAddress>();
             FromAddresses = new List<EmailAddress>();
+            ReplyToAddresses = new List<EmailAddress>();
         }
 
         public List<EmailAddress> ToAddresses { get; set; }
         public List<EmailAddress> FromAddresses { get; set; }
+        /// <summary>İsteğe bağlı; doluysa MailKit Reply-To başlığına yazılır.</summary>
+        public List<EmailAddress> ReplyToAddresses { get; set; }
         public string Subject { get; set; }
         public string Content { get; set; }
     }

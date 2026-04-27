@@ -63,12 +63,12 @@ namespace Business.Handlers.Authorizations.Commands
                     return new ErrorResult(Messages.EmailChangeInvalidOrExpired);
                 }
 
-                var pendingNorm = user.PendingEmail.Trim().ToLowerInvariant();
+                var pendingNormForDb = user.PendingEmail.Trim().ToLower();
                 var conflict = await _userRepository.GetAsync(u =>
                     u.UserId != user.UserId &&
                     u.Status &&
                     u.Email != null &&
-                    u.Email.Trim().ToLowerInvariant() == pendingNorm);
+                    u.Email.Trim().ToLower() == pendingNormForDb);
                 if (conflict != null)
                 {
                     return new ErrorResult(Messages.EmailAlreadyRegistered);

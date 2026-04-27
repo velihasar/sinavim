@@ -62,17 +62,19 @@ namespace Business.Handlers.Authorizations.Commands
                     return new ErrorResult(Messages.EmailNotVerified);
                 }
 
-                var normalizedNew = (request.NewEmail ?? string.Empty).Trim().ToLowerInvariant();
-                var currentNorm = (user.Email ?? string.Empty).Trim().ToLowerInvariant();
-                if (string.Equals(normalizedNew, currentNorm, StringComparison.Ordinal))
+                var newTrim = (request.NewEmail ?? string.Empty).Trim();
+                var currentTrim = (user.Email ?? string.Empty).Trim();
+                if (string.Equals(newTrim, currentTrim, StringComparison.OrdinalIgnoreCase))
                 {
                     return new ErrorResult(Messages.EmailChangeSameAsCurrent);
                 }
 
+                // EF / Npgsql: ToLowerInvariant LINQ içinde çevrilemez; ToLower() kullan.
+                var normalizedNewForDb = newTrim.ToLower();
                 var takenAsEmail = await _userRepository.GetAsync(u =>
                     u.UserId != user.UserId &&
                     u.Email != null &&
-                    u.Email.Trim().ToLowerInvariant() == normalizedNew);
+                    u.Email.Trim().ToLower() == normalizedNewForDb);
                 if (takenAsEmail != null)
                 {
                     return new ErrorResult(Messages.EmailAlreadyRegistered);
@@ -81,7 +83,7 @@ namespace Business.Handlers.Authorizations.Commands
                 var takenAsPending = await _userRepository.GetAsync(u =>
                     u.UserId != user.UserId &&
                     u.PendingEmail != null &&
-                    u.PendingEmail.Trim().ToLowerInvariant() == normalizedNew);
+                    u.PendingEmail.Trim().ToLower() == normalizedNewForDb);
                 if (takenAsPending != null)
                 {
                     return new ErrorResult(Messages.EmailAlreadyRegistered);
