@@ -12,8 +12,9 @@ services:
     build:
       context: .
       dockerfile: WebAPI/Dockerfile
+    # Host 8080 başka servisle (ör. Cüzdanım) çakışmasın diye farklı port
     ports:
-      - '8080:80'
+      - '8090:80'
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - 'ASPNETCORE_URLS=http://+:80'
