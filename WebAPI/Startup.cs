@@ -55,6 +55,84 @@ namespace WebAPI
         /// <param name="services"></param>
         public override void ConfigureServices(IServiceCollection services)
         {
+            // Coolify / ortam değişkenleri — Cüzdanım ile aynı anahtarlar (DB_*, JWT_*, SMTP_*, …).
+            var dbHost = Environment.GetEnvironmentVariable("DB_HOST");
+            var dbPort = Environment.GetEnvironmentVariable("DB_PORT");
+            var dbName = Environment.GetEnvironmentVariable("DB_NAME");
+            var dbUser = Environment.GetEnvironmentVariable("DB_USER");
+            var dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD");
+            var hangfireDbName = Environment.GetEnvironmentVariable("HANGFIRE_DB_NAME") ?? "sinavim_hangfire";
+            var hangfireConnectionString = Environment.GetEnvironmentVariable("HANGFIRE_CONNECTION_STRING");
+
+            if (!string.IsNullOrEmpty(dbHost) && !string.IsNullOrEmpty(dbPort) &&
+                !string.IsNullOrEmpty(dbName) && !string.IsNullOrEmpty(dbUser) &&
+                !string.IsNullOrEmpty(dbPassword))
+            {
+                if (string.IsNullOrEmpty(hangfireConnectionString))
+                {
+                    hangfireConnectionString =
+                        $"Host={dbHost};Port={dbPort};Database={hangfireDbName};Username={dbUser};Password={dbPassword};Command Timeout=30;Timeout=30;";
+                }
+
+                var pgConnectionString =
+                    $"Host={dbHost};Port={dbPort};Database={dbName};Username={dbUser};Password={dbPassword};Command Timeout=60;Timeout=60;Connection Lifetime=0;Pooling=true;MinPoolSize=1;MaxPoolSize=20;";
+
+                Configuration["ConnectionStrings:DArchPgContext"] = pgConnectionString;
+                Configuration["TaskSchedulerOptions:ConnectionString"] = hangfireConnectionString;
+                Configuration["SeriLogConfigurations:PostgreConfiguration:ConnectionString"] = pgConnectionString;
+            }
+            else if (!string.IsNullOrEmpty(hangfireConnectionString))
+            {
+                Configuration["TaskSchedulerOptions:ConnectionString"] = hangfireConnectionString;
+            }
+
+            var jwtIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER");
+            var jwtAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE");
+            var jwtSecurityKey = Environment.GetEnvironmentVariable("JWT_SECURITY_KEY");
+            if (!string.IsNullOrEmpty(jwtIssuer))
+                Configuration["TokenOptions:Issuer"] = jwtIssuer;
+            if (!string.IsNullOrEmpty(jwtAudience))
+                Configuration["TokenOptions:Audience"] = jwtAudience;
+            if (!string.IsNullOrEmpty(jwtSecurityKey))
+                Configuration["TokenOptions:SecurityKey"] = jwtSecurityKey;
+
+            var googleClientId0 = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_ID_0");
+            var googleClientId33 = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_ID_33");
+            if (!string.IsNullOrEmpty(googleClientId0))
+                Configuration["GoogleAuth:ClientIds:0"] = googleClientId0;
+            if (!string.IsNullOrEmpty(googleClientId33))
+                Configuration["GoogleAuth:ClientIds:33"] = googleClientId33;
+
+            void SetFromEnv(string envName, string configKey)
+            {
+                var v = Environment.GetEnvironmentVariable(envName);
+                if (!string.IsNullOrEmpty(v))
+                    Configuration[configKey] = v;
+            }
+
+            SetFromEnv("BASE_URL", "AppSettings:BaseUrl");
+            SetFromEnv("FRONTEND_URL", "AppSettings:FrontendUrl");
+            SetFromEnv("SMTP_SERVER", "EmailConfiguration:SmtpServer");
+            SetFromEnv("SMTP_PORT", "EmailConfiguration:SmtpPort");
+            SetFromEnv("SMTP_SENDER_NAME", "EmailConfiguration:SenderName");
+            SetFromEnv("SMTP_SENDER_EMAIL", "EmailConfiguration:SenderEmail");
+            SetFromEnv("SMTP_USERNAME", "EmailConfiguration:UserName");
+            SetFromEnv("SMTP_PASSWORD", "EmailConfiguration:Password");
+            SetFromEnv("REDIS_HOST", "CacheOptions:Host");
+            SetFromEnv("REDIS_PORT", "CacheOptions:Port");
+            SetFromEnv("REDIS_PASSWORD", "CacheOptions:Password");
+            SetFromEnv("RABBITMQ_HOST", "MessageBrokerOptions:HostName");
+            SetFromEnv("RABBITMQ_USERNAME", "MessageBrokerOptions:UserName");
+            SetFromEnv("RABBITMQ_PASSWORD", "MessageBrokerOptions:Password");
+            SetFromEnv("ELASTICSEARCH_URL", "ElasticSearchConfig:ConnectionString");
+            SetFromEnv("ELASTICSEARCH_USERNAME", "ElasticSearchConfig:UserName");
+            SetFromEnv("ELASTICSEARCH_PASSWORD", "ElasticSearchConfig:Password");
+            SetFromEnv("MONGODB_CONNECTIONSTRING", "MongoDbSettings:ConnectionString");
+            SetFromEnv("MONGODB_DATABASE", "MongoDbSettings:DatabaseName");
+            SetFromEnv("TEAMS_WEBHOOK_URL", "SeriLogConfigurations:MSTeamsConfiguration:ChannelHookAdress");
+            SetFromEnv("HANGFIRE_USERNAME", "TaskSchedulerOptions:Username");
+            SetFromEnv("HANGFIRE_PASSWORD", "TaskSchedulerOptions:Password");
+
             // Business katmanında olan dependency tanımlarının bir metot üzerinden buraya implemente edilmesi.
 
             services.AddControllers()
