@@ -1,0 +1,22 @@
+# Sinavım backend — Coolify (Cüzdanım düzenine benzer).
+# Bu dosya BE kökünde; build context = bu klasör.
+# .env dosyasını BE yanına koy veya Coolify ortam değişkenlerini kullan.
+
+version: '3.8'
+
+services:
+  webapi:
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
+    build:
+      context: .
+      dockerfile: WebAPI/Dockerfile
+    ports:
+      - '8080:80'
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - 'ASPNETCORE_URLS=http://+:80'
+    env_file:
+      - .env
+    restart: unless-stopped
