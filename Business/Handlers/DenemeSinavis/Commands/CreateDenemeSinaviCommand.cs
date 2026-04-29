@@ -55,9 +55,9 @@ namespace Business.Handlers.DenemeSinavis.Commands
                     UserId = request.UserId,
                     SinavId = request.SinavId,
                     SinavBolumId = request.SinavBolumId,
-                    Tarih = request.Tarih,
+                    Tarih = request.Tarih.ToNpgsqlTimestamp(),
                     CreatedBy = UserInfoExtensions.GetUserId(),
-                    CreatedDate = System.DateTime.Now,
+                    CreatedDate = DateTimeExtensions.NowForNpgsqlTimestamp(),
                     IsActive = true
                 };
 

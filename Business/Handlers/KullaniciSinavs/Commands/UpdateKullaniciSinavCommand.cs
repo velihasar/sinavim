@@ -55,7 +55,7 @@ namespace Business.Handlers.KullaniciSinavs.Commands
                 isThereKullaniciSinavRecord.SinavId = request.SinavId;
                 isThereKullaniciSinavRecord.HedefPuan = request.HedefPuan;
                 isThereKullaniciSinavRecord.UpdatedBy = UserInfoExtensions.GetUserId();
-                isThereKullaniciSinavRecord.UpdatedDate = System.DateTime.Now;
+                isThereKullaniciSinavRecord.UpdatedDate = DateTimeExtensions.NowForNpgsqlTimestamp();
 
 
                 _kullaniciSinavRepository.Update(isThereKullaniciSinavRecord);

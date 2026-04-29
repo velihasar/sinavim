@@ -1,10 +1,11 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Business.Adapters.SmsService;
 using Business.Constants;
 using Business.Services.Authentication.Model;
 using Core.Entities.Concrete;
+using Core.Extensions;
 using Core.Utilities.Results;
 using Core.Utilities.Toolkit;
 using DataAccess.Abstract;
@@ -26,7 +27,7 @@ namespace Business.Services.Authentication
         public virtual async Task<IDataResult<DArchToken>> Verify(VerifyOtpCommand command)
         {
             var externalUserId = command.ExternalUserId;
-            var date = DateTime.Now;
+            var date = DateTimeExtensions.NowForNpgsqlTimestamp();
             var login = await _logins.GetAsync(m => m.Provider == command.Provider && m.Code == command.Code &&
                                                     m.ExternalUserId == externalUserId &&
                                                     m.SendDate.AddSeconds(100) > date);
@@ -75,7 +76,7 @@ namespace Business.Services.Authentication
                     {
                         Code = mobileCode,
                         IsSend = sendSms,
-                        SendDate = DateTime.Now,
+                        SendDate = DateTimeExtensions.NowForNpgsqlTimestamp(),
                         ExternalUserId = externalUserId,
                         Provider = providerType,
                         IsUsed = false

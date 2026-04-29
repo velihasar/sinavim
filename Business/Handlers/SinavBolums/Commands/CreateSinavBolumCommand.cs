@@ -52,7 +52,7 @@ namespace Business.Handlers.SinavBolums.Commands
                     SinavId = request.SinavId,
                     Isim = request.Isim,
                     CreatedBy = UserInfoExtensions.GetUserId(),
-                    CreatedDate = System.DateTime.Now,
+                    CreatedDate = DateTimeExtensions.NowForNpgsqlTimestamp(),
                     IsActive = true
                 };
 

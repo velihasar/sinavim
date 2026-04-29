@@ -55,7 +55,7 @@ namespace Business.Handlers.SinavBolums.Commands
                 entity.SinavId = request.SinavId;
                 entity.Isim = request.Isim;
                 entity.UpdatedBy = UserInfoExtensions.GetUserId();
-                entity.UpdatedDate = System.DateTime.Now;
+                entity.UpdatedDate = DateTimeExtensions.NowForNpgsqlTimestamp();
 
                 _sinavBolumRepository.Update(entity);
                 await _sinavBolumRepository.SaveChangesAsync();

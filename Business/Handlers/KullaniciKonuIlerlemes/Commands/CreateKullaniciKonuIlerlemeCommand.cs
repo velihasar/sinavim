@@ -57,7 +57,7 @@ namespace Business.Handlers.KullaniciKonuIlerlemes.Commands
                     KonuId = request.KonuId,
                     Durum = request.Durum,
                     CreatedBy = UserInfoExtensions.GetUserId(),
-                    CreatedDate = System.DateTime.Now,
+                    CreatedDate = DateTimeExtensions.NowForNpgsqlTimestamp(),
                     IsActive = true
                 };
 

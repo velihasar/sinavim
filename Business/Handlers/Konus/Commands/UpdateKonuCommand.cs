@@ -55,7 +55,7 @@ namespace Business.Handlers.Konus.Commands
                 isThereKonuRecord.SiraNo = request.SiraNo;
                 isThereKonuRecord.DersId = request.DersId;
                 isThereKonuRecord.UpdatedBy = UserInfoExtensions.GetUserId();
-                isThereKonuRecord.UpdatedDate = System.DateTime.Now;
+                isThereKonuRecord.UpdatedDate = DateTimeExtensions.NowForNpgsqlTimestamp();
 
 
                 _konuRepository.Update(isThereKonuRecord);

@@ -1,3 +1,4 @@
+using System;
 using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
@@ -16,6 +17,9 @@ namespace WebAPI
         /// <param name="args"></param>
         public static void Main(string[] args)
         {
+            // Legacy timestamp + infinity/-infinity okuma (DB'de PG infinity varsa true ile patlar).
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+            AppContext.SetSwitch("Npgsql.DisableDateTimeInfinityConversions", false);
             CreateHostBuilder(args).Build().Run();
         }
 

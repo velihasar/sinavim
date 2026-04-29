@@ -83,7 +83,7 @@ namespace Business.Handlers.DenemeSinavSonucus.Commands
                 isThereDenemeSinavSonucuRecord.BosSayisi = request.BosSayisi;
                 isThereDenemeSinavSonucuRecord.ToplamNet = request.ToplamNet;
                 isThereDenemeSinavSonucuRecord.UpdatedBy = UserInfoExtensions.GetUserId();
-                isThereDenemeSinavSonucuRecord.UpdatedDate = System.DateTime.Now;
+                isThereDenemeSinavSonucuRecord.UpdatedDate = DateTimeExtensions.NowForNpgsqlTimestamp();
 
 
                 _denemeSinavSonucuRepository.Update(isThereDenemeSinavSonucuRecord);

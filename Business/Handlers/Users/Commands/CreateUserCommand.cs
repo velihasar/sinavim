@@ -7,6 +7,7 @@ using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Entities.Concrete;
+using Core.Extensions;
 using Core.Utilities.Results;
 using Core.Utilities.Security.Hashing;
 using DataAccess.Abstract;
@@ -57,7 +58,7 @@ namespace Business.Handlers.Users.Commands
                     FullName = request.FullName,
                     Status = true,
                     Address = request.Address,
-                    BirthDate = request.BirthDate,
+                    BirthDate = request.BirthDate.ToNpgsqlTimestamp(),
                     Gender = request.Gender,
                     Notes = request.Notes,
                     MobilePhones = request.MobilePhones,
