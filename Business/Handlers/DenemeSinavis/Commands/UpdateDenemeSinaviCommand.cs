@@ -69,9 +69,9 @@ namespace Business.Handlers.DenemeSinavis.Commands
                 isThereDenemeSinaviRecord.Aciklama = request.Aciklama;
                 isThereDenemeSinaviRecord.SinavId = request.SinavId;
                 isThereDenemeSinaviRecord.SinavBolumId = request.SinavBolumId;
-                isThereDenemeSinaviRecord.Tarih = request.Tarih;
+                isThereDenemeSinaviRecord.Tarih = request.Tarih.ToNpgsqlTimestamp();
                 isThereDenemeSinaviRecord.UpdatedBy = UserInfoExtensions.GetUserId();
-                isThereDenemeSinaviRecord.UpdatedDate = System.DateTime.Now;
+                isThereDenemeSinaviRecord.UpdatedDate = DateTimeExtensions.NowForNpgsqlTimestamp();
 
 
                 _denemeSinaviRepository.Update(isThereDenemeSinaviRecord);

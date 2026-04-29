@@ -74,7 +74,7 @@ namespace Business.Handlers.KullaniciSinavs.Commands
                     SinavId = request.SinavId,
                     HedefPuan = request.HedefPuan,
                     CreatedBy = userId,
-                    CreatedDate = System.DateTime.Now,
+                    CreatedDate = DateTimeExtensions.NowForNpgsqlTimestamp(),
                     IsActive = true
                 };
 

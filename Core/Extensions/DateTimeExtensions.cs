@@ -53,6 +53,28 @@ namespace Core.Extensions
         }
 
         /// <summary>
+        /// Audit (<c>CreatedDate</c>, <c>UpdatedDate</c>) için: UTC anı, <see cref="DateTimeKind.Unspecified"/> — <c>timestamp without time zone</c>.
+        /// </summary>
+        public static DateTime NowForNpgsqlTimestamp()
+        {
+            return DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Unspecified);
+        }
+
+        /// <summary>
+        /// API/JSON ile gelen tam tarih-saat (çoğu zaman <see cref="DateTimeKind.Utc"/>) değerini <c>timestamp without time zone</c> kolonuna yazılabilir hale getirir.
+        /// </summary>
+        public static DateTime ToNpgsqlTimestamp(this DateTime value)
+        {
+            return DateTime.SpecifyKind(value, DateTimeKind.Unspecified);
+        }
+
+        /// <inheritdoc cref="ToNpgsqlTimestamp(DateTime)"/>
+        public static DateTime? ToNpgsqlTimestamp(this DateTime? value)
+        {
+            return value.HasValue ? value.Value.ToNpgsqlTimestamp() : null;
+        }
+
+        /// <summary>
         /// PostgreSQL <c>timestamp without time zone</c> ile Npgsql: <see cref="DateTimeKind.Utc"/> / <see cref="DateTimeKind.Local"/>
         /// parametre veya kolon yazımında hata verir; günlük tarih için <see cref="DateTimeKind.Unspecified"/> üretir.
         /// </summary>

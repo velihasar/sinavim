@@ -79,7 +79,7 @@ namespace Business.Handlers.Derses.Commands
                 isThereDersRecord.SinavId = request.SinavId;
                 isThereDersRecord.SinavBolumId = request.SinavBolumId;
                 isThereDersRecord.UpdatedBy = UserInfoExtensions.GetUserId();
-                isThereDersRecord.UpdatedDate = System.DateTime.Now;
+                isThereDersRecord.UpdatedDate = DateTimeExtensions.NowForNpgsqlTimestamp();
 
 
                 _dersRepository.Update(isThereDersRecord);

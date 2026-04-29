@@ -54,7 +54,7 @@ namespace Business.Handlers.Motivasyons.Commands
                 {
                     Kelime = request.Kelime,
                     CreatedBy = UserInfoExtensions.GetUserId(),
-                    CreatedDate = DateTime.Now,
+                    CreatedDate = DateTimeExtensions.NowForNpgsqlTimestamp(),
                     IsActive = true,
                 };
 

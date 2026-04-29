@@ -57,11 +57,11 @@ namespace Business.Handlers.Sinavs.Commands
                     KısaAd = request.KısaAd,
                     Ad = request.Ad,
                     Aciklama = request.Aciklama,
-                    Tarih = request.Tarih,
+                    Tarih = request.Tarih.ToNpgsqlTimestamp(),
                     SiraNo = request.SiraNo,
                     DogruyuGoturenYanlisSay = request.DogruyuGoturenYanlisSay,
                     CreatedBy = UserInfoExtensions.GetUserId(),
-                    CreatedDate = System.DateTime.Now,
+                    CreatedDate = DateTimeExtensions.NowForNpgsqlTimestamp(),
                     IsActive = true
                 };
 

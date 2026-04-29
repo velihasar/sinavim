@@ -51,7 +51,7 @@ namespace Business.Handlers.Motivasyons.Commands
 
                 isThereMotivasyonRecord.Kelime = request.Kelime;
                 isThereMotivasyonRecord.UpdatedBy = UserInfoExtensions.GetUserId();
-                isThereMotivasyonRecord.UpdatedDate = DateTime.Now;
+                isThereMotivasyonRecord.UpdatedDate = DateTimeExtensions.NowForNpgsqlTimestamp();
 
                 _motivasyonRepository.Update(isThereMotivasyonRecord);
                 await _motivasyonRepository.SaveChangesAsync();

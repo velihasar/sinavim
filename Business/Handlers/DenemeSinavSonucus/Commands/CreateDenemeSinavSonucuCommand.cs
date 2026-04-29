@@ -64,7 +64,7 @@ namespace Business.Handlers.DenemeSinavSonucus.Commands
                     BosSayisi = request.BosSayisi,
                     ToplamNet = request.ToplamNet,
                     CreatedBy = UserInfoExtensions.GetUserId(),
-                    CreatedDate = System.DateTime.Now,
+                    CreatedDate = DateTimeExtensions.NowForNpgsqlTimestamp(),
                     IsActive = true
                 };
 

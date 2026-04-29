@@ -55,7 +55,7 @@ namespace Business.Handlers.KullaniciKonuIlerlemes.Commands
                 isThereKullaniciKonuIlerlemeRecord.KonuId = request.KonuId;
                 isThereKullaniciKonuIlerlemeRecord.Durum = request.Durum;
                 isThereKullaniciKonuIlerlemeRecord.UpdatedBy = UserInfoExtensions.GetUserId();
-                isThereKullaniciKonuIlerlemeRecord.UpdatedDate = System.DateTime.Now;
+                isThereKullaniciKonuIlerlemeRecord.UpdatedDate = DateTimeExtensions.NowForNpgsqlTimestamp();
 
 
                 _kullaniciKonuIlerlemeRepository.Update(isThereKullaniciKonuIlerlemeRecord);

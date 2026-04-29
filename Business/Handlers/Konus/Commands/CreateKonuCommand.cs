@@ -57,7 +57,7 @@ namespace Business.Handlers.Konus.Commands
                     SiraNo = request.SiraNo,
                     DersId = request.DersId,
                     CreatedBy = UserInfoExtensions.GetUserId(),
-                    CreatedDate = System.DateTime.Now,
+                    CreatedDate = DateTimeExtensions.NowForNpgsqlTimestamp(),
                     IsActive = true
                 };
 

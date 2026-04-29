@@ -58,11 +58,11 @@ namespace Business.Handlers.Sinavs.Commands
                 isThereSinavRecord.KısaAd = request.KısaAd;
                 isThereSinavRecord.Ad = request.Ad;
                 isThereSinavRecord.Aciklama = request.Aciklama;
-                isThereSinavRecord.Tarih = request.Tarih;
+                isThereSinavRecord.Tarih = request.Tarih.ToNpgsqlTimestamp();
                 isThereSinavRecord.SiraNo = request.SiraNo;
                 isThereSinavRecord.DogruyuGoturenYanlisSay = request.DogruyuGoturenYanlisSay;
                 isThereSinavRecord.UpdatedBy = UserInfoExtensions.GetUserId();
-                isThereSinavRecord.UpdatedDate = System.DateTime.Now;
+                isThereSinavRecord.UpdatedDate = DateTimeExtensions.NowForNpgsqlTimestamp();
 
 
                 _sinavRepository.Update(isThereSinavRecord);

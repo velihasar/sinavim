@@ -66,7 +66,7 @@ namespace Business.Handlers.KullaniciKonuIlerlemes.Commands
                 {
                     existing.Durum = request.Durum;
                     existing.UpdatedBy = userId;
-                    existing.UpdatedDate = DateTime.Now;
+                    existing.UpdatedDate = DateTimeExtensions.NowForNpgsqlTimestamp();
                     _ilerlemeRepository.Update(existing);
                     await _ilerlemeRepository.SaveChangesAsync();
 
@@ -86,7 +86,7 @@ namespace Business.Handlers.KullaniciKonuIlerlemes.Commands
                     KonuId = request.KonuId,
                     Durum = request.Durum,
                     CreatedBy = userId,
-                    CreatedDate = DateTime.Now,
+                    CreatedDate = DateTimeExtensions.NowForNpgsqlTimestamp(),
                     IsActive = true,
                 };
                 _ilerlemeRepository.Add(entity);

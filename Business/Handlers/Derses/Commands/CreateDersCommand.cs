@@ -77,7 +77,7 @@ namespace Business.Handlers.Derses.Commands
                     SinavId = request.SinavId,
                     SinavBolumId = request.SinavBolumId,
                     CreatedBy = UserInfoExtensions.GetUserId(),
-                    CreatedDate = System.DateTime.Now,
+                    CreatedDate = DateTimeExtensions.NowForNpgsqlTimestamp(),
                     IsActive = true
                 };
 
