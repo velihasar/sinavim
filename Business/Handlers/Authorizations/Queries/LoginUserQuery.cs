@@ -53,6 +53,12 @@ namespace Business.Handlers.Authorizations.Queries
                     return new ErrorDataResult<AccessToken>(Messages.EmailNotVerified);
                 }
 
+                if (user.PasswordSalt == null || user.PasswordHash == null)
+                {
+                    return new ErrorDataResult<AccessToken>(
+                        "Bu hesap Google ile oluşturuldu. Lütfen Google ile giriş yapın.");
+                }
+
                 if (!HashingHelper.VerifyPasswordHash(request.Password, user.PasswordSalt, user.PasswordHash))
                 {
                     return new ErrorDataResult<AccessToken>(Messages.PasswordError);

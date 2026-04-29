@@ -53,6 +53,9 @@ namespace Core.Entities.Concrete
         /// <summary>Doğrulanmayı bekleyen yeni e-posta (mevcut <see cref="Email"/> giriş için kullanılmaya devam eder).</summary>
         public string PendingEmail { get; set; }
 
+        /// <summary>Google Sign-In <c>sub</c> (aynı e-posta ile hesap birleştirme).</summary>
+        public string GoogleId { get; set; }
+
         public bool UpdateMobilePhone(string mobilePhone)
         {
             if (MobilePhones == mobilePhone)

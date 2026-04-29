@@ -48,5 +48,6 @@
 		<PackageReference Include="StackExchange.Redis" Version="2.8.22" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="7.2.0" />
 		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.3.0" />
+		<PackageReference Include="Google.Apis.Auth" Version="1.68.0" />
   </ItemGroup>
 </Project>
