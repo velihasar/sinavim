@@ -96,12 +96,27 @@ namespace WebAPI
             if (!string.IsNullOrEmpty(jwtSecurityKey))
                 Configuration["TokenOptions:SecurityKey"] = jwtSecurityKey;
 
-            var googleClientId0 = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_ID_0");
-            var googleClientId33 = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_ID_33");
-            if (!string.IsNullOrEmpty(googleClientId0))
-                Configuration["GoogleAuth:ClientIds:0"] = googleClientId0;
-            if (!string.IsNullOrEmpty(googleClientId33))
-                Configuration["GoogleAuth:ClientIds:33"] = googleClientId33;
+            // Google OAuth — Cüzdanım ile aynı env isimleri (GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, Google__RedirectUri).
+            var googleClientId = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_ID");
+            if (!string.IsNullOrEmpty(googleClientId))
+                Configuration["Google:ClientId"] = googleClientId;
+
+            if (string.IsNullOrEmpty(Configuration["Google:ClientId"]))
+            {
+                var googleWebClientId = Environment.GetEnvironmentVariable("GOOGLE_WEB_CLIENT_ID");
+                if (!string.IsNullOrEmpty(googleWebClientId))
+                    Configuration["Google:ClientId"] = googleWebClientId;
+            }
+
+            var googleClientSecret = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_SECRET");
+            if (!string.IsNullOrEmpty(googleClientSecret))
+                Configuration["Google:ClientSecret"] = googleClientSecret;
+
+            var googleRedirectUri =
+                Environment.GetEnvironmentVariable("Google__RedirectUri") ??
+                Environment.GetEnvironmentVariable("GOOGLE_REDIRECT_URI");
+            if (!string.IsNullOrEmpty(googleRedirectUri))
+                Configuration["Google:RedirectUri"] = googleRedirectUri;
 
             void SetFromEnv(string envName, string configKey)
             {

@@ -43,6 +43,18 @@ namespace WebAPI.Controllers
         [Produces("application/json", "text/plain")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IDataResult<AccessToken>))]
         [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(string))]
+        [HttpPost("google-login")]
+        public async Task<IActionResult> GoogleLogin([FromBody] GoogleLoginQuery googleLogin)
+        {
+            var result = await Mediator.Send(googleLogin);
+            return result.Success ? Ok(result) : Unauthorized(result.Message);
+        }
+
+        [AllowAnonymous]
+        [Consumes("application/json")]
+        [Produces("application/json", "text/plain")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IDataResult<AccessToken>))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(string))]
         [HttpPost("refresh-token")]
         public async Task<IActionResult> LoginWithRefreshToken([FromBody] LoginWithRefreshTokenQuery command)
         {
