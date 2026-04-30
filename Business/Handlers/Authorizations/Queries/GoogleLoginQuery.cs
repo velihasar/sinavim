@@ -84,7 +84,7 @@ namespace Business.Handlers.Authorizations.Queries
                 return new ErrorDataResult<AccessToken>("Google hesabınızda e-posta adresi bulunamadı.");
             }
 
-            var normalizedEmail = googleUser.Email.Trim().ToLowerInvariant();
+            var normalizedEmail = googleUser.Email.Trim().ToLower();
             var emailForDb = googleUser.Email.Trim();
             if (emailForDb.Length > 50)
             {
@@ -103,7 +103,7 @@ namespace Business.Handlers.Authorizations.Queries
             {
                 user = await _userRepository.GetAsync(u =>
                     u.Email != null &&
-                    u.Email.Trim().ToLowerInvariant() == normalizedEmail &&
+                    u.Email.Trim().ToLower() == normalizedEmail &&
                     u.Status);
             }
 
@@ -116,7 +116,7 @@ namespace Business.Handlers.Authorizations.Queries
             {
                 var pending = await _userRepository.GetAsync(u =>
                     u.Email != null &&
-                    u.Email.Trim().ToLowerInvariant() == normalizedEmail &&
+                    u.Email.Trim().ToLower() == normalizedEmail &&
                     !u.Status);
                 if (pending != null)
                 {
