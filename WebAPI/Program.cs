@@ -35,6 +35,12 @@ namespace WebAPI
                 .ConfigureLogging(logging =>
                 {
                     logging.ClearProviders();
+                    // Coolify/Docker stdout — ExceptionMiddleware ILogger çıktısı burada görünür.
+                    logging.AddSimpleConsole(options =>
+                    {
+                        options.SingleLine = true;
+                        options.TimestampFormat = "yyyy-MM-dd HH:mm:ss ";
+                    });
                     logging.SetMinimumLevel(LogLevel.Trace);
                 });
     }
