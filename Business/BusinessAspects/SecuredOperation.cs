@@ -48,6 +48,18 @@ namespace Business.BusinessAspects
                 throw new SecurityException(Messages.AuthorizationsDenied);
             }
 
+            // Kendi hesabını kalıcı silme: token yeterli (OperationClaim listesinde aranmaz).
+            string operationNameEarly = null;
+            if (invocation.Arguments != null && invocation.Arguments.Length > 0 && invocation.Arguments[0] != null)
+            {
+                operationNameEarly = invocation.Arguments[0].GetType().Name;
+            }
+
+            if (operationNameEarly == "DeleteMyAccountCommand")
+            {
+                return;
+            }
+
             // Operation name'i belirle (önce bunu yap ki UpdateUserCommand kontrolü yapabilelim)
             string operationName = null;
 

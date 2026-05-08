@@ -4,8 +4,6 @@ using Business.BusinessAspects;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Core.Extensions;
@@ -23,14 +21,10 @@ namespace Business.Handlers.DenemeSinavis.Commands
         public class DeleteDenemeSinaviCommandHandler : IRequestHandler<DeleteDenemeSinaviCommand, IResult>
         {
             private readonly IDenemeSinaviRepository _denemeSinaviRepository;
-            private readonly IDenemeSinavSonucuRepository _denemeSinavSonucuRepository;
 
-            public DeleteDenemeSinaviCommandHandler(
-                IDenemeSinaviRepository denemeSinaviRepository,
-                IDenemeSinavSonucuRepository denemeSinavSonucuRepository)
+            public DeleteDenemeSinaviCommandHandler(IDenemeSinaviRepository denemeSinaviRepository)
             {
                 _denemeSinaviRepository = denemeSinaviRepository;
-                _denemeSinavSonucuRepository = denemeSinavSonucuRepository;
             }
 
             [SecuredOperation(Priority = 1)]
@@ -51,14 +45,6 @@ namespace Business.Handlers.DenemeSinavis.Commands
                 if (denemeSinaviToDelete.UserId != uid)
                 {
                     return new ErrorResult("Bu işlem için yetkiniz yok.");
-                }
-
-                var sonuclar = await _denemeSinavSonucuRepository.Query()
-                    .Where(s => s.DenemeSinaviId == request.Id)
-                    .ToListAsync(cancellationToken);
-                foreach (var s in sonuclar)
-                {
-                    _denemeSinavSonucuRepository.Delete(s);
                 }
 
                 _denemeSinaviRepository.Delete(denemeSinaviToDelete);

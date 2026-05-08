@@ -34,4 +34,13 @@ namespace Business.Handlers.KullaniciSinavs.ValidationRules
             RuleFor(x => x.HedefPuan).GreaterThanOrEqualTo(0);
         }
     }
+
+    public class ChangeMyKullaniciSinavValidator : AbstractValidator<ChangeMyKullaniciSinavCommand>
+    {
+        public ChangeMyKullaniciSinavValidator()
+        {
+            RuleFor(x => x.SinavId).GreaterThan(0);
+            RuleFor(x => x.HedefPuan).GreaterThanOrEqualTo(0);
+        }
+    }
 }
