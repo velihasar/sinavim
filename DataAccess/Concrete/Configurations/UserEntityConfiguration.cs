@@ -24,6 +24,7 @@ namespace DataAccess.Concrete.Configurations
             builder.Property(x => x.EmailVerificationTokenExpiry).IsRequired(false);
             builder.Property(x => x.PendingEmail).HasMaxLength(50).IsRequired(false);
             builder.Property(x => x.GoogleId).HasMaxLength(255).IsRequired(false);
+            builder.Property(x => x.FcmToken).HasMaxLength(512).IsRequired(false);
 
             builder.HasIndex(x => x.UserId);
             builder.HasIndex(x => x.Email);

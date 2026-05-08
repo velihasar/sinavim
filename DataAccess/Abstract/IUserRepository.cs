@@ -9,5 +9,6 @@ namespace DataAccess.Abstract
     {
         List<OperationClaim> GetClaims(int userId);
         Task<User> GetByRefreshToken(string refreshToken);
+        Task<User> GetByIdWithTrackingAsync(int userId);
     }
 }

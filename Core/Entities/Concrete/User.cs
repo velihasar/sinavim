@@ -56,6 +56,9 @@ namespace Core.Entities.Concrete
         /// <summary>Google Sign-In <c>sub</c> (aynı e-posta ile hesap birleştirme).</summary>
         public string GoogleId { get; set; }
 
+        /// <summary>Firebase Cloud Messaging cihaz token'ı (push).</summary>
+        public string FcmToken { get; set; }
+
         public bool UpdateMobilePhone(string mobilePhone)
         {
             if (MobilePhones == mobilePhone)

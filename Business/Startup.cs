@@ -154,6 +154,8 @@ namespace Business
             {
                 cfg.RegisterServicesFromAssembly(typeof(BusinessStartup).Assembly);
             });
+
+            services.AddSingleton<Business.Services.IFirebaseNotificationService, Business.Services.FirebaseNotificationService>();
         }
 
         /// <summary>
