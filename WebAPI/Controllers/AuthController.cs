@@ -176,6 +176,15 @@ namespace WebAPI.Controllers
         }
 
         /// <summary>
+        /// Giriş yapan kullanıcı: hesabı ve uygulama verilerini kalıcı olarak siler.
+        /// </summary>
+        [HttpPost("delete-account")]
+        public async Task<IActionResult> DeleteMyAccount()
+        {
+            return GetResponseOnlyResult(await Mediator.Send(new DeleteMyAccountCommand()));
+        }
+
+        /// <summary>
         /// Mobile Login
         /// </summary>
         /// <param name="verifyCid"></param>

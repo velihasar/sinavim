@@ -131,10 +131,7 @@ namespace Tests.Business.HandlersTest
             _denemeSinaviRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<DenemeSinavi, bool>>>()))
                         .ReturnsAsync(new DenemeSinavi { Id = 1, UserId = 1 });
 
-            var sonucRepo = new Mock<IDenemeSinavSonucuRepository>();
-            sonucRepo.Setup(x => x.Query()).Returns(new List<DenemeSinavSonucu>().AsQueryable());
-
-            var handler = new DeleteDenemeSinaviCommandHandler(_denemeSinaviRepository.Object, sonucRepo.Object);
+            var handler = new DeleteDenemeSinaviCommandHandler(_denemeSinaviRepository.Object);
             var x = await handler.Handle(command, new System.Threading.CancellationToken());
 
             x.Success.Should().BeFalse();

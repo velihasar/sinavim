@@ -131,17 +131,31 @@ namespace Business
             }
 
             services.AddAutoMapper(typeof(ConfigurationManager));
+
+            // AddValidatorsFromAssembly kayıt sırasında çözümleyici gerektirebilir; önce atanmalı.
+            // memberInfo null olabilir → GetCustomAttribute(..., element) ArgumentNullException ('element').
+            ValidatorOptions.Global.DisplayNameResolver = (type, memberInfo, expression) =>
+            {
+                if (memberInfo == null)
+                    return null;
+                try
+                {
+                    var attr = memberInfo.GetCustomAttribute<DisplayAttribute>();
+                    return attr?.GetName();
+                }
+                catch
+                {
+                    return null;
+                }
+            };
+
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
             services.AddMediatR(cfg =>
             {
                 cfg.RegisterServicesFromAssembly(typeof(BusinessStartup).Assembly);
             });
 
-            ValidatorOptions.Global.DisplayNameResolver = (type, memberInfo, expression) =>
-            {
-                return memberInfo.GetCustomAttribute<DisplayAttribute>()
-                    ?.GetName();
-            };
+            services.AddSingleton<Business.Services.IFirebaseNotificationService, Business.Services.FirebaseNotificationService>();
         }
 
         /// <summary>

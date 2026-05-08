@@ -43,5 +43,10 @@ namespace DataAccess.Concrete.EntityFramework
         {
             return await Context.Users.FirstOrDefaultAsync(u => u.RefreshToken == refreshToken && u.Status);
         }
+
+        public async Task<User> GetByIdWithTrackingAsync(int userId)
+        {
+            return await Context.Users.FirstOrDefaultAsync(u => u.UserId == userId);
+        }
     }
 }

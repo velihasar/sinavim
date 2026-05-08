@@ -118,6 +118,24 @@ namespace WebAPI.Controllers
         }
 
         /// <summary>
+        /// Hedef sınavı değiştirir; önceki sınavdaki deneme ve konu takip verileri silinir.
+        /// </summary>
+        [Authorize]
+        [Produces("application/json", "text/plain")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CreateKullaniciSinavDto))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
+        [HttpPost("degistir")]
+        public async Task<IActionResult> ChangeMy([FromBody] ChangeMyKullaniciSinavCommand command)
+        {
+            var result = await Mediator.Send(command);
+            if (result.Success)
+            {
+                return Ok(result.Data);
+            }
+            return BadRequest(result.Message);
+        }
+
+        /// <summary>
         /// Update KullaniciSinav.
         /// </summary>
         /// <param name="updateKullaniciSinav"></param>

@@ -1,4 +1,4 @@
-﻿using Castle.DynamicProxy;
+using Castle.DynamicProxy;
 using Core.Aspects.Autofac.Exception;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using System;
@@ -12,11 +12,11 @@ namespace Core.Utilities.Interceptors
         public IInterceptor[] SelectInterceptors(Type type, MethodInfo method, IInterceptor[] interceptors)
         {
             var classAttributes = type.GetCustomAttributes<MethodInterceptionBaseAttribute>(true).ToList();
-            var methodAttributes =
-                type.GetMethods()?.Where(p => p.Name == method.Name).FirstOrDefault().GetCustomAttributes<MethodInterceptionBaseAttribute>(true);
-            if (methodAttributes != null)
+            var matchingMethod = type.GetMethods()?.FirstOrDefault(p => p.Name == method.Name);
+            if (matchingMethod != null)
             {
-                classAttributes.AddRange(methodAttributes);
+                classAttributes.AddRange(
+                    matchingMethod.GetCustomAttributes<MethodInterceptionBaseAttribute>(true));
             }
 
             classAttributes.Add(new ExceptionLogAspect(typeof(FileLogger)));
