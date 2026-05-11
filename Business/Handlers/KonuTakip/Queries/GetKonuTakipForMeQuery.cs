@@ -102,7 +102,7 @@ namespace Business.Handlers.KonuTakip.Queries
                     return new SuccessDataResult<KonuTakipForMeDto>(new KonuTakipForMeDto
                     {
                         SinavId = sinav.Id,
-                        SinavKisaAd = sinav.KısaAd,
+                        SinavKisaAd = sinav.KisaAd,
                         SinavAd = sinav.Ad,
                         AktifSinavBolumId = aktifBolumId,
                         Bolumler = bolumler,
@@ -179,7 +179,7 @@ namespace Business.Handlers.KonuTakip.Queries
                 var dto = new KonuTakipForMeDto
                 {
                     SinavId = sinav.Id,
-                    SinavKisaAd = sinav.KısaAd,
+                    SinavKisaAd = sinav.KisaAd,
                     SinavAd = sinav.Ad,
                     AktifSinavBolumId = aktifBolumId,
                     Bolumler = bolumler,

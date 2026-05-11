@@ -8,7 +8,7 @@ namespace Core.Entities.Concrete.Project
 {
     public class Sinav : BaseEntity, IEntity
     {
-        public string KısaAd { get; set; }
+        public string KisaAd { get; set; }
         public string Ad { get; set; }
         public string? Aciklama { get; set; }
         public DateTime Tarih { get; set; }

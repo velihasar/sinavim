@@ -45,7 +45,7 @@ namespace Business.Handlers.Sinavs.Queries
                 var sinavDtos = sinavs.Select(s => new SinavListDto
                 {
                     Id = s.Id,
-                    KısaAd = s.KısaAd,
+                    KisaAd = s.KisaAd,
                     Ad = s.Ad,
                     Aciklama = s.Aciklama,
                     Tarih = s.Tarih,

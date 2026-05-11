@@ -24,7 +24,7 @@ namespace Business.Handlers.Sinavs.Commands
     public class UpdateSinavCommand : IRequest<IDataResult<UpdateSinavDto>>
     {
         public int Id { get; set; }
-        public string KısaAd { get; set; }
+        public string KisaAd { get; set; }
         public string Ad { get; set; }
         public string? Aciklama { get; set; }
         public System.DateTime Tarih { get; set; }
@@ -55,7 +55,7 @@ namespace Business.Handlers.Sinavs.Commands
                     return new ErrorDataResult<UpdateSinavDto>("Kayıt bulunamadı");
                 }
 
-                isThereSinavRecord.KısaAd = request.KısaAd;
+                isThereSinavRecord.KisaAd = request.KisaAd;
                 isThereSinavRecord.Ad = request.Ad;
                 isThereSinavRecord.Aciklama = request.Aciklama;
                 isThereSinavRecord.Tarih = request.Tarih.ToNpgsqlTimestamp();
@@ -71,7 +71,7 @@ namespace Business.Handlers.Sinavs.Commands
                 var sinavDto = new UpdateSinavDto
                 {
                     Id = isThereSinavRecord.Id,
-                    KısaAd = isThereSinavRecord.KısaAd,
+                    KisaAd = isThereSinavRecord.KisaAd,
                     Ad = isThereSinavRecord.Ad,
                     Aciklama = isThereSinavRecord.Aciklama,
                     Tarih = isThereSinavRecord.Tarih,
