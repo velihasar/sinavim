@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DataAccess.Migrations.Pg
 {
     [DbContext(typeof(ProjectDbContext))]
-    [Migration("20260408195457_SinavBolumAdded")]
-    partial class SinavBolumAdded
+    [Migration("20260511070406_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -259,6 +259,9 @@ namespace DataAccess.Migrations.Pg
                     b.Property<DateTime?>("CreatedDate")
                         .HasColumnType("timestamp without time zone");
 
+                    b.Property<int>("DenemeSinaviId")
+                        .HasColumnType("integer");
+
                     b.Property<int>("DersId")
                         .HasColumnType("integer");
 
@@ -281,6 +284,8 @@ namespace DataAccess.Migrations.Pg
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DenemeSinaviId");
 
                     b.HasIndex("DersId");
 
@@ -310,6 +315,9 @@ namespace DataAccess.Migrations.Pg
                     b.Property<bool?>("IsActive")
                         .HasColumnType("boolean");
 
+                    b.Property<int?>("SinavBolumId")
+                        .HasColumnType("integer");
+
                     b.Property<int>("SinavId")
                         .HasColumnType("integer");
 
@@ -326,6 +334,8 @@ namespace DataAccess.Migrations.Pg
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("SinavBolumId");
 
                     b.HasIndex("SinavId");
 
@@ -351,6 +361,10 @@ namespace DataAccess.Migrations.Pg
                     b.Property<DateTime?>("CreatedDate")
                         .HasColumnType("timestamp without time zone");
 
+                    b.Property<string>("IkonAnahtari")
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
                     b.Property<bool?>("IsActive")
                         .HasColumnType("boolean");
 
@@ -358,6 +372,9 @@ namespace DataAccess.Migrations.Pg
                         .HasColumnType("integer");
 
                     b.Property<int>("SinavId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("SiraNo")
                         .HasColumnType("integer");
 
                     b.Property<int?>("UpdatedBy")
@@ -412,6 +429,45 @@ namespace DataAccess.Migrations.Pg
                     b.HasIndex("DersId");
 
                     b.ToTable("Konus");
+                });
+
+            modelBuilder.Entity("Core.Entities.Concrete.Project.KullaniciGunlukSoruCozumu", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CozulenSoruSayisi")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<bool?>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("Tarih")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("KullaniciGunlukSoruCozumus");
                 });
 
             modelBuilder.Entity("Core.Entities.Concrete.Project.KullaniciKonuIlerleme", b =>
@@ -496,6 +552,37 @@ namespace DataAccess.Migrations.Pg
                     b.ToTable("KullaniciSinavs");
                 });
 
+            modelBuilder.Entity("Core.Entities.Concrete.Project.Motivasyon", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<bool?>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Kelime")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Motivasyons");
+                });
+
             modelBuilder.Entity("Core.Entities.Concrete.Project.Sinav", b =>
                 {
                     b.Property<int>("Id")
@@ -503,6 +590,9 @@ namespace DataAccess.Migrations.Pg
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Aciklama")
+                        .HasColumnType("text");
 
                     b.Property<string>("Ad")
                         .HasColumnType("text");
@@ -521,6 +611,9 @@ namespace DataAccess.Migrations.Pg
 
                     b.Property<string>("KısaAd")
                         .HasColumnType("text");
+
+                    b.Property<int>("SiraNo")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("Tarih")
                         .HasColumnType("timestamp without time zone");
@@ -544,11 +637,26 @@ namespace DataAccess.Migrations.Pg
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<bool?>("IsActive")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Isim")
                         .HasColumnType("text");
 
                     b.Property<int>("SinavId")
                         .HasColumnType("integer");
+
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("timestamp without time zone");
 
                     b.HasKey("Id");
 
@@ -1723,6 +1831,17 @@ namespace DataAccess.Migrations.Pg
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
+                    b.Property<string>("EmailVerificationToken")
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<DateTime?>("EmailVerificationTokenExpiry")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("FcmToken")
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
+
                     b.Property<string>("FullName")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -1730,6 +1849,10 @@ namespace DataAccess.Migrations.Pg
 
                     b.Property<int>("Gender")
                         .HasColumnType("integer");
+
+                    b.Property<string>("GoogleId")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<string>("MobilePhones")
                         .HasMaxLength(30)
@@ -1742,8 +1865,19 @@ namespace DataAccess.Migrations.Pg
                     b.Property<byte[]>("PasswordHash")
                         .HasColumnType("bytea");
 
+                    b.Property<string>("PasswordResetToken")
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<DateTime?>("PasswordResetTokenExpiry")
+                        .HasColumnType("timestamp without time zone");
+
                     b.Property<byte[]>("PasswordSalt")
                         .HasColumnType("bytea");
+
+                    b.Property<string>("PendingEmail")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.Property<DateTime>("RecordDate")
                         .HasColumnType("timestamp without time zone");
@@ -1760,6 +1894,9 @@ namespace DataAccess.Migrations.Pg
                     b.HasKey("UserId");
 
                     b.HasIndex("Email");
+
+                    b.HasIndex("GoogleId")
+                        .IsUnique();
 
                     b.HasIndex("MobilePhones");
 
@@ -1796,17 +1933,29 @@ namespace DataAccess.Migrations.Pg
 
             modelBuilder.Entity("Core.Entities.Concrete.Project.DenemeSinavSonucu", b =>
                 {
+                    b.HasOne("Core.Entities.Concrete.Project.DenemeSinavi", "DenemeSinavi")
+                        .WithMany("Sonuclar")
+                        .HasForeignKey("DenemeSinaviId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Core.Entities.Concrete.Project.Ders", "Ders")
                         .WithMany()
                         .HasForeignKey("DersId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("DenemeSinavi");
+
                     b.Navigation("Ders");
                 });
 
             modelBuilder.Entity("Core.Entities.Concrete.Project.DenemeSinavi", b =>
                 {
+                    b.HasOne("Core.Entities.Concrete.Project.SinavBolum", "SinavBolum")
+                        .WithMany()
+                        .HasForeignKey("SinavBolumId");
+
                     b.HasOne("Core.Entities.Concrete.Project.Sinav", "Sinav")
                         .WithMany()
                         .HasForeignKey("SinavId")
@@ -1820,6 +1969,8 @@ namespace DataAccess.Migrations.Pg
                         .IsRequired();
 
                     b.Navigation("Sinav");
+
+                    b.Navigation("SinavBolum");
 
                     b.Navigation("User");
                 });
@@ -1850,6 +2001,17 @@ namespace DataAccess.Migrations.Pg
                         .IsRequired();
 
                     b.Navigation("Ders");
+                });
+
+            modelBuilder.Entity("Core.Entities.Concrete.Project.KullaniciGunlukSoruCozumu", b =>
+                {
+                    b.HasOne("Core.Entities.Concrete.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Core.Entities.Concrete.Project.KullaniciKonuIlerleme", b =>
@@ -1899,6 +2061,11 @@ namespace DataAccess.Migrations.Pg
                         .IsRequired();
 
                     b.Navigation("Sinav");
+                });
+
+            modelBuilder.Entity("Core.Entities.Concrete.Project.DenemeSinavi", b =>
+                {
+                    b.Navigation("Sonuclar");
                 });
 #pragma warning restore 612, 618
         }

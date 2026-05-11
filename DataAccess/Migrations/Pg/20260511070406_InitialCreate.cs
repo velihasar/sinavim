@@ -103,6 +103,24 @@ namespace DataAccess.Migrations.Pg
                 });
 
             migrationBuilder.CreateTable(
+                name: "Motivasyons",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Kelime = table.Column<string>(type: "text", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    UpdatedDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    CreatedBy = table.Column<int>(type: "integer", nullable: true),
+                    UpdatedBy = table.Column<int>(type: "integer", nullable: true),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Motivasyons", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "OperationClaims",
                 columns: table => new
                 {
@@ -130,7 +148,9 @@ namespace DataAccess.Migrations.Pg
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     KısaAd = table.Column<string>(type: "text", nullable: true),
                     Ad = table.Column<string>(type: "text", nullable: true),
+                    Aciklama = table.Column<string>(type: "text", nullable: true),
                     Tarih = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    SiraNo = table.Column<int>(type: "integer", nullable: false),
                     DogruyuGoturenYanlisSay = table.Column<int>(type: "integer", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     UpdatedDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
@@ -205,7 +225,14 @@ namespace DataAccess.Migrations.Pg
                     Notes = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
                     UpdateContactDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     PasswordSalt = table.Column<byte[]>(type: "bytea", nullable: true),
-                    PasswordHash = table.Column<byte[]>(type: "bytea", nullable: true)
+                    PasswordHash = table.Column<byte[]>(type: "bytea", nullable: true),
+                    PasswordResetToken = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: true),
+                    PasswordResetTokenExpiry = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    EmailVerificationToken = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: true),
+                    EmailVerificationTokenExpiry = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    PendingEmail = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    GoogleId = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    FcmToken = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -213,13 +240,13 @@ namespace DataAccess.Migrations.Pg
                 });
 
             migrationBuilder.CreateTable(
-                name: "Derses",
+                name: "SinavBolums",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Ad = table.Column<string>(type: "text", nullable: true),
                     SinavId = table.Column<int>(type: "integer", nullable: false),
+                    Isim = table.Column<string>(type: "text", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     UpdatedDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     CreatedBy = table.Column<int>(type: "integer", nullable: true),
@@ -228,9 +255,9 @@ namespace DataAccess.Migrations.Pg
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Derses", x => x.Id);
+                    table.PrimaryKey("PK_SinavBolums", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Derses_Sinavs_SinavId",
+                        name: "FK_SinavBolums_Sinavs_SinavId",
                         column: x => x.SinavId,
                         principalTable: "Sinavs",
                         principalColumn: "Id",
@@ -238,16 +265,14 @@ namespace DataAccess.Migrations.Pg
                 });
 
             migrationBuilder.CreateTable(
-                name: "DenemeSinavis",
+                name: "KullaniciGunlukSoruCozumus",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Ad = table.Column<string>(type: "text", nullable: true),
-                    Aciklama = table.Column<string>(type: "text", nullable: true),
                     UserId = table.Column<int>(type: "integer", nullable: false),
-                    SinavId = table.Column<int>(type: "integer", nullable: false),
                     Tarih = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    CozulenSoruSayisi = table.Column<int>(type: "integer", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     UpdatedDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     CreatedBy = table.Column<int>(type: "integer", nullable: true),
@@ -256,15 +281,9 @@ namespace DataAccess.Migrations.Pg
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_DenemeSinavis", x => x.Id);
+                    table.PrimaryKey("PK_KullaniciGunlukSoruCozumus", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_DenemeSinavis_Sinavs_SinavId",
-                        column: x => x.SinavId,
-                        principalTable: "Sinavs",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_DenemeSinavis_Users_UserId",
+                        name: "FK_KullaniciGunlukSoruCozumus_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "UserId",
@@ -304,11 +323,85 @@ namespace DataAccess.Migrations.Pg
                 });
 
             migrationBuilder.CreateTable(
+                name: "DenemeSinavis",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Ad = table.Column<string>(type: "text", nullable: true),
+                    Aciklama = table.Column<string>(type: "text", nullable: true),
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    SinavId = table.Column<int>(type: "integer", nullable: false),
+                    SinavBolumId = table.Column<int>(type: "integer", nullable: true),
+                    Tarih = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    UpdatedDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    CreatedBy = table.Column<int>(type: "integer", nullable: true),
+                    UpdatedBy = table.Column<int>(type: "integer", nullable: true),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DenemeSinavis", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DenemeSinavis_SinavBolums_SinavBolumId",
+                        column: x => x.SinavBolumId,
+                        principalTable: "SinavBolums",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_DenemeSinavis_Sinavs_SinavId",
+                        column: x => x.SinavId,
+                        principalTable: "Sinavs",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DenemeSinavis_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Derses",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Ad = table.Column<string>(type: "text", nullable: true),
+                    IkonAnahtari = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: true),
+                    SiraNo = table.Column<int>(type: "integer", nullable: false),
+                    SinavId = table.Column<int>(type: "integer", nullable: false),
+                    SinavBolumId = table.Column<int>(type: "integer", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    UpdatedDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    CreatedBy = table.Column<int>(type: "integer", nullable: true),
+                    UpdatedBy = table.Column<int>(type: "integer", nullable: true),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Derses", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Derses_SinavBolums_SinavBolumId",
+                        column: x => x.SinavBolumId,
+                        principalTable: "SinavBolums",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Derses_Sinavs_SinavId",
+                        column: x => x.SinavId,
+                        principalTable: "Sinavs",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "DenemeSinavSonucus",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    DenemeSinaviId = table.Column<int>(type: "integer", nullable: false),
                     DersId = table.Column<int>(type: "integer", nullable: false),
                     DogruSayisi = table.Column<int>(type: "integer", nullable: false),
                     YanlisSayisi = table.Column<int>(type: "integer", nullable: false),
@@ -323,6 +416,12 @@ namespace DataAccess.Migrations.Pg
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_DenemeSinavSonucus", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DenemeSinavSonucus_DenemeSinavis_DenemeSinaviId",
+                        column: x => x.DenemeSinaviId,
+                        principalTable: "DenemeSinavis",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_DenemeSinavSonucus_Derses_DersId",
                         column: x => x.DersId,
@@ -544,6 +643,11 @@ namespace DataAccess.Migrations.Pg
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_DenemeSinavis_SinavBolumId",
+                table: "DenemeSinavis",
+                column: "SinavBolumId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_DenemeSinavis_SinavId",
                 table: "DenemeSinavis",
                 column: "SinavId");
@@ -554,9 +658,19 @@ namespace DataAccess.Migrations.Pg
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_DenemeSinavSonucus_DenemeSinaviId",
+                table: "DenemeSinavSonucus",
+                column: "DenemeSinaviId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_DenemeSinavSonucus_DersId",
                 table: "DenemeSinavSonucus",
                 column: "DersId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Derses_SinavBolumId",
+                table: "Derses",
+                column: "SinavBolumId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Derses_SinavId",
@@ -567,6 +681,11 @@ namespace DataAccess.Migrations.Pg
                 name: "IX_Konus_DersId",
                 table: "Konus",
                 column: "DersId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_KullaniciGunlukSoruCozumus_UserId",
+                table: "KullaniciGunlukSoruCozumus",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_KullaniciKonuIlerlemes_KonuId",
@@ -594,9 +713,20 @@ namespace DataAccess.Migrations.Pg
                 columns: new[] { "ExternalUserId", "Provider" });
 
             migrationBuilder.CreateIndex(
+                name: "IX_SinavBolums_SinavId",
+                table: "SinavBolums",
+                column: "SinavId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Users_Email",
                 table: "Users",
                 column: "Email");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_GoogleId",
+                table: "Users",
+                column: "GoogleId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_MobilePhones",
@@ -613,9 +743,6 @@ namespace DataAccess.Migrations.Pg
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "DenemeSinavis");
-
-            migrationBuilder.DropTable(
                 name: "DenemeSinavSonucus");
 
             migrationBuilder.DropTable(
@@ -623,6 +750,9 @@ namespace DataAccess.Migrations.Pg
 
             migrationBuilder.DropTable(
                 name: "Groups");
+
+            migrationBuilder.DropTable(
+                name: "KullaniciGunlukSoruCozumus");
 
             migrationBuilder.DropTable(
                 name: "KullaniciKonuIlerlemes");
@@ -640,6 +770,9 @@ namespace DataAccess.Migrations.Pg
                 name: "MobileLogins");
 
             migrationBuilder.DropTable(
+                name: "Motivasyons");
+
+            migrationBuilder.DropTable(
                 name: "OperationClaims");
 
             migrationBuilder.DropTable(
@@ -652,6 +785,9 @@ namespace DataAccess.Migrations.Pg
                 name: "UserGroups");
 
             migrationBuilder.DropTable(
+                name: "DenemeSinavis");
+
+            migrationBuilder.DropTable(
                 name: "Konus");
 
             migrationBuilder.DropTable(
@@ -659,6 +795,9 @@ namespace DataAccess.Migrations.Pg
 
             migrationBuilder.DropTable(
                 name: "Derses");
+
+            migrationBuilder.DropTable(
+                name: "SinavBolums");
 
             migrationBuilder.DropTable(
                 name: "Sinavs");
