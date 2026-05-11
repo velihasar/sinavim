@@ -14,7 +14,7 @@ namespace DataAccess.Migrations.Pg
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
+            migrationBuilder.CreateTable(  
                 name: "GroupClaims",
                 columns: table => new
                 {
