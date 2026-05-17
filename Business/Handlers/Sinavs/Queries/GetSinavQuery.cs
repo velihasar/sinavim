@@ -42,7 +42,7 @@ namespace Business.Handlers.Sinavs.Queries
                 var sinavDto = new SinavDto
                 {
                     Id = sinav.Id,
-                    KısaAd = sinav.KısaAd,
+                    KisaAd = sinav.KisaAd,
                     Ad = sinav.Ad,
                     Aciklama = sinav.Aciklama,
                     Tarih = sinav.Tarih,

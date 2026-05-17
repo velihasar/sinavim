@@ -24,7 +24,7 @@ namespace Business.Handlers.Sinavs.Commands
     /// </summary>
     public class CreateSinavCommand : IRequest<IDataResult<CreateSinavDto>>
     {
-        public string KısaAd { get; set; }
+        public string KisaAd { get; set; }
         public string Ad { get; set; }
         public string? Aciklama { get; set; }
         public System.DateTime Tarih { get; set; }
@@ -54,7 +54,7 @@ namespace Business.Handlers.Sinavs.Commands
 
                 var addedSinav = new Sinav
                 {
-                    KısaAd = request.KısaAd,
+                    KisaAd = request.KisaAd,
                     Ad = request.Ad,
                     Aciklama = request.Aciklama,
                     Tarih = request.Tarih.ToNpgsqlTimestamp(),
@@ -71,7 +71,7 @@ namespace Business.Handlers.Sinavs.Commands
                 var sinavDto = new CreateSinavDto
                 {
                     Id = addedSinav.Id,
-                    KısaAd = addedSinav.KısaAd,
+                    KisaAd = addedSinav.KisaAd,
                     Ad = addedSinav.Ad,
                     Aciklama = addedSinav.Aciklama,
                     Tarih = addedSinav.Tarih,
