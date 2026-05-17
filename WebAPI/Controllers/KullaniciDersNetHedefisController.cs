@@ -2,6 +2,7 @@
 using Business.Handlers.KullaniciDersNetHedefis.Commands;
 using Business.Handlers.KullaniciDersNetHedefis.Queries;
 using Core.Entities.Dtos.Project.KullaniciDersNetHedefiDtos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -110,6 +111,40 @@ namespace WebAPI.Controllers
             {
                 return Ok(result.Message);
             }
+            return BadRequest(result.Message);
+        }
+
+        /// <summary>Oturumdaki kullanıcının ders bazlı deneme net hedefleri.</summary>
+        [Authorize]
+        [Produces("application/json", "text/plain")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<KullaniciDersNetHedefiDto>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
+        [HttpGet("getmy")]
+        public async Task<IActionResult> GetMy()
+        {
+            var result = await Mediator.Send(new GetMyKullaniciDersNetHedefleriQuery());
+            if (result.Success)
+            {
+                return Ok(result.Data);
+            }
+
+            return BadRequest(result.Message);
+        }
+
+        /// <summary>Tek ders için hedef ekler/günceller; HedefNet 0 veya daha küçükse kaydı siler.</summary>
+        [Authorize]
+        [Produces("application/json", "text/plain")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(KullaniciDersNetHedefiDto))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
+        [HttpPost("upsertmy")]
+        public async Task<IActionResult> UpsertMy([FromBody] UpsertMyKullaniciDersNetHedefiCommand command)
+        {
+            var result = await Mediator.Send(command);
+            if (result.Success)
+            {
+                return Ok(result.Data);
+            }
+
             return BadRequest(result.Message);
         }
     }

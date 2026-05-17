@@ -26,4 +26,14 @@ namespace Business.Handlers.KullaniciDersNetHedefis.ValidationRules
 
         }
     }
+
+    public class UpsertMyKullaniciDersNetHedefiValidator
+        : AbstractValidator<UpsertMyKullaniciDersNetHedefiCommand>
+    {
+        public UpsertMyKullaniciDersNetHedefiValidator()
+        {
+            RuleFor(x => x.DersId).GreaterThan(0);
+            RuleFor(x => x.HedefNet).GreaterThanOrEqualTo(0).LessThanOrEqualTo(500);
+        }
+    }
 }
