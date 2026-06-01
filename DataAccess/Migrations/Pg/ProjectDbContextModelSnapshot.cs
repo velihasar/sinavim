@@ -239,6 +239,112 @@ namespace DataAccess.Migrations.Pg
                     b.ToTable("OperationClaims");
                 });
 
+            modelBuilder.Entity("Core.Entities.Concrete.Project.Arkadaslik", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("ArkadaslikIstegiId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<bool?>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("OlusturulmaTarihi")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("UserIdBuyuk")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("UserIdKucuk")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ArkadaslikIstegiId")
+                        .IsUnique();
+
+                    b.HasIndex("UserIdBuyuk");
+
+                    b.HasIndex("UserIdKucuk");
+
+                    b.HasIndex("UserIdKucuk", "UserIdBuyuk")
+                        .IsUnique();
+
+                    b.ToTable("Arkadasliklar", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_Arkadaslik_UserIdSiralama", "\"UserIdKucuk\" < \"UserIdBuyuk\"");
+                        });
+                });
+
+            modelBuilder.Entity("Core.Entities.Concrete.Project.ArkadaslikIstegi", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("Durum")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("GonderenUserId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("HedefUserId")
+                        .HasColumnType("integer");
+
+                    b.Property<bool?>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("KullanilanDavetKodu")
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)");
+
+                    b.Property<DateTime>("OlusturulmaTarihi")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime?>("YanitTarihi")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GonderenUserId");
+
+                    b.HasIndex("HedefUserId");
+
+                    b.HasIndex("GonderenUserId", "HedefUserId", "Durum");
+
+                    b.ToTable("ArkadaslikIstekleri", (string)null);
+                });
+
             modelBuilder.Entity("Core.Entities.Concrete.Project.DenemeSinavSonucu", b =>
                 {
                     b.Property<int>("Id")
@@ -426,6 +532,36 @@ namespace DataAccess.Migrations.Pg
                     b.HasIndex("DersId");
 
                     b.ToTable("Konus");
+                });
+
+            modelBuilder.Entity("Core.Entities.Concrete.Project.KullaniciDavetKodu", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Kod")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)");
+
+                    b.Property<DateTime>("OlusturulmaTarihi")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Kod")
+                        .IsUnique();
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("KullaniciDavetKodlari", (string)null);
                 });
 
             modelBuilder.Entity("Core.Entities.Concrete.Project.KullaniciDersNetHedefi", b =>
@@ -1975,6 +2111,51 @@ namespace DataAccess.Migrations.Pg
                     b.ToTable("UserGroups");
                 });
 
+            modelBuilder.Entity("Core.Entities.Concrete.Project.Arkadaslik", b =>
+                {
+                    b.HasOne("Core.Entities.Concrete.Project.ArkadaslikIstegi", "ArkadaslikIstegi")
+                        .WithOne("Arkadaslik")
+                        .HasForeignKey("Core.Entities.Concrete.Project.Arkadaslik", "ArkadaslikIstegiId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("Core.Entities.Concrete.User", "UserBuyuk")
+                        .WithMany()
+                        .HasForeignKey("UserIdBuyuk")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Core.Entities.Concrete.User", "UserKucuk")
+                        .WithMany()
+                        .HasForeignKey("UserIdKucuk")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ArkadaslikIstegi");
+
+                    b.Navigation("UserBuyuk");
+
+                    b.Navigation("UserKucuk");
+                });
+
+            modelBuilder.Entity("Core.Entities.Concrete.Project.ArkadaslikIstegi", b =>
+                {
+                    b.HasOne("Core.Entities.Concrete.User", "GonderenUser")
+                        .WithMany()
+                        .HasForeignKey("GonderenUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Core.Entities.Concrete.User", "HedefUser")
+                        .WithMany()
+                        .HasForeignKey("HedefUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("GonderenUser");
+
+                    b.Navigation("HedefUser");
+                });
+
             modelBuilder.Entity("Core.Entities.Concrete.Project.DenemeSinavSonucu", b =>
                 {
                     b.HasOne("Core.Entities.Concrete.Project.DenemeSinavi", "DenemeSinavi")
@@ -2045,6 +2226,17 @@ namespace DataAccess.Migrations.Pg
                         .IsRequired();
 
                     b.Navigation("Ders");
+                });
+
+            modelBuilder.Entity("Core.Entities.Concrete.Project.KullaniciDavetKodu", b =>
+                {
+                    b.HasOne("Core.Entities.Concrete.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Core.Entities.Concrete.Project.KullaniciDersNetHedefi", b =>
@@ -2130,6 +2322,11 @@ namespace DataAccess.Migrations.Pg
                         .IsRequired();
 
                     b.Navigation("Sinav");
+                });
+
+            modelBuilder.Entity("Core.Entities.Concrete.Project.ArkadaslikIstegi", b =>
+                {
+                    b.Navigation("Arkadaslik");
                 });
 
             modelBuilder.Entity("Core.Entities.Concrete.Project.DenemeSinavi", b =>
