@@ -3,6 +3,7 @@ using System;
 using DataAccess.Concrete.EntityFramework.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DataAccess.Migrations.Pg
 {
     [DbContext(typeof(ProjectDbContext))]
-    partial class ProjectDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260601205058_Arkadaslik")]
+    partial class Arkadaslik
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -309,11 +312,6 @@ namespace DataAccess.Migrations.Pg
                     b.Property<int>("Durum")
                         .HasColumnType("integer");
 
-                    b.Property<bool>("GonderenKabulGordu")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(true);
-
                     b.Property<int>("GonderenUserId")
                         .HasColumnType("integer");
 
@@ -344,8 +342,6 @@ namespace DataAccess.Migrations.Pg
                     b.HasIndex("GonderenUserId");
 
                     b.HasIndex("HedefUserId");
-
-                    b.HasIndex("GonderenUserId", "Durum", "GonderenKabulGordu");
 
                     b.HasIndex("GonderenUserId", "HedefUserId", "Durum");
 

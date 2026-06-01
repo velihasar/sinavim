@@ -87,6 +87,7 @@ namespace Business.Handlers.ArkadaslikApp.Commands
 
                 istek.Durum = ArkadaslikIstekDurumu.Kabul;
                 istek.YanitTarihi = now;
+                istek.GonderenKabulGordu = false;
                 istek.UpdatedBy = userId;
                 istek.UpdatedDate = now;
 

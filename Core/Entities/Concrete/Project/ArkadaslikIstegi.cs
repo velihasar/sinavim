@@ -26,6 +26,12 @@ namespace Core.Entities.Concrete.Project
         /// <summary>Kabul / red / iptal zamanı.</summary>
         public DateTime? YanitTarihi { get; set; }
 
+        /// <summary>
+        /// İstek kabul edildiyse gönderen taraf kabulü gördü mü (rozet için).
+        /// Kabul anında false; gönderen Arkadaşlar ekranını açınca true yapılır.
+        /// </summary>
+        public bool GonderenKabulGordu { get; set; } = true;
+
         public Arkadaslik? Arkadaslik { get; set; }
     }
 }
