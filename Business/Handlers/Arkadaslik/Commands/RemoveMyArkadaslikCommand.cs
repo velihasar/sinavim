@@ -51,7 +51,7 @@ namespace Business.Handlers.ArkadaslikApp.Commands
                 _arkadaslikRepository.Delete(arkadaslik);
                 await _arkadaslikRepository.SaveChangesAsync();
 
-                return new SuccessResult(Business.Constants.Messages.Deleted);
+                return new SuccessResult("Arkadaşlık kaldırıldı.");
             }
         }
     }

@@ -48,6 +48,38 @@ namespace WebAPI.Controllers
 
         [Authorize]
         [Produces("application/json", "text/plain")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ArkadaslikBadgeOzetDto))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
+        [HttpGet("rozet-ozet")]
+        public async Task<IActionResult> GetBadgeOzet()
+        {
+            var result = await Mediator.Send(new GetMyArkadaslikBadgeOzetQuery());
+            if (result.Success)
+            {
+                return Ok(result.Data);
+            }
+
+            return BadRequest(result.Message);
+        }
+
+        [Authorize]
+        [Produces("application/json", "text/plain")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
+        [HttpPost("kabul-bildirimleri/goruldu")]
+        public async Task<IActionResult> MarkKabulBildirimleriGoruldu()
+        {
+            var result = await Mediator.Send(new MarkMyKabulBildirimleriGorulduCommand());
+            if (result.Success)
+            {
+                return Ok(result.Message);
+            }
+
+            return BadRequest(result.Message);
+        }
+
+        [Authorize]
+        [Produces("application/json", "text/plain")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(MyArkadaslikIstekleriDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         [HttpGet("isteklerim")]

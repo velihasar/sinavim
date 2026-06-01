@@ -115,7 +115,7 @@ namespace Business.Handlers.ArkadaslikApp.Commands
                     GonderenUserId = entity.GonderenUserId,
                     GonderenFullName = gonderen?.FullName,
                     HedefUserId = entity.HedefUserId,
-                    HedefFullName = hedef?.FullName,
+                    HedefFullName = ArkadasDisplayNameHelper.MaskToInitials(hedef?.FullName),
                     Durum = entity.Durum,
                     OlusturulmaTarihi = entity.OlusturulmaTarihi,
                     YanitTarihi = entity.YanitTarihi,

@@ -1,4 +1,5 @@
 using Business.BusinessAspects;
+using Business.Helpers;
 using Core.Entities.Dtos.Project.ArkadaslikDtos;
 using Core.Enums;
 using Core.Extensions;
@@ -52,7 +53,7 @@ namespace Business.Handlers.ArkadaslikApp.Queries
                         .ToList(),
                     Giden = list
                         .Where(x => x.GonderenUserId == userId)
-                        .Select(Map)
+                        .Select(MapGiden)
                         .ToList(),
                 };
 
@@ -72,6 +73,13 @@ namespace Business.Handlers.ArkadaslikApp.Queries
                     OlusturulmaTarihi = x.OlusturulmaTarihi,
                     YanitTarihi = x.YanitTarihi,
                 };
+            }
+
+            private static ArkadaslikIstegiListItemDto MapGiden(Core.Entities.Concrete.Project.ArkadaslikIstegi x)
+            {
+                var dto = Map(x);
+                dto.HedefFullName = ArkadasDisplayNameHelper.MaskToInitials(dto.HedefFullName);
+                return dto;
             }
         }
     }
