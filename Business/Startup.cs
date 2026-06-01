@@ -165,6 +165,9 @@ namespace Business
         public void ConfigureDevelopmentServices(IServiceCollection services)
         {
             ConfigureServices(services);
+            services.AddTransient<IArkadaslikIstegiRepository, ArkadaslikIstegiRepository>();
+            services.AddTransient<IArkadaslikRepository, ArkadaslikRepository>();
+            services.AddTransient<IKullaniciDavetKoduRepository, KullaniciDavetKoduRepository>();
             services.AddTransient<IKullaniciDersNetHedefiRepository, KullaniciDersNetHedefiRepository>();
             services.AddTransient<IKullaniciGunlukSoruCozumuRepository, KullaniciGunlukSoruCozumuRepository>();
             services.AddTransient<IMotivasyonRepository, MotivasyonRepository>();
@@ -199,6 +202,9 @@ namespace Business
         public void ConfigureStagingServices(IServiceCollection services)
         {
             ConfigureServices(services);
+            services.AddTransient<IArkadaslikIstegiRepository, ArkadaslikIstegiRepository>();
+            services.AddTransient<IArkadaslikRepository, ArkadaslikRepository>();
+            services.AddTransient<IKullaniciDavetKoduRepository, KullaniciDavetKoduRepository>();
             services.AddTransient<IKullaniciDersNetHedefiRepository, KullaniciDersNetHedefiRepository>();
             services.AddTransient<IKullaniciGunlukSoruCozumuRepository, KullaniciGunlukSoruCozumuRepository>();
             services.AddTransient<IMotivasyonRepository, MotivasyonRepository>();
@@ -232,6 +238,9 @@ namespace Business
         public void ConfigureProductionServices(IServiceCollection services)
         {
             ConfigureServices(services);
+            services.AddTransient<IArkadaslikIstegiRepository, ArkadaslikIstegiRepository>();
+            services.AddTransient<IArkadaslikRepository, ArkadaslikRepository>();
+            services.AddTransient<IKullaniciDavetKoduRepository, KullaniciDavetKoduRepository>();
             services.AddTransient<IKullaniciDersNetHedefiRepository, KullaniciDersNetHedefiRepository>();
             services.AddTransient<IKullaniciGunlukSoruCozumuRepository, KullaniciGunlukSoruCozumuRepository>();
             services.AddTransient<IMotivasyonRepository, MotivasyonRepository>();
