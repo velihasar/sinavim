@@ -160,6 +160,41 @@ namespace WebAPI.Controllers
 
         [Authorize]
         [Produces("application/json", "text/plain")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ArkadasRekabetDashboardOzetDto))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
+        [HttpGet("rekabet-dashboard-ozet")]
+        public async Task<IActionResult> GetRekabetDashboardOzet()
+        {
+            var result = await Mediator.Send(new GetArkadasRekabetDashboardOzetQuery());
+            if (result.Success)
+            {
+                return Ok(result.Data);
+            }
+
+            return BadRequest(result.Message);
+        }
+
+        [Authorize]
+        [Produces("application/json", "text/plain")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ArkadasRekabetDto))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
+        [HttpGet("rekabet")]
+        public async Task<IActionResult> GetRekabet([FromQuery] int? gunSayisi)
+        {
+            var result = await Mediator.Send(new GetArkadasRekabetQuery
+            {
+                GunSayisi = gunSayisi ?? 7,
+            });
+            if (result.Success)
+            {
+                return Ok(result.Data);
+            }
+
+            return BadRequest(result.Message);
+        }
+
+        [Authorize]
+        [Produces("application/json", "text/plain")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         [HttpDelete("{arkadaslikId:int}")]
