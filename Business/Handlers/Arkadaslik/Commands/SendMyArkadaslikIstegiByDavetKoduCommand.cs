@@ -29,17 +29,20 @@ namespace Business.Handlers.ArkadaslikApp.Commands
             private readonly IArkadaslikIstegiRepository _istekRepository;
             private readonly IKullaniciDavetKoduRepository _davetKoduRepository;
             private readonly IArkadaslikRepository _arkadaslikRepository;
+            private readonly IKullaniciSinavRepository _kullaniciSinavRepository;
             private readonly IUserRepository _userRepository;
 
             public SendMyArkadaslikIstegiByDavetKoduCommandHandler(
                 IArkadaslikIstegiRepository istekRepository,
                 IKullaniciDavetKoduRepository davetKoduRepository,
                 IArkadaslikRepository arkadaslikRepository,
+                IKullaniciSinavRepository kullaniciSinavRepository,
                 IUserRepository userRepository)
             {
                 _istekRepository = istekRepository;
                 _davetKoduRepository = davetKoduRepository;
                 _arkadaslikRepository = arkadaslikRepository;
+                _kullaniciSinavRepository = kullaniciSinavRepository;
                 _userRepository = userRepository;
             }
 
@@ -88,6 +91,16 @@ namespace Business.Handlers.ArkadaslikApp.Commands
                 {
                     return new ErrorDataResult<ArkadaslikIstegiListItemDto>(
                         "Bu kullanıcıyla zaten bekleyen bir istek var.");
+                }
+
+                var sinavCheck = await ArkadaslikDomainHelper.CanBecomeFriendsBySinavAsync(
+                    _kullaniciSinavRepository,
+                    userId,
+                    hedefUserId,
+                    cancellationToken);
+                if (!sinavCheck.Ok)
+                {
+                    return new ErrorDataResult<ArkadaslikIstegiListItemDto>(sinavCheck.Message);
                 }
 
                 var now = DateTimeExtensions.NowForNpgsqlTimestamp();

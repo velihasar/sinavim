@@ -22,13 +22,16 @@ namespace Business.Handlers.ArkadaslikApp.Commands
         {
             private readonly IArkadaslikIstegiRepository _istekRepository;
             private readonly IArkadaslikRepository _arkadaslikRepository;
+            private readonly IKullaniciSinavRepository _kullaniciSinavRepository;
 
             public AcceptMyArkadaslikIstegiCommandHandler(
                 IArkadaslikIstegiRepository istekRepository,
-                IArkadaslikRepository arkadaslikRepository)
+                IArkadaslikRepository arkadaslikRepository,
+                IKullaniciSinavRepository kullaniciSinavRepository)
             {
                 _istekRepository = istekRepository;
                 _arkadaslikRepository = arkadaslikRepository;
+                _kullaniciSinavRepository = kullaniciSinavRepository;
             }
 
             [SecuredOperation(Priority = 1)]
@@ -67,6 +70,16 @@ namespace Business.Handlers.ArkadaslikApp.Commands
                         cancellationToken))
                 {
                     return new ErrorResult("Bu kullanıcı zaten arkadaşınız.");
+                }
+
+                var sinavCheck = await ArkadaslikDomainHelper.CanBecomeFriendsBySinavAsync(
+                    _kullaniciSinavRepository,
+                    istek.GonderenUserId,
+                    istek.HedefUserId,
+                    cancellationToken);
+                if (!sinavCheck.Ok)
+                {
+                    return new ErrorResult(sinavCheck.Message);
                 }
 
                 var now = DateTimeExtensions.NowForNpgsqlTimestamp();
