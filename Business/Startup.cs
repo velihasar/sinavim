@@ -128,6 +128,7 @@ namespace Business
                 services.AddHangfireServer();
                 services.AddTransient<IJobService, HangfireJobService>();
                 services.AddTransient<IRecurringJobService, HangfireRecurringJobService>();
+                services.AddScoped<BackgroundJobs.GunlukSoruCozumuRetentionJob>();
             }
 
             services.AddAutoMapper(typeof(ConfigurationManager));

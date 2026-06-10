@@ -1,4 +1,5 @@
 using Business;
+using Business.BackgroundJobs;
 using Business.Helpers;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Extensions;
@@ -343,6 +344,15 @@ namespace WebAPI
                 // app.ApplicationServices, Autofac'ın üzerindeki ASP.NET Core DI abstraction'ıdır
                 // Bu sayede Autofac veya başka bir DI container kullanılsa bile çalışır
                 GlobalConfiguration.Configuration.UseActivator(new ServiceProviderJobActivator(app.ApplicationServices));
+
+                RecurringJob.AddOrUpdate<GunlukSoruCozumuRetentionJob>(
+                    GunlukSoruCozumuRetentionJob.RecurringJobId,
+                    job => job.PurgeExpiredRecordsAsync(default),
+                    "30 2 * * *",
+                    new RecurringJobOptions
+                    {
+                        TimeZone = DateTimeExtensions.GetTurkeyTimeZone(),
+                    });
 
                 app.UseHangfireDashboard(taskSchedulerConfig.Path, new DashboardOptions
                 {

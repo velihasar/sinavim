@@ -1,3 +1,4 @@
+using Business.Handlers.KonuTakip.Commands;
 using Business.Handlers.KonuTakip.Queries;
 using Core.Entities.Dtos.Project.KonuTakipDtos;
 using Microsoft.AspNetCore.Http;
@@ -25,6 +26,17 @@ namespace WebAPI.Controllers
                 return Ok(result.Data);
             }
             return BadRequest(result.Message);
+        }
+
+        /// <summary>Eksik veya yanlış konu bildirimi (SMTP ile support@masavtech.com).</summary>
+        [Consumes("application/json")]
+        [HttpPost("report-issue")]
+        [Produces("application/json", "text/plain")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
+        public async Task<IActionResult> ReportIssue([FromBody] ReportKonuIssueCommand command)
+        {
+            return GetResponseOnlyResultMessage(await Mediator.Send(command));
         }
     }
 }
