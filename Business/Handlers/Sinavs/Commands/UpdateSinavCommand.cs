@@ -27,7 +27,8 @@ namespace Business.Handlers.Sinavs.Commands
         public string KisaAd { get; set; }
         public string Ad { get; set; }
         public string? Aciklama { get; set; }
-        public System.DateTime Tarih { get; set; }
+        public System.DateTime? Tarih { get; set; }
+        public System.DateTime? TahminiTarih { get; set; }
         public int SiraNo { get; set; }
         public int DogruyuGoturenYanlisSay { get; set; }
 
@@ -59,6 +60,7 @@ namespace Business.Handlers.Sinavs.Commands
                 isThereSinavRecord.Ad = request.Ad;
                 isThereSinavRecord.Aciklama = request.Aciklama;
                 isThereSinavRecord.Tarih = request.Tarih.ToNpgsqlTimestamp();
+                isThereSinavRecord.TahminiTarih = request.TahminiTarih.ToNpgsqlTimestamp();
                 isThereSinavRecord.SiraNo = request.SiraNo;
                 isThereSinavRecord.DogruyuGoturenYanlisSay = request.DogruyuGoturenYanlisSay;
                 isThereSinavRecord.UpdatedBy = UserInfoExtensions.GetUserId();
@@ -75,6 +77,7 @@ namespace Business.Handlers.Sinavs.Commands
                     Ad = isThereSinavRecord.Ad,
                     Aciklama = isThereSinavRecord.Aciklama,
                     Tarih = isThereSinavRecord.Tarih,
+                    TahminiTarih = isThereSinavRecord.TahminiTarih,
                     SiraNo = isThereSinavRecord.SiraNo,
                     DogruyuGoturenYanlisSay = isThereSinavRecord.DogruyuGoturenYanlisSay
                 };

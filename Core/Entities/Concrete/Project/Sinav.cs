@@ -11,7 +11,8 @@ namespace Core.Entities.Concrete.Project
         public string KisaAd { get; set; }
         public string Ad { get; set; }
         public string? Aciklama { get; set; }
-        public DateTime Tarih { get; set; }
+        public DateTime? Tarih { get; set; }
+        public DateTime? TahminiTarih { get; set; }
         public int SiraNo { get; set; }
         public int DogruyuGoturenYanlisSay { get; set; }
 

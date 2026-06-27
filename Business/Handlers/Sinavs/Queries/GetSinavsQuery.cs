@@ -49,6 +49,7 @@ namespace Business.Handlers.Sinavs.Queries
                     Ad = s.Ad,
                     Aciklama = s.Aciklama,
                     Tarih = s.Tarih,
+                    TahminiTarih = s.TahminiTarih,
                     SiraNo = s.SiraNo,
                     DogruyuGoturenYanlisSay = s.DogruyuGoturenYanlisSay
                 });

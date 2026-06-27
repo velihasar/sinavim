@@ -11,6 +11,7 @@ namespace Core.Entities.Dtos.Project.KullaniciSinavDtos
 
         /// <summary>İlişkili sınavın tarihi (geri sayım için).</summary>
         public DateTime? SinavTarih { get; set; }
+        public DateTime? SinavTahminiTarih { get; set; }
 
         public string? SinavKisaAd { get; set; }
         public string? SinavAd { get; set; }

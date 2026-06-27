@@ -46,6 +46,7 @@ namespace Business.Handlers.Sinavs.Queries
                     Ad = sinav.Ad,
                     Aciklama = sinav.Aciklama,
                     Tarih = sinav.Tarih,
+                    TahminiTarih = sinav.TahminiTarih,
                     SiraNo = sinav.SiraNo,
                     DogruyuGoturenYanlisSay = sinav.DogruyuGoturenYanlisSay
                 };
