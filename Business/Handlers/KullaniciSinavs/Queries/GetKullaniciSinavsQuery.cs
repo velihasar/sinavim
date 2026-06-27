@@ -43,6 +43,7 @@ namespace Business.Handlers.KullaniciSinavs.Queries
                     SinavId = k.SinavId,
                     HedefPuan = k.HedefPuan,
                     SinavTarih = k.Sinav?.Tarih,
+                    SinavTahminiTarih = k.Sinav?.TahminiTarih,
                     SinavKisaAd = k.Sinav?.KisaAd,
                     SinavAd = k.Sinav?.Ad,
                 });

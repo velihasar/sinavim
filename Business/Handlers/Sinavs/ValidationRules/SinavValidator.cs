@@ -10,7 +10,14 @@ namespace Business.Handlers.Sinavs.ValidationRules
         public CreateSinavValidator()
         {
             RuleFor(x => x.Ad).NotEmpty();
-            RuleFor(x => x.Tarih).NotEmpty();
+            RuleFor(x => x.Tarih)
+                .NotEmpty()
+                .When(x => x.TahminiTarih == null)
+                .WithMessage("Tarih veya Tahmini Tarih alanlarından en az biri dolu olmalıdır.");
+            RuleFor(x => x.TahminiTarih)
+                .NotEmpty()
+                .When(x => x.Tarih == null)
+                .WithMessage("Tarih veya Tahmini Tarih alanlarından en az biri dolu olmalıdır.");
             RuleFor(x => x.SiraNo).GreaterThanOrEqualTo(0);
         }
     }
@@ -19,7 +26,14 @@ namespace Business.Handlers.Sinavs.ValidationRules
         public UpdateSinavValidator()
         {
             RuleFor(x => x.Ad).NotEmpty();
-            RuleFor(x => x.Tarih).NotEmpty();
+            RuleFor(x => x.Tarih)
+                .NotEmpty()
+                .When(x => x.TahminiTarih == null)
+                .WithMessage("Tarih veya Tahmini Tarih alanlarından en az biri dolu olmalıdır.");
+            RuleFor(x => x.TahminiTarih)
+                .NotEmpty()
+                .When(x => x.Tarih == null)
+                .WithMessage("Tarih veya Tahmini Tarih alanlarından en az biri dolu olmalıdır.");
             RuleFor(x => x.SiraNo).GreaterThanOrEqualTo(0);
         }
     }
